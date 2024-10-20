@@ -19,7 +19,5 @@ public abstract class DaoFactory {
         return instance;
     }
 
-    public abstract ToDoListDao getToDoListDao();
-
-    // További entitások DAOinak lekérése
+    public abstract ToDoDao getToDoDao();
 }

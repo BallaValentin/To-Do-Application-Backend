@@ -1,5 +1,6 @@
 package edu.bbte.idde.bvim2209.repo.mem;
 
+import edu.bbte.idde.bvim2209.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.model.BaseEntity;
 import edu.bbte.idde.bvim2209.repo.Dao;
 
@@ -26,16 +27,22 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
     }
 
     @Override
-    public void update(T entity) {
+    public void update(T entity) throws EntityNotFoundException {
         Long id = entity.getId();
         if (entities.containsKey(id)) {
             entities.put(id, entity);
+        } else {
+            throw new EntityNotFoundException("To Do with the given ID does not exists");
         }
     }
 
     @Override
-    public void delete(T entity) {
-        entities.remove(entity.getId());
+    public void delete(Long id) throws EntityNotFoundException{
+        if(entities.containsKey(id)) {
+            entities.remove(id);
+        } else {
+            throw new EntityNotFoundException("To Do with the given ID does not exists");
+        }
     }
 
     // további itt megvalósítható CRUD műveletek

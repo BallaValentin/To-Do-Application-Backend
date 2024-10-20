@@ -1,7 +1,7 @@
 package edu.bbte.idde.bvim2209.repo.mem;
 
-import edu.bbte.idde.bvim2209.model.ToDoList;
-import edu.bbte.idde.bvim2209.repo.ToDoListDao;
+import edu.bbte.idde.bvim2209.model.ToDo;
+import edu.bbte.idde.bvim2209.repo.ToDoDao;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
  * - örökli a BlogPostDao-t az érintett entitás miatt
  * - örökli a MemDao-t az elérési mód miatt
  */
-public class ToDoListMemDao extends MemDao<ToDoList> implements ToDoListDao {
+public class ToDoMemDao extends MemDao<ToDo> implements ToDoDao {
 
     @Override
-    public Collection<ToDoList> findByTitle(String title) {
+    public Collection<ToDo> findByTitle(String title) {
         return entities.values().stream()
-                .filter(toDoList -> toDoList.getTitle().equals(title))
+                .filter(toDo -> toDo.getTitle().equals(title))
                 .collect(Collectors.toList());
     }
 }

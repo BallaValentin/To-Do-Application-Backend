@@ -2,18 +2,18 @@ package edu.bbte.idde.bvim2209.model;
 
 import java.util.Date;
 
-public class ToDoList extends BaseEntity {
+public class ToDo extends BaseEntity {
 
     private String title;
     private String description;
     private Date dueDate;
     private Integer levelOfImportance;
 
-    public ToDoList() {
+    public ToDo() {
         super();
     }
 
-    public ToDoList(Long id, String title, String description, Date dueDate, Integer levelOfImportance) {
+    public ToDo(Long id, String title, String description, Date dueDate, Integer levelOfImportance) {
         super(id);
         this.title = title;
         this.description = description;

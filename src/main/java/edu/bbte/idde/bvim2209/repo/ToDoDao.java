@@ -1,6 +1,6 @@
 package edu.bbte.idde.bvim2209.repo;
 
-import edu.bbte.idde.bvim2209.model.ToDoList;
+import edu.bbte.idde.bvim2209.model.ToDo;
 
 import java.util.Collection;
 
@@ -10,12 +10,12 @@ import java.util.Collection;
  * Egy bizonyos entitásra specifikus CRUD műveletek.
  */
 
-    public interface ToDoListDao extends Dao<ToDoList> {
+    public interface ToDoDao extends Dao<ToDo> {
 
         /**
          * Szűrt entitáslista visszatérítése.
          */
-        Collection<ToDoList> findByTitle(String author);
+        Collection<ToDo> findByTitle(String title);
 
         // további blogposzt-specifikus CRUD műveletek...
     }

@@ -1,5 +1,10 @@
 package edu.bbte.idde.bvim2209.presentation;
 
+import edu.bbte.idde.bvim2209.exceptions.EntityNotFoundException;
+import edu.bbte.idde.bvim2209.model.ToDo;
+import edu.bbte.idde.bvim2209.services.ToDoService;
+import edu.bbte.idde.bvim2209.services.ToDoServiceImpl;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -7,9 +12,14 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
+import java.text.ParseException;
+import java.util.Collection;
 
 public class ToDoListFrame extends JFrame {
+    private static ToDoService toDoService;
+    private static DefaultTableModel tableModel;
     public ToDoListFrame() {
+        toDoService = new ToDoServiceImpl();
         this.setSize(1280, 720);
         this.setTitle("To Do List application");
 
@@ -59,6 +69,7 @@ public class ToDoListFrame extends JFrame {
         inputButtonsPanel.add(updateButton);
         inputButtonsPanel.add(deleteButton);
 
+
         inputPanel.add(writingInputPanel);
         inputPanel.add(inputButtonsPanel);
 
@@ -67,7 +78,7 @@ public class ToDoListFrame extends JFrame {
 
         String[] columnNames = {"ID", "Title", "Description", "Due date", "Importance level"};
         Object[][] tableData = {};
-        DefaultTableModel tableModel = new DefaultTableModel(tableData, columnNames);
+        tableModel = new DefaultTableModel(tableData, columnNames);
         JTable table = new JTable(tableModel);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
@@ -94,6 +105,63 @@ public class ToDoListFrame extends JFrame {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.pack();
         this.setVisible(true);
+
+        addButton.addActionListener(e -> {
+            String title = inputTitleTextField.getText();
+            String description = inputDescriptionTextField.getText();
+            String dueDate = inputDueDateTextField.getText();
+            String importanceLevel = inputImportanceLevelTextField.getText();
+            try {
+                toDoService.createToDo(title, description, dueDate, importanceLevel);
+                refreshTable();
+            } catch (ParseException ex) {
+
+                throw new RuntimeException(ex);
+            }
+            inputTitleTextField.setText("");
+            inputDescriptionTextField.setText("");
+            inputDueDateTextField.setText("");
+            inputImportanceLevelTextField.setText("");
+        });
+
+        updateButton.addActionListener(e -> {
+            String title = inputTitleTextField.getText();
+            String description = inputDescriptionTextField.getText();
+            String dueDate = inputDueDateTextField.getText();
+            String importanceLevel = inputImportanceLevelTextField.getText();
+            String id = JOptionPane.showInputDialog(this, "Enter ID of to do:");
+            try {
+                toDoService.updateToDo(Long.parseLong(id), title, description, dueDate, importanceLevel);
+                refreshTable();
+            } catch (EntityNotFoundException|ParseException|NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        deleteButton.addActionListener(e -> {
+            String id = JOptionPane.showInputDialog(this, "Enter ID of to do:");
+            try {
+                toDoService.deleteToDo(Long.parseLong(id));
+                refreshTable();
+            } catch (EntityNotFoundException | ParseException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+    }
+
+    private static void refreshTable() {
+        tableModel.setRowCount(0);
+        Collection<ToDo> toDoCollection = toDoService.findAll();
+        for (ToDo toDo : toDoCollection) {
+            Object[] rowData = {
+                    toDo.getId(),
+                    toDo.getTitle(),
+                    toDo.getDescription(),
+                    toDo.getDueDate(),
+                    toDo.getLevelOfImportance(),
+            };
+            tableModel.addRow(rowData);
+        }
     }
 
     private static Border createCustomTitledBorder(String title) {
