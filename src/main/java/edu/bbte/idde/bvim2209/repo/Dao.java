@@ -3,7 +3,6 @@ package edu.bbte.idde.bvim2209.repo;
 import edu.bbte.idde.bvim2209.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.model.BaseEntity;
 
-import java.text.ParseException;
 import java.util.Collection;
 
 /**

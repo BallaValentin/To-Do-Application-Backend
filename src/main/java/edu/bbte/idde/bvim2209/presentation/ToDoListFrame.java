@@ -62,11 +62,11 @@ public class ToDoListFrame extends JFrame {
         JPanel inputButtonsPanel = new JPanel();
         inputButtonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
-        JButton addButton = new JButton("Add to do");
+        JButton insertButton = new JButton("Insert to do");
         JButton updateButton = new JButton("Update to do");
         JButton deleteButton = new JButton("Delete to do");
 
-        inputButtonsPanel.add(addButton);
+        inputButtonsPanel.add(insertButton);
         inputButtonsPanel.add(updateButton);
         inputButtonsPanel.add(deleteButton);
 
@@ -110,7 +110,7 @@ public class ToDoListFrame extends JFrame {
         this.pack();
         this.setVisible(true);
 
-        addButton.addActionListener(e -> {
+        insertButton.addActionListener(e -> {
             String title = inputTitleTextField.getText();
             String description = inputDescriptionTextField.getText();
             String dueDate = inputDueDateTextField.getText();
@@ -120,7 +120,7 @@ public class ToDoListFrame extends JFrame {
                 refreshTable();
                 systemOutputLabel.setText("New To Do was added successfully.");
                 systemOutputLabel.setForeground(new Color(0, 100, 0));
-            } catch (ParseException | NumberFormatException ex) {
+            } catch (ParseException | IllegalArgumentException ex) {
                 systemOutputLabel.setText("Error: " + ex.getMessage());
                 systemOutputLabel.setForeground(Color.RED);
             }
@@ -141,7 +141,7 @@ public class ToDoListFrame extends JFrame {
                 refreshTable();
                 systemOutputLabel.setText("To Do with id " + id + " updated successfully.");
                 systemOutputLabel.setForeground(new Color(0, 100, 0));
-            } catch (EntityNotFoundException|ParseException|NumberFormatException ex) {
+            } catch (EntityNotFoundException | ParseException | IllegalArgumentException ex) {
                 systemOutputLabel.setText("Error: " + ex.getMessage());
                 systemOutputLabel.setForeground(Color.RED);
             }
