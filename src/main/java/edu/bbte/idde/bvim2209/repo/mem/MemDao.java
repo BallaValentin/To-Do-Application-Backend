@@ -22,7 +22,7 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
     }
 
     @Override
-    public void create(T entity) {
+    public void create(T entity) throws EntityNotFoundException {
         entities.put(entity.getId(), entity);
     }
 

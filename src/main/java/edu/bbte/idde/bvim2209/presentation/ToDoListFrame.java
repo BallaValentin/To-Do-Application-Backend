@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 
 public class ToDoListFrame extends JFrame {
@@ -96,6 +97,9 @@ public class ToDoListFrame extends JFrame {
 
         JPanel systemOutputPanel = new JPanel();
         systemOutputPanel.setBorder(createCustomTitledBorder("System Output"));
+        systemOutputPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        JLabel systemOutputLabel = new JLabel();
+        systemOutputPanel.add(systemOutputLabel);
 
         mainPanel.add(inputPanel);
         mainPanel.add(tableOutputPanel);
@@ -114,9 +118,11 @@ public class ToDoListFrame extends JFrame {
             try {
                 toDoService.createToDo(title, description, dueDate, importanceLevel);
                 refreshTable();
-            } catch (ParseException ex) {
-
-                throw new RuntimeException(ex);
+                systemOutputLabel.setText("New To Do was added successfully.");
+                systemOutputLabel.setForeground(new Color(0, 100, 0));
+            } catch (ParseException | NumberFormatException ex) {
+                systemOutputLabel.setText("Error: " + ex.getMessage());
+                systemOutputLabel.setForeground(Color.RED);
             }
             inputTitleTextField.setText("");
             inputDescriptionTextField.setText("");
@@ -133,8 +139,11 @@ public class ToDoListFrame extends JFrame {
             try {
                 toDoService.updateToDo(Long.parseLong(id), title, description, dueDate, importanceLevel);
                 refreshTable();
+                systemOutputLabel.setText("To Do with id " + id + " updated successfully.");
+                systemOutputLabel.setForeground(new Color(0, 100, 0));
             } catch (EntityNotFoundException|ParseException|NumberFormatException ex) {
-                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                systemOutputLabel.setText("Error: " + ex.getMessage());
+                systemOutputLabel.setForeground(Color.RED);
             }
         });
 
@@ -143,8 +152,11 @@ public class ToDoListFrame extends JFrame {
             try {
                 toDoService.deleteToDo(Long.parseLong(id));
                 refreshTable();
+                systemOutputLabel.setText("To Do with id " + id + " deleted successfully.");
+                systemOutputLabel.setForeground(new Color(0, 100, 0));
             } catch (EntityNotFoundException | ParseException ex) {
-                throw new RuntimeException(ex);
+                systemOutputLabel.setText("Error: " + ex.getMessage());
+                systemOutputLabel.setForeground(Color.RED);
             }
         });
     }
@@ -157,7 +169,7 @@ public class ToDoListFrame extends JFrame {
                     toDo.getId(),
                     toDo.getTitle(),
                     toDo.getDescription(),
-                    toDo.getDueDate(),
+                    new SimpleDateFormat("yyyy-MM-dd").format(toDo.getDueDate()),
                     toDo.getLevelOfImportance(),
             };
             tableModel.addRow(rowData);

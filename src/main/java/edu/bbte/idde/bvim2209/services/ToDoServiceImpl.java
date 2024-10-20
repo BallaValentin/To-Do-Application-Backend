@@ -19,7 +19,7 @@ public class ToDoServiceImpl implements ToDoService{
     }
 
     @Override
-    public void createToDo(String title, String description, String dueDate, String importanceLevel) throws ParseException {
+    public void createToDo(String title, String description, String dueDate, String importanceLevel) throws ParseException, EntityNotFoundException {
         Date dueDateNew = null;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         dueDateNew = dateFormat.parse(dueDate);
@@ -41,7 +41,7 @@ public class ToDoServiceImpl implements ToDoService{
     }
 
     @Override
-    public void deleteToDo(Long id) throws EntityNotFoundException, ParseException{
+    public void deleteToDo(Long id) throws EntityNotFoundException{
         toDoDao.delete(id);
     }
 
