@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.5.0'
+    implementation group: 'com.mysql', name: 'mysql-connector-j', version: '9.1.0'
     implementation group: 'com.zaxxer', name: 'HikariCP', version: '6.0.0'
 }
 
