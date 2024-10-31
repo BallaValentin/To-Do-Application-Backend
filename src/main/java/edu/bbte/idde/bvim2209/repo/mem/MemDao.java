@@ -7,6 +7,7 @@ import edu.bbte.idde.bvim2209.repo.Dao;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * CRUD műveletek implementációja egy elérési móddal.
@@ -15,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
 
     protected Map<Long, T> entities = new ConcurrentHashMap<>();
+    private final AtomicLong idCounter = new AtomicLong(1);
 
     @Override
     public Collection<T> findAll() {
@@ -23,6 +25,9 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
 
     @Override
     public void create(T entity) throws EntityNotFoundException {
+        if (entity.getId() == null) {
+            entity.setId(idCounter.getAndIncrement());
+        }
         entities.put(entity.getId(), entity);
     }
 

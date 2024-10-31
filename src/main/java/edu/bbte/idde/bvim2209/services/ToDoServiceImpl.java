@@ -30,7 +30,7 @@ public class ToDoServiceImpl implements ToDoService{
         Date dueDateNew = dateFormat.parse(dueDate);
         Integer integer;
         integer = Integer.parseInt(importanceLevel);
-        ToDo toDo = new ToDo(nextId++, title, description, dueDateNew, integer);
+        ToDo toDo = new ToDo(null, title, description, dueDateNew, integer);
         toDoDao.create(toDo);
     }
 
