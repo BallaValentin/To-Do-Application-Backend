@@ -12,6 +12,7 @@ repositories {
 
 dependencies {
     implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.5.0'
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: '6.0.0'
 }
 
 application {
