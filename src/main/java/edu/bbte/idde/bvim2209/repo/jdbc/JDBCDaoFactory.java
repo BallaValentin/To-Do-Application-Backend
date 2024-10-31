@@ -6,6 +6,6 @@ import edu.bbte.idde.bvim2209.repo.ToDoDao;
 public class JDBCDaoFactory extends DaoFactory {
     @Override
     public ToDoDao getToDoDao() {
-        return null;
+        return new ToDoJDBCDao();
     }
 }
