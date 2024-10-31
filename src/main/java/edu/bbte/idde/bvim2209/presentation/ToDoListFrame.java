@@ -116,7 +116,12 @@ public class ToDoListFrame extends JFrame {
             String dueDate = inputDueDateTextField.getText();
             String importanceLevel = inputImportanceLevelTextField.getText();
             try {
-                toDoService.createToDo(title, description, dueDate, importanceLevel);
+                ToDo toDo = new ToDo();
+                toDo.setTitle(title);
+                toDo.setDescription(description);
+                toDo.setDueDate(new SimpleDateFormat("yyyy-MM-dd").parse(dueDate));
+                toDo.setLevelOfImportance(Integer.parseInt(importanceLevel));
+                toDoService.createToDo(toDo);
                 refreshTable();
                 systemOutputLabel.setText("New To Do was added successfully.");
                 systemOutputLabel.setForeground(new Color(0, 100, 0));
@@ -137,7 +142,13 @@ public class ToDoListFrame extends JFrame {
             String importanceLevel = inputImportanceLevelTextField.getText();
             String id = JOptionPane.showInputDialog(this, "Enter ID of to do:");
             try {
-                toDoService.updateToDo(Long.parseLong(id), title, description, dueDate, importanceLevel);
+                ToDo toDo = new ToDo();
+                toDo.setTitle(title);
+                toDo.setDescription(description);
+                toDo.setDueDate(new SimpleDateFormat("yyyy-MM-dd").parse(dueDate));
+                toDo.setLevelOfImportance(Integer.parseInt(importanceLevel));
+                toDo.setId(Long.valueOf(id));
+                toDoService.updateToDo(toDo);
                 refreshTable();
                 systemOutputLabel.setText("To Do with id " + id + " updated successfully.");
                 systemOutputLabel.setForeground(new Color(0, 100, 0));

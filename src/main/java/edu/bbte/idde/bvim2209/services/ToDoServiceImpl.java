@@ -19,34 +19,38 @@ public class ToDoServiceImpl implements ToDoService{
     }
 
     @Override
-    public void createToDo(String title, String description, String dueDate, String importanceLevel) throws ParseException, IllegalArgumentException {
-        if(title == null || title.trim().isEmpty()) {
+    public void createToDo(ToDo toDo) throws ParseException, IllegalArgumentException {
+        if (toDo.getTitle() == null || toDo.getTitle().trim().isEmpty()) {
             throw new IllegalArgumentException("Title cannot be empty or null");
         }
-        if(description == null || description.trim().isEmpty()) {
+        if (toDo.getDescription() == null || toDo.getDescription().trim().isEmpty()) {
             throw new IllegalArgumentException("Description cannot be null or empty");
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date dueDateNew = dateFormat.parse(dueDate);
-        Integer integer;
-        integer = Integer.parseInt(importanceLevel);
-        ToDo toDo = new ToDo(null, title, description, dueDateNew, integer);
+        if (toDo.getDueDate() == null) {
+            throw new IllegalArgumentException("Due date cannot be null");
+        }
+        if (toDo.getLevelOfImportance() == null) {
+            throw new IllegalArgumentException("Importance level cannot be null");
+        }
         toDoDao.create(toDo);
     }
 
     @Override
-    public void updateToDo(Long id, String title, String description, String dueDate, String importanceLevel) throws EntityNotFoundException, ParseException, IllegalArgumentException {
-        if(title == null || title.trim().isEmpty()) {
+    public void updateToDo(ToDo toDo) throws EntityNotFoundException, ParseException, IllegalArgumentException {
+        if (toDo.getTitle() == null || toDo.getTitle().trim().isEmpty()) {
             throw new IllegalArgumentException("Title cannot be empty or null");
         }
-        if(description == null || description.trim().isEmpty()) {
+        if (toDo.getDescription() == null || toDo.getDescription().trim().isEmpty()) {
             throw new IllegalArgumentException("Description cannot be null or empty");
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date dueDateNew = dateFormat.parse(dueDate);
-        Integer integer;
-        integer = Integer.parseInt(importanceLevel);
-        ToDo toDo = new ToDo(id, title, description, dueDateNew, integer);
+        if (toDo.getDueDate() == null) {
+            throw new IllegalArgumentException("Due date cannot be null");
+        }
+        if (toDo.getLevelOfImportance() == null) {
+            throw new IllegalArgumentException("Importance level cannot be null");
+        }
         toDoDao.update(toDo);
     }
 
