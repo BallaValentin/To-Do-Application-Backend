@@ -1,4 +1,19 @@
 /*
  * Kiinduló gradle file
  */
-apply plugin: "java"
+plugins {
+    id 'java'
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.5.0'
+}
+
+application {
+    mainClass = 'edu.bbte.idde.bvim2209.presentation.ToDoListFrame'
+}
