@@ -10,9 +10,8 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 
-public class ToDoServiceImpl implements ToDoService{
+public class ToDoServiceImpl implements ToDoService {
     private final ToDoDao toDoDao;
-    private static Long nextId = 1L;
 
     public ToDoServiceImpl() {
         toDoDao = DaoFactory.getInstance().getToDoDao();
@@ -20,7 +19,7 @@ public class ToDoServiceImpl implements ToDoService{
 
     @Override
     public void createToDo(ToDo toDo) throws IllegalArgumentException {
-        if (toDo.getTitle() == null || toDo.getTitle().trim().isEmpty()) {
+        if (toDo.getTitle() == null || toDo.getTitle().trim().isBlank()) {
             throw new IllegalArgumentException("Title cannot be empty or null");
         }
         if (toDo.getDescription() == null || toDo.getDescription().trim().isEmpty()) {
@@ -38,7 +37,7 @@ public class ToDoServiceImpl implements ToDoService{
 
     @Override
     public void updateToDo(ToDo toDo) throws EntityNotFoundException, IllegalArgumentException {
-        if (toDo.getTitle() == null || toDo.getTitle().trim().isEmpty()) {
+        if (toDo.getTitle() == null || toDo.getTitle().isBlank()) {
             throw new IllegalArgumentException("Title cannot be empty or null");
         }
         if (toDo.getDescription() == null || toDo.getDescription().trim().isEmpty()) {
@@ -55,7 +54,7 @@ public class ToDoServiceImpl implements ToDoService{
     }
 
     @Override
-    public void deleteToDo(Long id) throws EntityNotFoundException{
+    public void deleteToDo(Long id) throws EntityNotFoundException {
         toDoDao.delete(id);
     }
 

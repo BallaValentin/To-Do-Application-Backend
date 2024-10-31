@@ -19,6 +19,7 @@ import java.util.Collection;
 public class ToDoListFrame extends JFrame {
     private static ToDoService toDoService;
     private static DefaultTableModel tableModel;
+
     public ToDoListFrame() {
         toDoService = new ToDoServiceImpl();
         this.setSize(1280, 720);

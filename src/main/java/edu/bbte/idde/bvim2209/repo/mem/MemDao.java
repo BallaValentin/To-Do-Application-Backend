@@ -53,8 +53,8 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
     }
 
     @Override
-    public void delete(Long id) throws EntityNotFoundException{
-        if(entities.containsKey(id)) {
+    public void delete(Long id) throws EntityNotFoundException {
+        if (entities.containsKey(id)) {
             entities.remove(id);
         } else {
             throw new EntityNotFoundException("To Do with the given ID does not exists");

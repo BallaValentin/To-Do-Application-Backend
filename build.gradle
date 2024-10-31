@@ -18,3 +18,5 @@ dependencies {
 application {
     mainClass = 'edu.bbte.idde.bvim2209.presentation.ToDoListFrame'
 }
+
+apply from: "$rootDir/lint.gradle"
