@@ -34,6 +34,15 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
     }
 
     @Override
+    public T findById(Long id) throws EntityNotFoundException {
+        T entity = entities.get(id);
+        if (entity == null) {
+            throw new EntityNotFoundException("Entity with ID " + id + " not found");
+        }
+        return entity;
+    }
+
+    @Override
     public void update(T entity) throws EntityNotFoundException {
         Long id = entity.getId();
         if (entities.containsKey(id)) {

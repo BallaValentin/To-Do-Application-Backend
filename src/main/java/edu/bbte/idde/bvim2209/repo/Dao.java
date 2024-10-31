@@ -24,6 +24,8 @@ public interface Dao<T extends BaseEntity> {
      */
     void create(T entity) throws IllegalArgumentException;
 
+    T findById(Long id) throws EntityNotFoundException;
+
     void update(T entity) throws EntityNotFoundException;
 
     void delete(Long id) throws EntityNotFoundException;

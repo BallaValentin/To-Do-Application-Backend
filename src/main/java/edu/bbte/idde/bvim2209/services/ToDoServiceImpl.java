@@ -19,7 +19,7 @@ public class ToDoServiceImpl implements ToDoService{
     }
 
     @Override
-    public void createToDo(ToDo toDo) throws ParseException, IllegalArgumentException {
+    public void createToDo(ToDo toDo) throws IllegalArgumentException {
         if (toDo.getTitle() == null || toDo.getTitle().trim().isEmpty()) {
             throw new IllegalArgumentException("Title cannot be empty or null");
         }
@@ -37,7 +37,7 @@ public class ToDoServiceImpl implements ToDoService{
     }
 
     @Override
-    public void updateToDo(ToDo toDo) throws EntityNotFoundException, ParseException, IllegalArgumentException {
+    public void updateToDo(ToDo toDo) throws EntityNotFoundException, IllegalArgumentException {
         if (toDo.getTitle() == null || toDo.getTitle().trim().isEmpty()) {
             throw new IllegalArgumentException("Title cannot be empty or null");
         }
