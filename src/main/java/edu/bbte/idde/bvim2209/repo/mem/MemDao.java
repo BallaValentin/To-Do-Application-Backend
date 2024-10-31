@@ -24,9 +24,11 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
     }
 
     @Override
-    public void create(T entity) throws EntityNotFoundException {
+    public void create(T entity) throws IllegalArgumentException {
         if (entity.getId() == null) {
             entity.setId(idCounter.getAndIncrement());
+        } else if (entities.containsKey(entity.getId())) {
+            throw new IllegalArgumentException("Entity with ID " + entity.getId() + " already exists.");
         }
         entities.put(entity.getId(), entity);
     }

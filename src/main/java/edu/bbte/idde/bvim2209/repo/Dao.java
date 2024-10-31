@@ -22,7 +22,7 @@ public interface Dao<T extends BaseEntity> {
     /**
      * Létrehozás entitás által
      */
-    void create(T entity) throws EntityNotFoundException;
+    void create(T entity) throws IllegalArgumentException;
 
     void update(T entity) throws EntityNotFoundException;
 
