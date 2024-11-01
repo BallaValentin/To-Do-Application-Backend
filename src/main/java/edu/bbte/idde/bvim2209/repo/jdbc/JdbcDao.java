@@ -51,12 +51,14 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     protected abstract void setStatementForInsert(PreparedStatement preparedStatement, T entity) throws SQLException;
 
     protected abstract void setStatementForUpdate(PreparedStatement preparedStatement, T entity) throws SQLException;
+
     @Override
     public void create(T entity) throws IllegalArgumentException {
         String query = "INSERT INTO ToDo (Title, Description, DueDate, ImportanceLevel) VALUES (?, ?, ?, ?)";
         try (
                 Connection connection = dataSource.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)
         ) {
             setStatementForInsert(preparedStatement, entity);
             int rowsAffected = preparedStatement.executeUpdate();

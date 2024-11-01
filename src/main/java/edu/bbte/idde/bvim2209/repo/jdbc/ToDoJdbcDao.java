@@ -1,21 +1,21 @@
 package edu.bbte.idde.bvim2209.repo.jdbc;
 
-import com.sun.tools.javac.Main;
 import edu.bbte.idde.bvim2209.model.ToDo;
 import edu.bbte.idde.bvim2209.repo.ToDoDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Collections;
 
 public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
+    //    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
     @Override
     public Collection<ToDo> findByTitle(String title) {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

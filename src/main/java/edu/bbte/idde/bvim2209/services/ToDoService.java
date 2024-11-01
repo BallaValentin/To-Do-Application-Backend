@@ -7,11 +7,11 @@ import java.text.ParseException;
 import java.util.Collection;
 
 public interface ToDoService {
-    public void createToDo(ToDo toDo) throws ParseException, IllegalArgumentException;
+    void createToDo(ToDo toDo) throws ParseException, IllegalArgumentException;
 
-    public void updateToDo(ToDo toDo) throws EntityNotFoundException, ParseException;
+    void updateToDo(ToDo toDo) throws EntityNotFoundException, ParseException;
 
-    public void deleteToDo(Long id) throws EntityNotFoundException, ParseException;
+    void deleteToDo(Long id) throws EntityNotFoundException, ParseException;
 
-    public Collection<ToDo> findAll();
+    Collection<ToDo> findAll();
 }

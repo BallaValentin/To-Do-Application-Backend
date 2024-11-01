@@ -101,7 +101,7 @@ public class ToDoListFrame extends JFrame {
 
         this.add(mainPanel, BorderLayout.CENTER);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.pack();
+        super.pack();
         refreshTable();
 
         addInsertButtonListener();
