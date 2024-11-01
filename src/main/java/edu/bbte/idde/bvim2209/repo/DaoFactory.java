@@ -1,12 +1,11 @@
 package edu.bbte.idde.bvim2209.repo;
 
-import edu.bbte.idde.bvim2209.repo.jdbc.JDBCDaoFactory;
+import com.sun.tools.javac.Main;
+import edu.bbte.idde.bvim2209.repo.jdbc.JdbcDaoFactory;
 import edu.bbte.idde.bvim2209.repo.mem.MemDaoFactory;
 import edu.bbte.idde.bvim2209.util.PropertyProvider;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Általános factory
@@ -14,6 +13,7 @@ import java.util.Properties;
 public abstract class DaoFactory {
     // singleton lazy loading
     private static DaoFactory instance;
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     /**
      * Kérünk egy példányt - itt dől el az adatelérési módszer.
@@ -22,11 +22,12 @@ public abstract class DaoFactory {
         if (instance == null) {
             String implementationType = PropertyProvider.getProperty("DAO_IMPLEMENTATION");
             if ("jdbc".equals(implementationType)) {
-                System.out.println("JDBC");
+                logger.info("Creating instance of JdbcDaoFactory...");
+                instance = new JdbcDaoFactory();
             } else {
-                System.out.println("MEMORY");
+                logger.info("Creating new instance of MemDaoFactory");
+                instance = new MemDaoFactory();
             }
-            instance = new JDBCDaoFactory();
         }
         return instance;
     }

@@ -15,11 +15,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public abstract class JDBCDao<T extends BaseEntity> implements Dao<T> {
+public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     private static final HikariDataSource dataSource = new HikariDataSource();
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-    public JDBCDao() {
+    public JdbcDao() {
+        logger.info("Setting up database connection parameters...");
         dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/ToDoDatabase");
         dataSource.setUsername("root");
         dataSource.setPassword("12345");
@@ -49,19 +50,17 @@ public abstract class JDBCDao<T extends BaseEntity> implements Dao<T> {
 
     protected abstract void setStatementForInsert(PreparedStatement preparedStatement, T entity) throws SQLException;
 
+    protected abstract void setStatementForUpdate(PreparedStatement preparedStatement, T entity) throws SQLException;
     @Override
     public void create(T entity) throws IllegalArgumentException {
-        System.out.println("Starting to insert new ToDo");
         String query = "INSERT INTO ToDo (Title, Description, DueDate, ImportanceLevel) VALUES (?, ?, ?, ?)";
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)
         ) {
-            System.out.println("Setting up statement for inserting new ToDo");
             setStatementForInsert(preparedStatement, entity);
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
-                System.out.println("New ToDo inserted successfully");
                 try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         entity.setId(generatedKeys.getLong("ID"));
@@ -69,7 +68,6 @@ public abstract class JDBCDao<T extends BaseEntity> implements Dao<T> {
                 }
             }
         } catch (SQLException exception) {
-            System.out.println("An exception occured during the insertion of a new ToDo");
             logger.error("Error creating entity", exception);
             throw new IllegalArgumentException("Could not create entity", exception);
         }
@@ -99,8 +97,8 @@ public abstract class JDBCDao<T extends BaseEntity> implements Dao<T> {
         String query = "UPDATE ToDo SET Title=?, Description=?, DueDate=?, ImportanceLevel=? WHERE ID=?";
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            setStatementForInsert(preparedStatement, entity);
-            preparedStatement.setLong(1, entity.getId());
+            setStatementForUpdate(preparedStatement, entity);
+            preparedStatement.setLong(5, entity.getId());
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected == 0) {
                 throw new EntityNotFoundException("Entity with ID " + entity.getId() + " not found.");
