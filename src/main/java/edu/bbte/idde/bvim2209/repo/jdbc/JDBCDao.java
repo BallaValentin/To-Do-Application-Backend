@@ -89,7 +89,18 @@ public abstract class JDBCDao<T extends BaseEntity> implements Dao<T> {
 
     @Override
     public void update(T entity) throws EntityNotFoundException {
-
+        String query = "UPDATE ToDo SET Title=?, Description=?, DueDate=?, ImportanceLevel=? WHERE ID=?";
+        try (Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            setStatementForInsert(preparedStatement, entity);
+            preparedStatement.setLong(1, entity.getId());
+            int rowsAffected = preparedStatement.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new EntityNotFoundException("Entity with ID " + entity.getId() + " not found.");
+            }
+        } catch (SQLException exception) {
+            logger.error("Error updating entity", exception);
+        }
     }
 
     @Override
