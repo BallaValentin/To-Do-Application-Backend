@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-    protected Map<Long, T> entities = new ConcurrentHashMap<>();
+    protected transient Map<Long, T> entities = new ConcurrentHashMap<>();
     private static AtomicLong idCounter = new AtomicLong(1);
 
     @Override
