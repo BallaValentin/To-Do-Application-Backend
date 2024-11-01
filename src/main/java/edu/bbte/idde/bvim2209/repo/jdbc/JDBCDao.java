@@ -70,7 +70,21 @@ public abstract class JDBCDao<T extends BaseEntity> implements Dao<T> {
 
     @Override
     public T findById(Long id) throws EntityNotFoundException {
-        return null;
+        String query = "SELECT * FROM ToDo WHERE ID=?";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setLong(1, id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapResultSetToEntity(resultSet);
+                } else {
+                    throw new EntityNotFoundException("Entity with ID " + id + " not found.");
+                }
+            }
+        } catch (SQLException exception) {
+            logger.error("Error finding entity by ID", exception);
+            throw new EntityNotFoundException("Entity with ID " + id + " not found.");
+        }
     }
 
     @Override
