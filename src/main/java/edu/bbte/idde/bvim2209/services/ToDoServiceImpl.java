@@ -8,7 +8,7 @@ import edu.bbte.idde.bvim2209.repo.ToDoDao;
 import java.util.Collection;
 
 public class ToDoServiceImpl implements ToDoService {
-    private final ToDoDao toDoDao;
+    private transient final ToDoDao toDoDao;
 
     public ToDoServiceImpl() {
         toDoDao = DaoFactory.getInstance().getToDoDao();

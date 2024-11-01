@@ -20,7 +20,7 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     protected Map<Long, T> entities = new ConcurrentHashMap<>();
-    private final AtomicLong idCounter = new AtomicLong(1);
+    private static AtomicLong idCounter = new AtomicLong(1);
 
     @Override
     public Collection<T> findAll() {
