@@ -5,10 +5,8 @@ import edu.bbte.idde.bvim2209.model.ToDo;
 import edu.bbte.idde.bvim2209.repo.DaoFactory;
 import edu.bbte.idde.bvim2209.repo.ToDoDao;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 
 public class ToDoServiceImpl implements ToDoService {
     private final ToDoDao toDoDao;
@@ -25,7 +23,6 @@ public class ToDoServiceImpl implements ToDoService {
         if (toDo.getDescription() == null || toDo.getDescription().trim().isEmpty()) {
             throw new IllegalArgumentException("Description cannot be null or empty");
         }
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         if (toDo.getDueDate() == null) {
             throw new IllegalArgumentException("Due date cannot be null");
         }
@@ -43,7 +40,6 @@ public class ToDoServiceImpl implements ToDoService {
         if (toDo.getDescription() == null || toDo.getDescription().trim().isEmpty()) {
             throw new IllegalArgumentException("Description cannot be null or empty");
         }
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         if (toDo.getDueDate() == null) {
             throw new IllegalArgumentException("Due date cannot be null");
         }

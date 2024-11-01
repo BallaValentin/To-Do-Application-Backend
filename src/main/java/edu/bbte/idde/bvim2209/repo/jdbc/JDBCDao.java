@@ -18,12 +18,14 @@ import java.util.Collection;
 public abstract class JDBCDao<T extends BaseEntity> implements Dao<T> {
     private static final HikariDataSource dataSource = new HikariDataSource();
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
     public JDBCDao() {
         dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/ToDoDatabase");
         dataSource.setUsername("root");
         dataSource.setPassword("12345");
         dataSource.setMaximumPoolSize(10);
     }
+
     @Override
     public Collection<T> findAll() {
         Collection<T> entities = new ArrayList<>();
@@ -31,12 +33,12 @@ public abstract class JDBCDao<T extends BaseEntity> implements Dao<T> {
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
-                ResultSet resultSet = preparedStatement.executeQuery();
-                ) {
-                    while (resultSet.next()) {
-                        T entity = mapResultSetToEntity(resultSet);
-                        entities.add(entity);
-                    }
+                ResultSet resultSet = preparedStatement.executeQuery()
+        ) {
+            while (resultSet.next()) {
+                T entity = mapResultSetToEntity(resultSet);
+                entities.add(entity);
+            }
         } catch (SQLException exception) {
             logger.error("Error fetching all entities", exception);
         }
@@ -44,6 +46,7 @@ public abstract class JDBCDao<T extends BaseEntity> implements Dao<T> {
     }
 
     protected abstract T mapResultSetToEntity(ResultSet resultSet) throws SQLException;
+
     protected abstract void setStatementForInsert(PreparedStatement preparedStatement, T entity) throws SQLException;
 
     @Override
@@ -51,8 +54,8 @@ public abstract class JDBCDao<T extends BaseEntity> implements Dao<T> {
         String query = "INSERT INTO ToDo (Title, Description, DueDate, ImportanceLevel) VALUES (?, ?, ?, ?)";
         try (
                 Connection connection = dataSource.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
-                ) {
+                PreparedStatement preparedStatement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)
+        ) {
             setStatementForInsert(preparedStatement, entity);
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
@@ -91,7 +94,7 @@ public abstract class JDBCDao<T extends BaseEntity> implements Dao<T> {
     public void update(T entity) throws EntityNotFoundException {
         String query = "UPDATE ToDo SET Title=?, Description=?, DueDate=?, ImportanceLevel=? WHERE ID=?";
         try (Connection connection = dataSource.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             setStatementForInsert(preparedStatement, entity);
             preparedStatement.setLong(1, entity.getId());
             int rowsAffected = preparedStatement.executeUpdate();
@@ -105,6 +108,17 @@ public abstract class JDBCDao<T extends BaseEntity> implements Dao<T> {
 
     @Override
     public void delete(Long id) throws EntityNotFoundException {
+        String query = "DELETE FROM ToDo WHERE ID=?";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setLong(1, id);
+            int rowsAffected = preparedStatement.executeUpdate();
 
+            if (rowsAffected == 0) {
+                throw new EntityNotFoundException("Entity with ID " + id + " not found.");
+            }
+        } catch (SQLException e) {
+            logger.error("Error deleting entity", e);
+        }
     }
 }
