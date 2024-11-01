@@ -3,7 +3,6 @@ package edu.bbte.idde.bvim2209.repo.jdbc;
 import edu.bbte.idde.bvim2209.model.ToDo;
 import edu.bbte.idde.bvim2209.repo.ToDoDao;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,6 +14,7 @@ public class ToDoJDBCDao extends JDBCDao<ToDo> implements ToDoDao {
         return null;
     }
 
+    @Override
     protected ToDo mapResultSetToEntity(ResultSet resultSet) throws SQLException {
         ToDo toDo = new ToDo();
         toDo.setId(resultSet.getLong("ID"));
@@ -29,7 +29,7 @@ public class ToDoJDBCDao extends JDBCDao<ToDo> implements ToDoDao {
     protected void setStatementForInsert(PreparedStatement preparedStatement, ToDo entity) throws SQLException {
         preparedStatement.setString(2, entity.getTitle());
         preparedStatement.setString(3, entity.getDescription());
-        preparedStatement.setDate(4, (Date) entity.getDueDate());
+        preparedStatement.setDate(4, new java.sql.Date(entity.getDueDate().getTime()));
         preparedStatement.setInt(5, entity.getLevelOfImportance());
     }
 }

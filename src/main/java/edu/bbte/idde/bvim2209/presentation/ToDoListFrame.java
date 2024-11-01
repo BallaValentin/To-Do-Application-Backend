@@ -110,6 +110,7 @@ public class ToDoListFrame extends JFrame {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.pack();
         this.setVisible(true);
+        refreshTable();
 
         insertButton.addActionListener(e -> {
             String title = inputTitleTextField.getText();

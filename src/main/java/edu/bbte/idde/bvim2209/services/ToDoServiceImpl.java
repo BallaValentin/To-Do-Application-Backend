@@ -17,6 +17,7 @@ public class ToDoServiceImpl implements ToDoService {
 
     @Override
     public void createToDo(ToDo toDo) throws IllegalArgumentException {
+        System.out.println("Creating new ToDo");
         if (toDo.getTitle() == null || toDo.getTitle().trim().isBlank()) {
             throw new IllegalArgumentException("Title cannot be empty or null");
         }

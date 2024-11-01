@@ -51,14 +51,17 @@ public abstract class JDBCDao<T extends BaseEntity> implements Dao<T> {
 
     @Override
     public void create(T entity) throws IllegalArgumentException {
+        System.out.println("Starting to insert new ToDo");
         String query = "INSERT INTO ToDo (Title, Description, DueDate, ImportanceLevel) VALUES (?, ?, ?, ?)";
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)
         ) {
+            System.out.println("Setting up statement for inserting new ToDo");
             setStatementForInsert(preparedStatement, entity);
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
+                System.out.println("New ToDo inserted successfully");
                 try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         entity.setId(generatedKeys.getLong("ID"));
@@ -66,6 +69,7 @@ public abstract class JDBCDao<T extends BaseEntity> implements Dao<T> {
                 }
             }
         } catch (SQLException exception) {
+            System.out.println("An exception occured during the insertion of a new ToDo");
             logger.error("Error creating entity", exception);
             throw new IllegalArgumentException("Could not create entity", exception);
         }

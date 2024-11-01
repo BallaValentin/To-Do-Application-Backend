@@ -1,6 +1,12 @@
 package edu.bbte.idde.bvim2209.repo;
 
+import edu.bbte.idde.bvim2209.repo.jdbc.JDBCDaoFactory;
 import edu.bbte.idde.bvim2209.repo.mem.MemDaoFactory;
+import edu.bbte.idde.bvim2209.util.PropertyProvider;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * Általános factory
@@ -14,7 +20,13 @@ public abstract class DaoFactory {
      */
     public static synchronized DaoFactory getInstance() {
         if (instance == null) {
-            instance = new MemDaoFactory();
+            String implementationType = PropertyProvider.getProperty("DAO_IMPLEMENTATION");
+            if ("jdbc".equals(implementationType)) {
+                System.out.println("JDBC");
+            } else {
+                System.out.println("MEMORY");
+            }
+            instance = new JDBCDaoFactory();
         }
         return instance;
     }
