@@ -36,6 +36,11 @@ public abstract class BaseEntity implements Serializable {
         BaseEntity that = (BaseEntity) other;
         return Objects.equals(id, that.id);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
 
 
