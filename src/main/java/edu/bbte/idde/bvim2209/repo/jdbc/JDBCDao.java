@@ -44,10 +44,28 @@ public abstract class JDBCDao<T extends BaseEntity> implements Dao<T> {
     }
 
     protected abstract T mapResultSetToEntity(ResultSet resultSet) throws SQLException;
+    protected abstract void setStatementForInsert(PreparedStatement preparedStatement, T entity) throws SQLException;
 
     @Override
     public void create(T entity) throws IllegalArgumentException {
-
+        String query = "INSERT INTO ToDo (Title, Description, DueDate, ImportanceLevel) VALUES (?, ?, ?, ?)";
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
+                ) {
+            setStatementForInsert(preparedStatement, entity);
+            int rowsAffected = preparedStatement.executeUpdate();
+            if (rowsAffected > 0) {
+                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        entity.setId(generatedKeys.getLong("ID"));
+                    }
+                }
+            }
+        } catch (SQLException exception) {
+            logger.error("Error creating entity", exception);
+            throw new IllegalArgumentException("Could not create entity", exception);
+        }
     }
 
     @Override
