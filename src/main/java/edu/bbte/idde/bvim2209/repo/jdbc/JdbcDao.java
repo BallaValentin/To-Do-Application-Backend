@@ -63,7 +63,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
             if (rowsAffected > 0) {
                 try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
-                        entity.setId(generatedKeys.getLong("ID"));
+                        entity.setId(generatedKeys.getLong(1));
                     }
                 }
             }
