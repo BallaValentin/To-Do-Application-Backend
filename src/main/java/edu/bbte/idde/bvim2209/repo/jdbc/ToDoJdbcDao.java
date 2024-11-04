@@ -49,4 +49,29 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
         preparedStatement.setDate(3, new java.sql.Date(entity.getDueDate().getTime()));
         preparedStatement.setInt(4, entity.getLevelOfImportance());
     }
+
+    @Override
+    protected String getInsertQuery() {
+        return "INSERT INTO ToDo (Title, Description, DueDate, ImportanceLevel) VALUES (?, ?, ?, ?)";
+    }
+
+    @Override
+    protected String getFindByIdQuery() {
+        return "SELECT * FROM ToDo WHERE ID=?";
+    }
+
+    @Override
+    protected String getUpdateQuery() {
+        return "UPDATE ToDo SET Title=?, Description=?, DueDate=?, ImportanceLevel=? WHERE ID=?";
+    }
+
+    @Override
+    protected String getDeleteQuery() {
+        return "DELETE FROM ToDo WHERE ID=?";
+    }
+
+    @Override
+    protected String getTableName() {
+        return "ToDo";
+    }
 }

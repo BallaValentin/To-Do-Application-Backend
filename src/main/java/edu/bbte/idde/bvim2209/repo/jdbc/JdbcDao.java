@@ -26,7 +26,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     public Collection<T> findAll() {
         logger.info("Trying to fetch all entities from database");
         Collection<T> entities = new ArrayList<>();
-        String query = "SELECT * FROM ToDo";
+        String query = "SELECT * FROM " + getTableName();
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -49,10 +49,20 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
 
     protected abstract void setStatementForUpdate(PreparedStatement preparedStatement, T entity) throws SQLException;
 
+    protected abstract String getInsertQuery();
+
+    protected abstract String getFindByIdQuery();
+
+    protected abstract String getUpdateQuery();
+
+    protected abstract String getDeleteQuery();
+
+    protected abstract String getTableName();
+
     @Override
     public void create(T entity) throws IllegalArgumentException {
         logger.info("Trying to insert new entity in database");
-        String query = "INSERT INTO ToDo (Title, Description, DueDate, ImportanceLevel) VALUES (?, ?, ?, ?)";
+        String query = getInsertQuery();
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement =
@@ -77,7 +87,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     @Override
     public T findById(Long id) throws EntityNotFoundException {
         logger.info("Trying to find entity by id: " + id + " in database");
-        String query = "SELECT * FROM ToDo WHERE ID=?";
+        String query = getFindByIdQuery();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setLong(1, id);
@@ -98,7 +108,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     @Override
     public void update(T entity) throws EntityNotFoundException {
         logger.info("Trying to update entity with id " + entity.getId() + " in database");
-        String query = "UPDATE ToDo SET Title=?, Description=?, DueDate=?, ImportanceLevel=? WHERE ID=?";
+        String query = getUpdateQuery();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             setStatementForUpdate(preparedStatement, entity);
@@ -116,7 +126,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     @Override
     public void delete(Long id) throws EntityNotFoundException {
         logger.info("Trying to delete entity with id " + id + " from database");
-        String query = "DELETE FROM ToDo WHERE ID=?";
+        String query = getDeleteQuery();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setLong(1, id);
