@@ -8,9 +8,14 @@ import org.slf4j.LoggerFactory;
 public class JdbcDaoFactory extends DaoFactory {
     private static final Logger logger = LoggerFactory.getLogger(JdbcDaoFactory.class);
 
+    private ToDoDao instance;
+
     @Override
-    public ToDoDao getToDoDao() {
+    public synchronized ToDoDao getToDoDao() {
         logger.info("Fetching ToDao instance of type: " + ToDoJdbcDao.class.getSimpleName());
-        return new ToDoJdbcDao();
+        if (instance == null) {
+            instance = new ToDoJdbcDao();
+        }
+        return instance;
     }
 }
