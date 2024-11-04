@@ -4,7 +4,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import edu.bbte.idde.bvim2209.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.model.BaseEntity;
 import edu.bbte.idde.bvim2209.repo.Dao;
-import edu.bbte.idde.bvim2209.util.PropertyProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,15 +15,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
-    private static final HikariDataSource dataSource = new HikariDataSource();
     private static final Logger logger = LoggerFactory.getLogger(JdbcDao.class);
 
-    public JdbcDao() {
-        logger.info("Setting up database connection parameters...");
-        dataSource.setJdbcUrl(PropertyProvider.getProperty("JDBC_URL"));
-        dataSource.setUsername(PropertyProvider.getProperty("USERNAME"));
-        dataSource.setPassword(PropertyProvider.getProperty("PASSWORD"));
-        dataSource.setMaximumPoolSize(10);
+    private static final HikariDataSource dataSource = DataSourceFactory.getDataSource();
+
+    protected JdbcDao() {
     }
 
     @Override
