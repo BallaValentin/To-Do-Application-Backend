@@ -1,6 +1,5 @@
 package edu.bbte.idde.bvim2209.repo.jdbc;
 
-import com.sun.tools.javac.Main;
 import edu.bbte.idde.bvim2209.model.ToDo;
 import edu.bbte.idde.bvim2209.repo.ToDoDao;
 import org.slf4j.Logger;
@@ -14,7 +13,7 @@ import java.util.Collections;
 
 public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private static final Logger logger = LoggerFactory.getLogger(ToDoJdbcDao.class);
 
     @Override
     public Collection<ToDo> findByTitle(String title) {

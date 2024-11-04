@@ -1,6 +1,5 @@
 package edu.bbte.idde.bvim2209.repo.mem;
 
-import com.sun.tools.javac.Main;
 import edu.bbte.idde.bvim2209.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.model.BaseEntity;
 import edu.bbte.idde.bvim2209.repo.Dao;
@@ -17,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * Itt, a példa kedvéért: memóriában tárolt entitások.
  */
 public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private static final Logger logger = LoggerFactory.getLogger(MemDao.class);
 
     protected transient Map<Long, T> entities = new ConcurrentHashMap<>();
     private static AtomicLong idCounter = new AtomicLong(1);

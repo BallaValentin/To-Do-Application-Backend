@@ -1,6 +1,5 @@
 package edu.bbte.idde.bvim2209.repo;
 
-import com.sun.tools.javac.Main;
 import edu.bbte.idde.bvim2209.repo.jdbc.JdbcDaoFactory;
 import edu.bbte.idde.bvim2209.repo.mem.MemDaoFactory;
 import edu.bbte.idde.bvim2209.util.PropertyProvider;
@@ -13,7 +12,7 @@ import org.slf4j.LoggerFactory;
 public abstract class DaoFactory {
     // singleton lazy loading
     private static DaoFactory instance;
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private static final Logger logger = LoggerFactory.getLogger(DaoFactory.class);
 
     /**
      * Kérünk egy példányt - itt dől el az adatelérési módszer.

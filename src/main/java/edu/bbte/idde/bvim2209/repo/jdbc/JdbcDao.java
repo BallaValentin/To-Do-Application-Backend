@@ -1,6 +1,5 @@
 package edu.bbte.idde.bvim2209.repo.jdbc;
 
-import com.sun.tools.javac.Main;
 import com.zaxxer.hikari.HikariDataSource;
 import edu.bbte.idde.bvim2209.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.model.BaseEntity;
@@ -18,7 +17,7 @@ import java.util.Collection;
 
 public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     private static final HikariDataSource dataSource = new HikariDataSource();
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private static final Logger logger = LoggerFactory.getLogger(JdbcDao.class);
 
     public JdbcDao() {
         logger.info("Setting up database connection parameters...");
