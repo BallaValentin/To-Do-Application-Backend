@@ -15,56 +15,53 @@ import java.awt.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Locale;
 
 public class ToDoListFrame extends JFrame {
-    private static ToDoService toDoService;
-    private static DefaultTableModel tableModel;
+    private static final ToDoService toDoService = new ToDoServiceImpl();
+    private static final JPanel mainPanel = new JPanel();
+    private static final JPanel inputPanel = new JPanel();
+    private static final JPanel writingInputPanel = new JPanel();
+    private static final JLabel inputTitleLabel = new JLabel();
+    private static final JTextField inputTitleTextField = new JTextField();
+    private static final JLabel inputDescriptionLabel = new JLabel();
+    private static final JTextField inputDescriptionTextField = new JTextField();
+    private static final JLabel inputDueDateLabel = new JLabel();
+    private static final JTextField inputDueDateTextField = new JTextField();
+    private static final JLabel inputImportanceLevelLabel = new JLabel();
+    private static final JTextField inputImportanceLevelTextField = new JTextField();
+    private static final JPanel inputButtonsPanel = new JPanel();
+    private static final JButton insertButton = new JButton();
+    private static final JButton updateButton = new JButton();
+    private static final JButton deleteButton = new JButton();
+    private static final JPanel tableOutputPanel = new JPanel();
+    private static final JTable table = new JTable();
+    private static final JScrollPane scrollPane = new JScrollPane();
+    private static final JPanel systemOutputPanel = new JPanel();
+    private static final JLabel systemOutputLabel = new JLabel();
+    private static final DefaultTableModel tableModel = new DefaultTableModel();
+
     public ToDoListFrame() {
-        toDoService = new ToDoServiceImpl();
+        super();
         this.setSize(1280, 720);
         this.setTitle("To Do List application");
+        this.setVisible(true);
 
-        JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayout(3, 1));
         mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new GridLayout(2, 1, 0, 50));
         inputPanel.setBorder(createCustomTitledBorder("User Input"));
 
-        JPanel writingInputPanel = new JPanel();
+        addInputFields();
+
         writingInputPanel.setLayout(new GridLayout(2, 4, 5, 5));
 
-        JLabel inputTitleLabel = new JLabel();
-        inputTitleLabel.setText("Title: ");
-        JTextField inputTitleTextField = new JTextField(30);
-        writingInputPanel.add(inputTitleLabel);
-        writingInputPanel.add(inputTitleTextField);
-
-        JLabel inputDescriptionLabel = new JLabel();
-        inputDescriptionLabel.setText("Description: ");
-        JTextField inputDescriptionTextField = new JTextField(30);
-        writingInputPanel.add(inputDescriptionLabel);
-        writingInputPanel.add(inputDescriptionTextField);
-
-        JLabel inputDueDateLabel = new JLabel();
-        inputDueDateLabel.setText("Due date: ");
-        JTextField inputDueDateTextField = new JTextField(30);
-        writingInputPanel.add(inputDueDateLabel);
-        writingInputPanel.add(inputDueDateTextField);
-
-        JLabel inputImportanceLevelLabel = new JLabel();
-        inputImportanceLevelLabel.setText("Importance level: ");
-        JTextField inputImportanceLevelTextField = new JTextField(30);
-        writingInputPanel.add(inputImportanceLevelLabel);
-        writingInputPanel.add(inputImportanceLevelTextField);
-
-        JPanel inputButtonsPanel = new JPanel();
         inputButtonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
-        JButton insertButton = new JButton("Insert to do");
-        JButton updateButton = new JButton("Update to do");
-        JButton deleteButton = new JButton("Delete to do");
+        insertButton.setText("Insert to do");
+        updateButton.setText("Update to do");
+        deleteButton.setText("Delete to do");
 
         inputButtonsPanel.add(insertButton);
         inputButtonsPanel.add(updateButton);
@@ -74,13 +71,12 @@ public class ToDoListFrame extends JFrame {
         inputPanel.add(writingInputPanel);
         inputPanel.add(inputButtonsPanel);
 
-        JPanel tableOutputPanel = new JPanel();
         tableOutputPanel.setBorder(createCustomTitledBorder("Table Output"));
 
         String[] columnNames = {"ID", "Title", "Description", "Due date", "Importance level"};
         Object[][] tableData = {};
-        tableModel = new DefaultTableModel(tableData, columnNames);
-        JTable table = new JTable(tableModel);
+        tableModel.setDataVector(tableData, columnNames);
+        table.setModel(tableModel);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
         TableColumnModel columnModel = table.getColumnModel();
@@ -89,16 +85,14 @@ public class ToDoListFrame extends JFrame {
             columnModel.getColumn(i).setPreferredWidth(250);
         }
 
-        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setViewportView(table);
         scrollPane.setPreferredSize(new Dimension(1260, 200));
         table.setFillsViewportHeight(true);
         tableOutputPanel.add(scrollPane);
 
 
-        JPanel systemOutputPanel = new JPanel();
         systemOutputPanel.setBorder(createCustomTitledBorder("System Output"));
         systemOutputPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        JLabel systemOutputLabel = new JLabel();
         systemOutputPanel.add(systemOutputLabel);
 
         mainPanel.add(inputPanel);
@@ -107,58 +101,37 @@ public class ToDoListFrame extends JFrame {
 
         this.add(mainPanel, BorderLayout.CENTER);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.pack();
-        this.setVisible(true);
+        super.pack();
+        refreshTable();
 
-        insertButton.addActionListener(e -> {
-            String title = inputTitleTextField.getText();
-            String description = inputDescriptionTextField.getText();
-            String dueDate = inputDueDateTextField.getText();
-            String importanceLevel = inputImportanceLevelTextField.getText();
-            try {
-                toDoService.createToDo(title, description, dueDate, importanceLevel);
-                refreshTable();
-                systemOutputLabel.setText("New To Do was added successfully.");
-                systemOutputLabel.setForeground(new Color(0, 100, 0));
-            } catch (ParseException | IllegalArgumentException ex) {
-                systemOutputLabel.setText("Error: " + ex.getMessage());
-                systemOutputLabel.setForeground(Color.RED);
-            }
-            inputTitleTextField.setText("");
-            inputDescriptionTextField.setText("");
-            inputDueDateTextField.setText("");
-            inputImportanceLevelTextField.setText("");
-        });
+        addInsertButtonListener();
 
-        updateButton.addActionListener(e -> {
-            String title = inputTitleTextField.getText();
-            String description = inputDescriptionTextField.getText();
-            String dueDate = inputDueDateTextField.getText();
-            String importanceLevel = inputImportanceLevelTextField.getText();
-            String id = JOptionPane.showInputDialog(this, "Enter ID of to do:");
-            try {
-                toDoService.updateToDo(Long.parseLong(id), title, description, dueDate, importanceLevel);
-                refreshTable();
-                systemOutputLabel.setText("To Do with id " + id + " updated successfully.");
-                systemOutputLabel.setForeground(new Color(0, 100, 0));
-            } catch (EntityNotFoundException | ParseException | IllegalArgumentException ex) {
-                systemOutputLabel.setText("Error: " + ex.getMessage());
-                systemOutputLabel.setForeground(Color.RED);
-            }
-        });
+        addUpdateButtonListener();
 
-        deleteButton.addActionListener(e -> {
-            String id = JOptionPane.showInputDialog(this, "Enter ID of to do:");
-            try {
-                toDoService.deleteToDo(Long.parseLong(id));
-                refreshTable();
-                systemOutputLabel.setText("To Do with id " + id + " deleted successfully.");
-                systemOutputLabel.setForeground(new Color(0, 100, 0));
-            } catch (EntityNotFoundException | ParseException ex) {
-                systemOutputLabel.setText("Error: " + ex.getMessage());
-                systemOutputLabel.setForeground(Color.RED);
-            }
-        });
+        addDeleteButtonListener();
+
+    }
+
+    private static void addInputFields() {
+        inputTitleLabel.setText("Title: ");
+        inputTitleTextField.setColumns(30);
+        writingInputPanel.add(inputTitleLabel);
+        writingInputPanel.add(inputTitleTextField);
+
+        inputDescriptionLabel.setText("Description: ");
+        inputDescriptionTextField.setColumns(30);
+        writingInputPanel.add(inputDescriptionLabel);
+        writingInputPanel.add(inputDescriptionTextField);
+
+        inputDueDateLabel.setText("Due date: ");
+        inputDueDateTextField.setColumns(30);
+        writingInputPanel.add(inputDueDateLabel);
+        writingInputPanel.add(inputDueDateTextField);
+
+        inputImportanceLevelLabel.setText("Importance level: ");
+        inputImportanceLevelTextField.setColumns(30);
+        writingInputPanel.add(inputImportanceLevelLabel);
+        writingInputPanel.add(inputImportanceLevelTextField);
     }
 
     private static void refreshTable() {
@@ -169,7 +142,7 @@ public class ToDoListFrame extends JFrame {
                     toDo.getId(),
                     toDo.getTitle(),
                     toDo.getDescription(),
-                    new SimpleDateFormat("yyyy-MM-dd").format(toDo.getDueDate()),
+                    new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(toDo.getDueDate()),
                     toDo.getLevelOfImportance(),
             };
             tableModel.addRow(rowData);
@@ -184,6 +157,73 @@ public class ToDoListFrame extends JFrame {
         return BorderFactory.createCompoundBorder(
                 marginBorder,
                 titledBorder);
+    }
+
+    private void addInsertButtonListener() {
+        insertButton.addActionListener(e -> {
+            String title = inputTitleTextField.getText();
+            String description = inputDescriptionTextField.getText();
+            String dueDate = inputDueDateTextField.getText();
+            String importanceLevel = inputImportanceLevelTextField.getText();
+            try {
+                ToDo toDo = new ToDo();
+                toDo.setTitle(title);
+                toDo.setDescription(description);
+                toDo.setDueDate(new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(dueDate));
+                toDo.setLevelOfImportance(Integer.parseInt(importanceLevel));
+                toDoService.createToDo(toDo);
+                refreshTable();
+                systemOutputLabel.setText("New To Do was added successfully.");
+                systemOutputLabel.setForeground(new Color(0, 100, 0));
+            } catch (ParseException | IllegalArgumentException ex) {
+                systemOutputLabel.setText("Error: " + ex.getMessage());
+                systemOutputLabel.setForeground(Color.RED);
+            }
+            inputTitleTextField.setText("");
+            inputDescriptionTextField.setText("");
+            inputDueDateTextField.setText("");
+            inputImportanceLevelTextField.setText("");
+        });
+    }
+
+    private void addUpdateButtonListener() {
+        updateButton.addActionListener(e -> {
+            String title = inputTitleTextField.getText();
+            String description = inputDescriptionTextField.getText();
+            String dueDate = inputDueDateTextField.getText();
+            String importanceLevel = inputImportanceLevelTextField.getText();
+            String id = JOptionPane.showInputDialog(this, "Enter ID of to do:");
+            try {
+                ToDo toDo = new ToDo();
+                toDo.setTitle(title);
+                toDo.setDescription(description);
+                toDo.setDueDate(new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(dueDate));
+                toDo.setLevelOfImportance(Integer.parseInt(importanceLevel));
+                toDo.setId(Long.valueOf(id));
+                toDoService.updateToDo(toDo);
+                refreshTable();
+                systemOutputLabel.setText("To Do with id " + id + " updated successfully.");
+                systemOutputLabel.setForeground(new Color(0, 100, 0));
+            } catch (EntityNotFoundException | ParseException | IllegalArgumentException ex) {
+                systemOutputLabel.setText("Error: " + ex.getMessage());
+                systemOutputLabel.setForeground(Color.RED);
+            }
+        });
+    }
+
+    private void addDeleteButtonListener() {
+        deleteButton.addActionListener(e -> {
+            String id = JOptionPane.showInputDialog(this, "Enter ID of to do:");
+            try {
+                toDoService.deleteToDo(Long.parseLong(id));
+                refreshTable();
+                systemOutputLabel.setText("To Do with id " + id + " deleted successfully.");
+                systemOutputLabel.setForeground(new Color(0, 100, 0));
+            } catch (EntityNotFoundException | ParseException ex) {
+                systemOutputLabel.setText("Error: " + ex.getMessage());
+                systemOutputLabel.setForeground(Color.RED);
+            }
+        });
     }
 
     public static void main(String[] args) {

@@ -1,4 +1,24 @@
 /*
  * Kiinduló gradle file
  */
-apply plugin: "java"
+plugins {
+    id 'java'
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    runtimeOnly group: 'com.mysql', name: 'mysql-connector-j', version: '9.1.0'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.16'
+    runtimeOnly group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.12'
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: '6.0.0'
+}
+
+application {
+    mainClass = 'edu.bbte.idde.bvim2209.presentation.ToDoListFrame'
+}
+
+apply from: "$rootDir/lint.gradle"

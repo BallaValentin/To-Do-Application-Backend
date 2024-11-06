@@ -2,6 +2,8 @@ package edu.bbte.idde.bvim2209.repo.mem;
 
 import edu.bbte.idde.bvim2209.repo.ToDoDao;
 import edu.bbte.idde.bvim2209.repo.DaoFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -10,8 +12,11 @@ import edu.bbte.idde.bvim2209.repo.DaoFactory;
  * egy ugyanazon módszerrel történik.
  */
 public class MemDaoFactory extends DaoFactory {
+    private static final Logger logger = LoggerFactory.getLogger(MemDaoFactory.class);
+
     @Override
     public ToDoDao getToDoDao() {
+        logger.info("Fetching ToDao instance of type: " + ToDoMemDao.class.getSimpleName());
         return new ToDoMemDao();
     }
 }
