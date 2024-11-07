@@ -7,7 +7,6 @@ import edu.bbte.idde.bvim2209.repo.Dao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,19 +16,37 @@ import java.util.Collection;
 public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     private static final Logger logger = LoggerFactory.getLogger(JdbcDao.class);
 
-    private static final HikariDataSource dataSource = DataSourceFactory.getDataSource();
+    static final HikariDataSource dataSource = DataSourceFactory.getDataSource();
 
     protected JdbcDao() {
     }
+
+    protected abstract T mapResultSetToEntity(ResultSet resultSet) throws SQLException;
+
+    protected abstract void setStatementForInsert(PreparedStatement preparedStatement, T entity) throws SQLException;
+
+    protected abstract void setStatementForUpdate(PreparedStatement preparedStatement, T entity) throws SQLException;
+
+    protected abstract PreparedStatement prepareStatementForFindAll() throws SQLException;
+
+    protected abstract PreparedStatement prepareStatementForInsert() throws SQLException;
+
+    protected abstract PreparedStatement prepareStatementForFindById(Long id) throws SQLException;
+
+    protected abstract PreparedStatement prepareStatementForDeleteById(Long id) throws SQLException;
+
+    protected abstract PreparedStatement prepareStatementForUpdate() throws SQLException;
+
+    protected abstract Integer getPrimaryKeyIndex();
+
+    protected abstract Integer getNumberOfColumnsToUpdate();
 
     @Override
     public Collection<T> findAll() {
         logger.info("Trying to fetch all entities from database");
         Collection<T> entities = new ArrayList<>();
-        String query = "SELECT * FROM %s".formatted(getTableName());
         try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                PreparedStatement preparedStatement = prepareStatementForFindAll();
                 ResultSet resultSet = preparedStatement.executeQuery()
         ) {
             while (resultSet.next()) {
@@ -43,34 +60,11 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
         return entities;
     }
 
-    protected abstract T mapResultSetToEntity(ResultSet resultSet) throws SQLException;
-
-    protected abstract void setStatementForInsert(PreparedStatement preparedStatement, T entity) throws SQLException;
-
-    protected abstract void setStatementForUpdate(PreparedStatement preparedStatement, T entity) throws SQLException;
-
-    protected abstract String getInsertQuery();
-
-    protected abstract String getFindByIdQuery();
-
-    protected abstract String getUpdateQuery();
-
-    protected abstract String getDeleteQuery();
-
-    protected abstract String getTableName();
-
-    protected abstract Integer getPrimaryKeyIndex();
-
-    protected abstract Integer getNumberOfColumnsToUpdate();
-
     @Override
     public void create(T entity) throws IllegalArgumentException {
         logger.info("Trying to insert new entity in database");
-        String query = getInsertQuery();
         try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement preparedStatement =
-                        connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)
+                PreparedStatement preparedStatement = prepareStatementForInsert()
         ) {
             setStatementForInsert(preparedStatement, entity);
             int rowsAffected = preparedStatement.executeUpdate();
@@ -91,9 +85,8 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     @Override
     public T findById(Long id) throws EntityNotFoundException {
         logger.info("Trying to find entity by id: {} in database", id);
-        String query = getFindByIdQuery();
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (
+                PreparedStatement preparedStatement = prepareStatementForFindById(id)) {
             preparedStatement.setLong(getPrimaryKeyIndex(), id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
@@ -112,9 +105,8 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     @Override
     public void update(T entity) throws EntityNotFoundException {
         logger.info("Trying to update entity with id {} in database", entity.getId());
-        String query = getUpdateQuery();
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (
+                PreparedStatement preparedStatement = prepareStatementForUpdate()) {
             setStatementForUpdate(preparedStatement, entity);
             preparedStatement.setLong(getNumberOfColumnsToUpdate() + 1, entity.getId());
             int rowsAffected = preparedStatement.executeUpdate();
@@ -124,15 +116,14 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
         } catch (SQLException exception) {
             logger.error("Error updating entity in database", exception);
         }
-        logger.info("Entity with id " + entity.getId() + " has been successfully updated in database");
+        logger.info("Entity with id {} has been successfully updated in database", entity.getId());
     }
 
     @Override
     public void delete(Long id) throws EntityNotFoundException {
         logger.info("Trying to delete entity with id {} from database", id);
-        String query = getDeleteQuery();
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (
+                PreparedStatement preparedStatement = prepareStatementForDeleteById(id)) {
             preparedStatement.setLong(1, id);
             int rowsAffected = preparedStatement.executeUpdate();
 

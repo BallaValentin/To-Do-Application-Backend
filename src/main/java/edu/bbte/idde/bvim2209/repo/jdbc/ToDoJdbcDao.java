@@ -5,6 +5,7 @@ import edu.bbte.idde.bvim2209.repo.ToDoDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -51,28 +52,48 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
     }
 
     @Override
-    protected String getInsertQuery() {
-        return "INSERT INTO ToDo (Title, Description, DueDate, ImportanceLevel) VALUES (?, ?, ?, ?)";
+    protected PreparedStatement prepareStatementForFindAll() throws SQLException {
+        String query = "SELECT * FROM ToDo";
+        Connection connection = dataSource.getConnection();
+        PreparedStatement preparedStatement;
+        preparedStatement = connection.prepareStatement(query);
+        return preparedStatement;
     }
 
     @Override
-    protected String getFindByIdQuery() {
-        return "SELECT * FROM ToDo WHERE ID=?";
+    protected PreparedStatement prepareStatementForInsert() throws SQLException {
+        String query = "INSERT INTO ToDo (Title, Description, DueDate, ImportanceLevel) VALUES (?, ?, ?, ?)";
+        Connection connection = dataSource.getConnection();
+        PreparedStatement preparedStatement;
+        preparedStatement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
+        return preparedStatement;
     }
 
     @Override
-    protected String getUpdateQuery() {
-        return "UPDATE ToDo SET Title=?, Description=?, DueDate=?, ImportanceLevel=? WHERE ID=?";
+    protected PreparedStatement prepareStatementForFindById(Long id) throws SQLException {
+        String query = "SELECT * FROM ToDo WHERE ID=?";
+        Connection connection = dataSource.getConnection();
+        PreparedStatement preparedStatement;
+        preparedStatement = connection.prepareStatement(query);
+        return preparedStatement;
     }
 
     @Override
-    protected String getDeleteQuery() {
-        return "DELETE FROM ToDo WHERE ID=?";
+    protected PreparedStatement prepareStatementForDeleteById(Long id) throws SQLException {
+        String query = "DELETE FROM ToDo WHERE ID=?";
+        Connection connection = dataSource.getConnection();
+        PreparedStatement preparedStatement;
+        preparedStatement = connection.prepareStatement(query);
+        return preparedStatement;
     }
 
     @Override
-    protected String getTableName() {
-        return "ToDo";
+    protected PreparedStatement prepareStatementForUpdate() throws SQLException {
+        String query = "UPDATE ToDo SET Title=?, Description=?, DueDate=?, ImportanceLevel=? WHERE ID=?";
+        Connection connection = dataSource.getConnection();
+        PreparedStatement preparedStatement;
+        preparedStatement = connection.prepareStatement(query);
+        return preparedStatement;
     }
 
     @Override
