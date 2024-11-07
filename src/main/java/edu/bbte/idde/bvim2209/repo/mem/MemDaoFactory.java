@@ -16,7 +16,7 @@ public class MemDaoFactory extends DaoFactory {
 
     @Override
     public ToDoDao getToDoDao() {
-        logger.info("Fetching ToDao instance of type: " + ToDoMemDao.class.getSimpleName());
+        logger.info("Fetching ToDao instance of type: {}", ToDoMemDao.class.getSimpleName());
         return new ToDoMemDao();
     }
 }

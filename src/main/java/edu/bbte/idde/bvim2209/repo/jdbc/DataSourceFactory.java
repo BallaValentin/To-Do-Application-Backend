@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 public class DataSourceFactory {
     private static HikariDataSource dataSource;
-    private static final Logger logger = LoggerFactory.getLogger(JdbcDao.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataSourceFactory.class);
 
     public static synchronized HikariDataSource getDataSource() {
         if (dataSource == null) {

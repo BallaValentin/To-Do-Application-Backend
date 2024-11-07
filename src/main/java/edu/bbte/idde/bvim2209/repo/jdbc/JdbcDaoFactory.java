@@ -12,7 +12,7 @@ public class JdbcDaoFactory extends DaoFactory {
 
     @Override
     public synchronized ToDoDao getToDoDao() {
-        logger.info("Fetching ToDao instance of type: " + ToDoJdbcDao.class.getSimpleName());
+        logger.info("Fetching ToDao instance of type: {}", ToDoJdbcDao.class.getSimpleName());
         if (instance == null) {
             instance = new ToDoJdbcDao();
         }
