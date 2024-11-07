@@ -26,7 +26,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     public Collection<T> findAll() {
         logger.info("Trying to fetch all entities from database");
         Collection<T> entities = new ArrayList<>();
-        String query = "SELECT * FROM " + getTableName();
+        String query = "SELECT * FROM %s".formatted(getTableName());
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -59,6 +59,10 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
 
     protected abstract String getTableName();
 
+    protected abstract Integer getPrimaryKeyIndex();
+
+    protected abstract Integer getNumberOfColumnsToUpdate();
+
     @Override
     public void create(T entity) throws IllegalArgumentException {
         logger.info("Trying to insert new entity in database");
@@ -73,7 +77,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
             if (rowsAffected > 0) {
                 try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
-                        entity.setId(generatedKeys.getLong(1));
+                        entity.setId(generatedKeys.getLong(getPrimaryKeyIndex()));
                     }
                 }
             }
@@ -86,14 +90,14 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
 
     @Override
     public T findById(Long id) throws EntityNotFoundException {
-        logger.info("Trying to find entity by id: " + id + " in database");
+        logger.info("Trying to find entity by id: {} in database", id);
         String query = getFindByIdQuery();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setLong(1, id);
+            preparedStatement.setLong(getPrimaryKeyIndex(), id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    logger.info("Entity with id " + id + " has been successfully found in database");
+                    logger.info("Entity with id {} has been successfully found in database", id);
                     return mapResultSetToEntity(resultSet);
                 } else {
                     throw new EntityNotFoundException("Entity with ID " + id + " not found");
@@ -107,12 +111,12 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
 
     @Override
     public void update(T entity) throws EntityNotFoundException {
-        logger.info("Trying to update entity with id " + entity.getId() + " in database");
+        logger.info("Trying to update entity with id {} in database", entity.getId());
         String query = getUpdateQuery();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             setStatementForUpdate(preparedStatement, entity);
-            preparedStatement.setLong(5, entity.getId());
+            preparedStatement.setLong(getNumberOfColumnsToUpdate() + 1, entity.getId());
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected == 0) {
                 throw new EntityNotFoundException("Entity with ID " + entity.getId() + " not found.");
@@ -125,7 +129,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
 
     @Override
     public void delete(Long id) throws EntityNotFoundException {
-        logger.info("Trying to delete entity with id " + id + " from database");
+        logger.info("Trying to delete entity with id {} from database", id);
         String query = getDeleteQuery();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -138,6 +142,6 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
         } catch (SQLException e) {
             logger.error("Error deleting entity from database", e);
         }
-        logger.info("Entity with id " + id + " has been successfully deleted from database");
+        logger.info("Entity with id {} has been successfully deleted from database", id);
     }
 }

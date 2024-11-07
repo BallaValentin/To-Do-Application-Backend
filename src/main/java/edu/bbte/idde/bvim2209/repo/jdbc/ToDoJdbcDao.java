@@ -74,4 +74,14 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
     protected String getTableName() {
         return "ToDo";
     }
+
+    @Override
+    protected Integer getPrimaryKeyIndex() {
+        return 1;
+    }
+
+    @Override
+    protected Integer getNumberOfColumnsToUpdate() {
+        return 4;
+    }
 }
