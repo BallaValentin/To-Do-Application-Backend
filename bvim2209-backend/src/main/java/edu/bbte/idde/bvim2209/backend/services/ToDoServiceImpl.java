@@ -31,6 +31,11 @@ public class ToDoServiceImpl implements ToDoService {
         toDoDao.delete(id);
     }
 
+    @Override
+    public ToDo findById(Long id) throws EntityNotFoundException {
+        return toDoDao.findById(id);
+    }
+
     private void validateToDo(ToDo toDo) {
         validateTitle(toDo);
         validateDescription(toDo);

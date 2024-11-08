@@ -13,5 +13,7 @@ public interface ToDoService {
 
     void deleteToDo(Long id) throws EntityNotFoundException, ParseException;
 
+    ToDo findById(Long id) throws EntityNotFoundException;
+
     Collection<ToDo> findAll();
 }

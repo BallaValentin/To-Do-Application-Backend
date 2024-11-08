@@ -18,6 +18,7 @@ public class DataSourceFactory {
             dataSource.setUsername(PropertyProvider.getProperty("USERNAME"));
             dataSource.setPassword(PropertyProvider.getProperty("PASSWORD"));
             dataSource.setMaximumPoolSize(10);
+            dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         }
         return  dataSource;
     }
