@@ -6,7 +6,6 @@ import edu.bbte.idde.bvim2209.backend.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.backend.model.ToDo;
 
 import edu.bbte.idde.bvim2209.backend.services.ToDoServiceImpl;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +20,7 @@ import java.util.Optional;
 
 @WebServlet("/todos")
 public class ToDoJsonServlet extends HttpServlet {
-    private final ToDoServiceImpl toDoService = new ToDoServiceImpl();
+    private final transient ToDoServiceImpl toDoService = new ToDoServiceImpl();
     private final ObjectMapper objectMapper = JsonConfig.createConfiguredObjectMapper();
     private static final Logger logger = LoggerFactory.getLogger(ToDoJsonServlet.class);
 
@@ -58,7 +57,12 @@ public class ToDoJsonServlet extends HttpServlet {
         try {
             ToDo toDo = objectMapper.readValue(req.getReader(), ToDo.class);
             if (toDo.getId() != null) {
-                throw new IllegalArgumentException("The 'id' field should not be provided.");
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                try (PrintWriter writer = resp.getWriter()) {
+                    writer.write("{\"error\": \"The 'id' field should not be provided.\"}");
+                } catch (IOException ioException) {
+                    logger.error("Failed to write error response", ioException);
+                }
             }
             toDoService.createToDo(toDo);
             resp.setStatus(HttpServletResponse.SC_CREATED);
@@ -78,26 +82,43 @@ public class ToDoJsonServlet extends HttpServlet {
         resp.setContentType("application/json");
         try {
             String idParam = req.getParameter("id");
-            if (idParam == null) {
-                throw new IllegalArgumentException("The 'id' field should be provided.");
-            }
+            handleEmptyID(idParam, resp);
             Long id = Long.parseLong(idParam);
             ToDo toDo = objectMapper.readValue(req.getReader(), ToDo.class);
             if (toDo.getId() != null) {
-                throw new IllegalArgumentException(
-                        "The 'id' field should only be provided as a parameter.");
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                try (PrintWriter writer = resp.getWriter()) {
+                    writer.write("{\"error\": \"The 'id' "
+                            + "field should only be provided as a parameter.\"}");
+                } catch (IOException ioException) {
+                    logger.error("Failed to write error response", ioException);
+                }
             }
             toDo.setId(id);
             toDoService.updateToDo(toDo);
             resp.getWriter().write("{\"message\": \"Entity with id '" + id + "' updated successfully.\"}");
-        } catch (EntityNotFoundException | IllegalArgumentException exception) {
-            if (exception instanceof EntityNotFoundException) {
-                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            } else {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            }
+        } catch (EntityNotFoundException exception) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             try (PrintWriter writer = resp.getWriter()) {
                 writer.write("{\"error\": \"" + exception.getMessage() + "\"}");
+            } catch (IOException ioException) {
+                logger.error("Failed to write error response", ioException);
+            }
+        } catch (IllegalArgumentException exception) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            try (PrintWriter writer = resp.getWriter()) {
+                writer.write("{\"error\": \"" + exception.getMessage() + "\"}");
+            } catch (IOException ioException) {
+                logger.error("Failed to write error response", ioException);
+            }
+        }
+    }
+
+    private static void handleEmptyID(String idParam, HttpServletResponse resp) {
+        if (idParam == null) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            try (PrintWriter writer = resp.getWriter()) {
+                writer.write("{\"error\": \"" + "The 'id' field should be provided." + "\"}");
             } catch (IOException ioException) {
                 logger.error("Failed to write error response", ioException);
             }
@@ -109,14 +130,19 @@ public class ToDoJsonServlet extends HttpServlet {
         resp.setContentType("application/json");
         try {
             String idParam = req.getParameter("id");
-            if (idParam == null) {
-                throw new IllegalArgumentException("The 'id' field should be provided.");
-            }
+            handleEmptyID(idParam, resp);
             Long id = Long.parseLong(idParam);
             toDoService.deleteToDo(id);
             resp.getWriter().write("{\"message\": \"Entity with id '" + id + "' deleted successfully.\"}");
-        } catch (IllegalArgumentException | EntityNotFoundException exception) {
+        } catch (IllegalArgumentException exception) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            try (PrintWriter writer = resp.getWriter()) {
+                writer.write("{\"error\": \"" + exception.getMessage() + "\"}");
+            } catch (IOException ioException) {
+                logger.error("Failed to write error response", ioException);
+            }
+        } catch (EntityNotFoundException exception) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             try (PrintWriter writer = resp.getWriter()) {
                 writer.write("{\"error\": \"" + exception.getMessage() + "\"}");
             } catch (IOException ioException) {
