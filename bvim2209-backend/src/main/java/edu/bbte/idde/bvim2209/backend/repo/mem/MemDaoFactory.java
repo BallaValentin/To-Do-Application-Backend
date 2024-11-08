@@ -1,0 +1,22 @@
+package edu.bbte.idde.bvim2209.backend.repo.mem;
+
+import edu.bbte.idde.bvim2209.backend.repo.ToDoDao;
+import edu.bbte.idde.bvim2209.backend.repo.DaoFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+/**
+ * Az absztract DAO factory egyik konkretizációja.
+ * Garantálja, hogy mindegyik entitás elérése
+ * egy ugyanazon módszerrel történik.
+ */
+public class MemDaoFactory extends DaoFactory {
+    private static final Logger logger = LoggerFactory.getLogger(MemDaoFactory.class);
+
+    @Override
+    public ToDoDao getToDoDao() {
+        logger.info("Fetching ToDao instance of type: {}", ToDoMemDao.class.getSimpleName());
+        return new ToDoMemDao();
+    }
+}
