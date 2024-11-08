@@ -105,8 +105,23 @@ public class ToDoJsonServlet extends HttpServlet {
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
-        super.doDelete(req, resp);
+        try {
+            String idParam = req.getParameter("id");
+            if (idParam == null) {
+                throw new IllegalArgumentException("The 'id' field should be provided.");
+            }
+            Long id = Long.parseLong(idParam);
+            toDoService.deleteToDo(id);
+            resp.getWriter().write("{\"message\": \"Entity with id '" + id + "' deleted successfully.\"}");
+        } catch (IllegalArgumentException | EntityNotFoundException exception) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            try (PrintWriter writer = resp.getWriter()) {
+                writer.write("{\"error\": \"" + exception.getMessage() + "\"}");
+            } catch (IOException ioException) {
+                logger.error("Failed to write error response", ioException);
+            }
+        }
     }
 }
