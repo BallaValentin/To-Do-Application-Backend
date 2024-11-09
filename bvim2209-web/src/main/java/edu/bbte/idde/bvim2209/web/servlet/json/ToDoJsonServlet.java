@@ -1,4 +1,4 @@
-package edu.bbte.idde.bvim2209.web.servlet;
+package edu.bbte.idde.bvim2209.web.servlet.json;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
