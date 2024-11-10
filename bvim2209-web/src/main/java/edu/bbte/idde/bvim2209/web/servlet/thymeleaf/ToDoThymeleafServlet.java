@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@WebServlet("/")
+@WebServlet("/todo/*")
 public class ToDoThymeleafServlet extends HttpServlet {
     private final transient ToDoServiceImpl toDoService = new ToDoServiceImpl();
 

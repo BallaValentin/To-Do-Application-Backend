@@ -2,6 +2,7 @@ plugins {
     id 'war'
 }
 
+
 def deploymentName = 'bvim2209-todo-servlet'
 
 // beolvassuk környezeti változóból, hogy hova van telepítve a Tomcat
