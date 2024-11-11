@@ -10,10 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @WebServlet("/todo/*")
@@ -28,7 +25,7 @@ public class ToDoThymeleafServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         Map<String, Object> model = new ConcurrentHashMap<>();
         Collection<ToDo> toDoCollection = toDoService.findAll();
         List<Map<String, Object>> todosForView = new ArrayList<>();
