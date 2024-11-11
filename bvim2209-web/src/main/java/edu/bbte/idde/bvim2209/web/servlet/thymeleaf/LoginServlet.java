@@ -1,6 +1,7 @@
 package edu.bbte.idde.bvim2209.web.servlet.thymeleaf;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@WebServlet("/login")
 public class LoginServlet extends HttpServlet {
     private static final String username = "admin";
     private static final String password = "12345";
