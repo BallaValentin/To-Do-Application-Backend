@@ -23,7 +23,7 @@ public class AuthenticationFilter extends HttpFilter {
 
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse resp, FilterChain chain)
-        throws IOException, ServletException {
+            throws IOException, ServletException {
         logger.info("{} {}", req.getMethod(), req.getRequestURI());
 
         Boolean loggedIn = (Boolean) req.getSession().getAttribute("loggedIn");
