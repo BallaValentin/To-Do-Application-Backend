@@ -29,3 +29,30 @@
 .error-message {
     color: red;
 }
+
+.login-container {
+    justify-content: center;
+    margin: auto;
+    border: solid black 2px;
+    padding: 10px;
+    max-width: 500px;
+    text-align: center;
+    margin-top: 20%;
+}
+
+.logout-button-container {
+    text-align: center;
+    margin: 10px auto;
+}
+
+button[type="submit"] {
+    background-color: dodgerblue;
+    color: antiquewhite;
+    padding: 5px;
+    border-radius: 3px;
+    transition: filter 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    filter: brightness(0.8);
+}
