@@ -1,7 +1,8 @@
 package edu.bbte.idde.bvim2209.backend.repo.jdbc;
 
 import com.zaxxer.hikari.HikariDataSource;
-import edu.bbte.idde.bvim2209.backend.util.PropertyProvider;
+import edu.bbte.idde.bvim2209.backend.conf.ConfigurationFactory;
+import edu.bbte.idde.bvim2209.backend.conf.JdbcConfiguration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,13 +14,18 @@ public class DataSourceFactory {
     public static synchronized HikariDataSource getDataSource() {
         if (dataSource == null) {
             logger.info("Setting up database connection parameters...");
-            dataSource = new HikariDataSource();
-            dataSource.setJdbcUrl(PropertyProvider.getProperty("JDBC_URL"));
-            dataSource.setUsername(PropertyProvider.getProperty("USERNAME"));
-            dataSource.setPassword(PropertyProvider.getProperty("PASSWORD"));
-            dataSource.setMaximumPoolSize(10);
-            dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+            Object activeConfiguration = ConfigurationFactory.getActiveProfileConfig();
+            if (activeConfiguration instanceof JdbcConfiguration jdbcConfiguration) {
+                dataSource = new HikariDataSource();
+                dataSource.setJdbcUrl(jdbcConfiguration.getDatabaseConfig().getUrl());
+                dataSource.setUsername(jdbcConfiguration.getDatabaseConfig().getUsername());
+                dataSource.setPassword(jdbcConfiguration.getDatabaseConfig().getPassword());
+                dataSource.setMaximumPoolSize(jdbcConfiguration.getDatabaseConfig().getConnectionPoolSize());
+                dataSource.setDriverClassName(jdbcConfiguration.getDatabaseConfig().getDriverClassName());
+            } else {
+                logger.warn("In-memory configuration selected. No JDBC data source configured.");
+            }
         }
-        return  dataSource;
+        return dataSource;
     }
 }

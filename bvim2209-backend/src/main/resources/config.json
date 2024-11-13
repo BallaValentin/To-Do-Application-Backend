@@ -1,24 +1,17 @@
 {
   "profiles": {
-    "inMemory": {
-      "daoImplementation": "inMemory",
-      "databaseConfig": {
-        "url": "",
-        "username": "",
-        "password": "",
-        "driverClassName": ""
-      },
-      "connectionPoolSize": 10
+    "inMemoryConfiguration": {
+      "daoImplementation": "inMemory"
     },
-    "jdbc": {
+    "jdbcConfiguration": {
       "daoImplementation": "jdbc",
       "databaseConfig": {
         "url": "jdbc:mysql://127.0.0.1:3306/ToDoDatabase",
         "username": "root",
         "password": "12345",
-        "driverClassName": "com.mysql.cj.jdbc.Driver"
-      },
-      "connectionPoolSize": 20
+        "driverClassName": "com.mysql.cj.jdbc.Driver",
+        "connectionPoolSize": 20
+      }
     }
   }
 }

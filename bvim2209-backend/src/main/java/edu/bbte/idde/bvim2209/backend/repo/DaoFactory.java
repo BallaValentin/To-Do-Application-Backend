@@ -1,8 +1,9 @@
 package edu.bbte.idde.bvim2209.backend.repo;
 
+import edu.bbte.idde.bvim2209.backend.conf.ConfigurationFactory;
+import edu.bbte.idde.bvim2209.backend.conf.JdbcConfiguration;
 import edu.bbte.idde.bvim2209.backend.repo.jdbc.JdbcDaoFactory;
 import edu.bbte.idde.bvim2209.backend.repo.mem.MemDaoFactory;
-import edu.bbte.idde.bvim2209.backend.util.PropertyProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +20,8 @@ public abstract class DaoFactory {
      */
     public static synchronized DaoFactory getInstance() {
         if (instance == null) {
-            String implementationType = PropertyProvider.getProperty("DAO_IMPLEMENTATION");
-            if ("jdbc".equals(implementationType)) {
+            Object activeConfiguration = ConfigurationFactory.getActiveProfileConfig();
+            if (activeConfiguration instanceof JdbcConfiguration) {
                 logger.info("Creating instance of JdbcDaoFactory...");
                 instance = new JdbcDaoFactory();
             } else {
