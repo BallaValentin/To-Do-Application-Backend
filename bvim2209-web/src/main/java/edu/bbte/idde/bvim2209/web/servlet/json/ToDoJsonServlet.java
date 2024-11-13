@@ -27,23 +27,24 @@ public class ToDoJsonServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
+        logger.info("Executing doGet request");
 
         String id = req.getParameter("id");
         if (id == null) {
+            logger.info("id is null, preparing to find all todo`s");
             Collection<ToDo> toDoCollection = toDoService.findAll();
             resp.getWriter().write(objectMapper.writeValueAsString(toDoCollection));
         } else {
-            try {
-                Optional<ToDo> toDo = Optional.ofNullable(toDoService.findById(Long.parseLong(id)));
-                if (toDo.isPresent()) {
-                    resp.getWriter().write(objectMapper.writeValueAsString(toDo.get()));
-                } else {
-                    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                }
-            } catch (EntityNotFoundException exception) {
+            logger.info("Preparing to find todo with id: {}", id);
+            Optional<ToDo> toDo = Optional.ofNullable(toDoService.findById(Long.parseLong(id)));
+            if (toDo.isPresent()) {
+                logger.info("Todo with id: {} found", id);
+                resp.getWriter().write(objectMapper.writeValueAsString(toDo.get()));
+            } else {
+                logger.warn("To do with id: {} not found", id);
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 try (PrintWriter writer = resp.getWriter()) {
-                    writer.write("{\"error\": \"" + exception.getMessage() + "\"}");
+                    writer.write("{\"error\": \"To do not found\"}");
                 } catch (IOException ioException) {
                     logger.error("Failed to write error response", ioException);
                 }
@@ -54,9 +55,11 @@ public class ToDoJsonServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
+        logger.info("Executing doPost request");
         try {
             ToDo toDo = objectMapper.readValue(req.getReader(), ToDo.class);
             if (toDo.getId() != null) {
+                logger.warn("The `id` field should not be provided.");
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 try (PrintWriter writer = resp.getWriter()) {
                     writer.write("{\"error\": \"The 'id' field should not be provided.\"}");
@@ -64,6 +67,7 @@ public class ToDoJsonServlet extends HttpServlet {
                     logger.error("Failed to write error response", ioException);
                 }
             }
+            logger.info("Inserting new todo.");
             toDoService.createToDo(toDo);
             resp.setStatus(HttpServletResponse.SC_CREATED);
             resp.getWriter().write("{\"message\": \"Entity created successfully.\"}");
@@ -80,6 +84,7 @@ public class ToDoJsonServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
+        logger.info("Executing doPut request");
         try {
             String idParam = req.getParameter("id");
             handleEmptyID(idParam, resp);
@@ -116,9 +121,10 @@ public class ToDoJsonServlet extends HttpServlet {
 
     private static void handleEmptyID(String idParam, HttpServletResponse resp) {
         if (idParam == null) {
+            logger.warn("Id has not been provided.");
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             try (PrintWriter writer = resp.getWriter()) {
-                writer.write("{\"error\": \"" + "The 'id' field should be provided." + "\"}");
+                writer.write("{\"error\": \"" + "The `id` field should be provided." + "\"}");
             } catch (IOException ioException) {
                 logger.error("Failed to write error response", ioException);
             }
@@ -128,6 +134,7 @@ public class ToDoJsonServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
+        logger.info("Executing doDelete request");
         try {
             String idParam = req.getParameter("id");
             handleEmptyID(idParam, resp);
