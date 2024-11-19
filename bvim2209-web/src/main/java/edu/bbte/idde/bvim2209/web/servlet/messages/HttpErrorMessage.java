@@ -3,9 +3,6 @@ package edu.bbte.idde.bvim2209.web.servlet.messages;
 public class HttpErrorMessage {
     private String error;
 
-    public HttpErrorMessage() {
-    }
-
     public String getMessage() {
         return error;
     }

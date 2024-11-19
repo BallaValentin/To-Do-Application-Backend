@@ -23,7 +23,7 @@ import java.util.Optional;
 @WebServlet("/todos")
 public class ToDoJsonServlet extends HttpServlet {
     private final transient ToDoServiceImpl toDoService = new ToDoServiceImpl();
-    private final ObjectMapper objectMapper = JsonConfig.createConfiguredObjectMapper();
+    private static final ObjectMapper objectMapper = JsonConfig.createConfiguredObjectMapper();
     private static final Logger logger = LoggerFactory.getLogger(ToDoJsonServlet.class);
     private static final HttpErrorMessage errorMessage = new HttpErrorMessage();
     private static final HttpSuccessMessage successMessage = new HttpSuccessMessage();
@@ -47,32 +47,14 @@ public class ToDoJsonServlet extends HttpServlet {
                     resp.getWriter().write(objectMapper.writeValueAsString(toDo.get()));
                 } else {
                     logger.warn("To do with id: {} not found", id);
-                    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                    errorMessage.setMessage("To do not found");
-                    try (PrintWriter writer = resp.getWriter()) {
-                        writer.write(objectMapper.writeValueAsString(errorMessage));
-                    } catch (IOException ioException) {
-                        logger.error("Failed to write error response", ioException);
-                    }
+                    handleNotFound(resp, "To do not found");
                 }
             } catch (IllegalArgumentException exception) {
                 logger.warn("Invalid id: {} in query", id);
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                errorMessage.setMessage(exception.getMessage());
-                try (PrintWriter writer = resp.getWriter()) {
-                    writer.write(objectMapper.writeValueAsString(errorMessage));
-                } catch (IOException ioException) {
-                    logger.error("Failed to write error response", ioException);
-                }
+                handleBadRequest(resp, exception.getMessage());
             } catch (EntityNotFoundException exception) {
                 logger.warn("Entity with id: {} not found", id);
-                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                errorMessage.setMessage(exception.getMessage());
-                try (PrintWriter writer = resp.getWriter()) {
-                    writer.write(objectMapper.writeValueAsString(errorMessage));
-                } catch (IOException ioException) {
-                    logger.error("Failed to write error response", ioException);
-                }
+                handleNotFound(resp, exception.getMessage());
             }
         }
     }
@@ -84,14 +66,8 @@ public class ToDoJsonServlet extends HttpServlet {
         try {
             ToDo toDo = objectMapper.readValue(req.getReader(), ToDo.class);
             if (toDo.getId() != null) {
-                logger.warn("The `id` field should not be provided.");
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                errorMessage.setMessage("The `id` field should not be provided.");
-                try (PrintWriter writer = resp.getWriter()) {
-                    writer.write(objectMapper.writeValueAsString(errorMessage));
-                } catch (IOException ioException) {
-                    logger.error("Failed to write error response", ioException);
-                }
+                logger.warn("The 'id' field should not be provided.");
+                handleBadRequest(resp, "The 'id' field should not be provided.");
             }
             logger.info("Inserting new todo.");
             toDoService.createToDo(toDo);
@@ -99,13 +75,8 @@ public class ToDoJsonServlet extends HttpServlet {
             successMessage.setMessage("Entity created successfully");
             resp.getWriter().write(objectMapper.writeValueAsString(successMessage));
         } catch (IllegalArgumentException | JsonMappingException exception) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            errorMessage.setMessage(exception.getMessage());
-            try (PrintWriter writer = resp.getWriter()) {
-                writer.write(objectMapper.writeValueAsString(errorMessage));
-            } catch (IOException ioException) {
-                logger.error("Failed to write error response", ioException);
-            }
+            logger.warn("Invalid request", exception);
+            handleBadRequest(resp, exception.getMessage());
         }
     }
 
@@ -116,48 +87,30 @@ public class ToDoJsonServlet extends HttpServlet {
         try {
             String idParam = req.getParameter("id");
             if (idParam == null || idParam.isEmpty()) {
+                logger.warn("The 'id' field should be provided.");
                 handleEmptyID(resp);
                 return;
             }
             Long id = Long.parseLong(idParam);
             ToDo toDo = objectMapper.readValue(req.getReader(), ToDo.class);
             if (toDo.getId() != null) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                errorMessage.setMessage("The 'id' field should only be provided as a parameter.");
-                try (PrintWriter writer = resp.getWriter()) {
-                    writer.write(objectMapper.writeValueAsString(errorMessage));
-                } catch (IOException ioException) {
-                    logger.error("Failed to write error response", ioException);
-                }
+                logger.warn("The 'id' field should only be provided as parameter");
+                handleBadRequest(resp,
+                        "The 'id' field should only be provided as a parameter.");
             }
             toDo.setId(id);
             toDoService.updateToDo(toDo);
             successMessage.setMessage("Entity updated successfully");
             resp.getWriter().write(objectMapper.writeValueAsString(successMessage));
         } catch (EntityNotFoundException exception) {
-            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            errorMessage.setMessage(exception.getMessage());
-            try (PrintWriter writer = resp.getWriter()) {
-                writer.write(objectMapper.writeValueAsString(errorMessage));
-            } catch (IOException ioException) {
-                logger.error("Failed to write error response", ioException);
-            }
+            logger.warn("Failed to update entity: {}", exception.getMessage());
+            handleNotFound(resp, exception.getMessage());
         } catch (IllegalArgumentException exception) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            errorMessage.setMessage(exception.getMessage());
-            try (PrintWriter writer = resp.getWriter()) {
-                writer.write(objectMapper.writeValueAsString(errorMessage));
-            } catch (IOException ioException) {
-                logger.error("Failed to write error response", ioException);
-            }
+            logger.warn("The provided id could not be parsed to long");
+            handleBadRequest(resp, exception.getMessage());
         } catch (JsonMappingException exception) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            errorMessage.setMessage(exception.getMessage());
-            try (PrintWriter writer = resp.getWriter()) {
-                writer.write(objectMapper.writeValueAsString(errorMessage));
-            } catch (IOException ioException) {
-                logger.error("Failed to write error response", ioException);
-            }
+            logger.warn("Failed to map ToDo {}", exception.getMessage());
+            handleBadRequest(resp, exception.getMessage());
         }
     }
 
@@ -176,29 +129,34 @@ public class ToDoJsonServlet extends HttpServlet {
             successMessage.setMessage("Entity with id '" + id + "' deleted successfully");
             resp.getWriter().write(objectMapper.writeValueAsString(successMessage));
         } catch (IllegalArgumentException exception) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            errorMessage.setMessage(exception.getMessage());
-            try (PrintWriter writer = resp.getWriter()) {
-                writer.write(objectMapper.writeValueAsString(errorMessage));
-            } catch (IOException ioException) {
-                logger.error("Failed to write error response", ioException);
-            }
+            logger.warn("Invalid request", exception);
+            handleBadRequest(resp, exception.getMessage());
         } catch (EntityNotFoundException exception) {
-            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            errorMessage.setMessage(exception.getMessage());
-            try (PrintWriter writer = resp.getWriter()) {
-                writer.write(objectMapper.writeValueAsString(errorMessage));
-            } catch (IOException ioException) {
-                logger.error("Failed to write error response", ioException);
-            }
+            logger.warn("Failed to delete entity: {}", exception.getMessage());
+            handleNotFound(resp, exception.getMessage());
         }
     }
 
     private static void handleEmptyID(HttpServletResponse resp) {
         logger.warn("Id has not been provided.");
+        handleBadRequest(resp, "The id field should be provided.");
+    }
+
+    private static void handleBadRequest(HttpServletResponse resp, String message) {
         resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        errorMessage.setMessage(message);
         try (PrintWriter writer = resp.getWriter()) {
-            writer.write("{\"error\": \"" + "The `id` field should be provided." + "\"}");
+            writer.write(objectMapper.writeValueAsString(errorMessage));
+        } catch (IOException ioException) {
+            logger.error("Failed to write error response", ioException);
+        }
+    }
+
+    private static void handleNotFound(HttpServletResponse resp, String message) {
+        resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        errorMessage.setMessage(message);
+        try (PrintWriter writer = resp.getWriter()) {
+            writer.write(objectMapper.writeValueAsString(errorMessage));
         } catch (IOException ioException) {
             logger.error("Failed to write error response", ioException);
         }
