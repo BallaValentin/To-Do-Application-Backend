@@ -22,7 +22,7 @@
         <td th:text="${todo.id}"></td>
         <td th:text="${todo.title}"></td>
         <td th:text="${todo.description}"></td>
-        <td th:text="${todo.dueDate}"></td>
+        <td th:text="${#dates.format(todo.dueDate, 'yyyy-MM-dd')}"></td>
         <td th:text="${todo.levelOfImportance}"></td>
     </tr>
     </tbody>
