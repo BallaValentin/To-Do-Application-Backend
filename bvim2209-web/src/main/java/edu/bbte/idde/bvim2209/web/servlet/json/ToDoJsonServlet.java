@@ -68,6 +68,7 @@ public class ToDoJsonServlet extends HttpServlet {
             if (toDo.getId() != null) {
                 logger.warn("The 'id' field should not be provided.");
                 handleBadRequest(resp, "The 'id' field should not be provided.");
+                return;
             }
             logger.info("Inserting new todo.");
             toDoService.createToDo(toDo);
@@ -97,6 +98,7 @@ public class ToDoJsonServlet extends HttpServlet {
                 logger.warn("The 'id' field should only be provided as parameter");
                 handleBadRequest(resp,
                         "The 'id' field should only be provided as a parameter.");
+                return;
             }
             toDo.setId(id);
             toDoService.updateToDo(toDo);
