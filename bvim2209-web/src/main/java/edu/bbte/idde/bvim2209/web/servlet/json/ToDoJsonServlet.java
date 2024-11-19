@@ -35,13 +35,29 @@ public class ToDoJsonServlet extends HttpServlet {
             Collection<ToDo> toDoCollection = toDoService.findAll();
             resp.getWriter().write(objectMapper.writeValueAsString(toDoCollection));
         } else {
-            logger.info("Preparing to find todo with id: {}", id);
-            Optional<ToDo> toDo = Optional.ofNullable(toDoService.findById(Long.parseLong(id)));
-            if (toDo.isPresent()) {
-                logger.info("Todo with id: {} found", id);
-                resp.getWriter().write(objectMapper.writeValueAsString(toDo.get()));
-            } else {
-                logger.warn("To do with id: {} not found", id);
+            try {
+                logger.info("Preparing to find todo with id: {}", id);
+                Optional<ToDo> toDo = Optional.ofNullable(toDoService.findById(Long.parseLong(id)));
+                if (toDo.isPresent()) {
+                    logger.info("Todo with id: {} found", id);
+                    resp.getWriter().write(objectMapper.writeValueAsString(toDo.get()));
+                } else {
+                    logger.warn("To do with id: {} not found", id);
+                    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    try (PrintWriter writer = resp.getWriter()) {
+                        writer.write("{\"error\": \"To do not found\"}");
+                    } catch (IOException ioException) {
+                        logger.error("Failed to write error response", ioException);
+                    }
+                }
+            } catch (NumberFormatException exception) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                try (PrintWriter writer = resp.getWriter()) {
+                    writer.write("{\"error\": \"Invalid id\"}");
+                } catch (IOException ioException) {
+                    logger.error("Failed to write error response", ioException);
+                }
+            } catch (EntityNotFoundException exception) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 try (PrintWriter writer = resp.getWriter()) {
                     writer.write("{\"error\": \"To do not found\"}");
