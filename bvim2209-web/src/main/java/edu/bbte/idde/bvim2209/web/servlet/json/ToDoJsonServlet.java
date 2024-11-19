@@ -137,6 +137,13 @@ public class ToDoJsonServlet extends HttpServlet {
             } catch (IOException ioException) {
                 logger.error("Failed to write error response", ioException);
             }
+        } catch (JsonMappingException exception) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            try (PrintWriter writer = resp.getWriter()) {
+                writer.write("{\"error\": \"" + exception.getMessage() + "\"}");
+            } catch (IOException ioException) {
+                logger.error("Failed to write error response", ioException);
+            }
         }
     }
 
