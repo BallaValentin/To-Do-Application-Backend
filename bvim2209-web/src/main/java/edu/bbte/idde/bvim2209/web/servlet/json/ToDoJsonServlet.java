@@ -25,8 +25,6 @@ public class ToDoJsonServlet extends HttpServlet {
     private final transient ToDoServiceImpl toDoService = new ToDoServiceImpl();
     private static final ObjectMapper objectMapper = JsonConfig.createConfiguredObjectMapper();
     private static final Logger logger = LoggerFactory.getLogger(ToDoJsonServlet.class);
-    private static final HttpErrorMessage errorMessage = new HttpErrorMessage();
-    private static final HttpSuccessMessage successMessage = new HttpSuccessMessage();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -73,7 +71,7 @@ public class ToDoJsonServlet extends HttpServlet {
             logger.info("Inserting new todo.");
             toDoService.createToDo(toDo);
             resp.setStatus(HttpServletResponse.SC_CREATED);
-            successMessage.setMessage("Entity created successfully");
+            HttpSuccessMessage successMessage = new HttpSuccessMessage("Entity created successfully");
             resp.getWriter().write(objectMapper.writeValueAsString(successMessage));
         } catch (IllegalArgumentException | JsonMappingException exception) {
             logger.warn("Invalid request", exception);
@@ -102,7 +100,7 @@ public class ToDoJsonServlet extends HttpServlet {
             }
             toDo.setId(id);
             toDoService.updateToDo(toDo);
-            successMessage.setMessage("Entity updated successfully");
+            HttpSuccessMessage successMessage = new HttpSuccessMessage("Entity updated successfully");
             resp.getWriter().write(objectMapper.writeValueAsString(successMessage));
         } catch (EntityNotFoundException exception) {
             logger.warn("Failed to update entity: {}", exception.getMessage());
@@ -128,7 +126,7 @@ public class ToDoJsonServlet extends HttpServlet {
             }
             Long id = Long.parseLong(idParam);
             toDoService.deleteToDo(id);
-            successMessage.setMessage("Entity with id '" + id + "' deleted successfully");
+            HttpSuccessMessage successMessage = new HttpSuccessMessage("Entity deleted successfully");
             resp.getWriter().write(objectMapper.writeValueAsString(successMessage));
         } catch (IllegalArgumentException exception) {
             logger.warn("Invalid request", exception);
@@ -146,7 +144,7 @@ public class ToDoJsonServlet extends HttpServlet {
 
     private static void handleBadRequest(HttpServletResponse resp, String message) {
         resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        errorMessage.setMessage(message);
+        HttpErrorMessage errorMessage = new HttpErrorMessage(message);
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(errorMessage));
         } catch (IOException ioException) {
@@ -156,7 +154,7 @@ public class ToDoJsonServlet extends HttpServlet {
 
     private static void handleNotFound(HttpServletResponse resp, String message) {
         resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        errorMessage.setMessage(message);
+        HttpErrorMessage errorMessage = new HttpErrorMessage(message);
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(errorMessage));
         } catch (IOException ioException) {
