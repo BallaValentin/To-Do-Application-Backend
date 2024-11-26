@@ -1,6 +1,5 @@
 package edu.bbte.idde.bvim2209.backend.conf;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.bbte.idde.bvim2209.backend.exceptions.ConfigurationException;
 import org.slf4j.Logger;
