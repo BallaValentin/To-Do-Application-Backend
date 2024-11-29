@@ -1,0 +1,13 @@
+plugins {
+    id 'application'
+}
+
+group = 'org.example'
+version = 'unspecified'
+
+dependencies {
+    implementation project(':bvim2209-backend')
+}
+application {
+    mainClass = 'edu.bbte.idde.bvim2209.desktop.ToDoListFrame'
+}
