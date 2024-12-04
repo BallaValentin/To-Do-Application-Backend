@@ -225,7 +225,7 @@ public class ToDoListFrame extends JFrame {
                 refreshTable();
                 systemOutputLabel.setText("To Do with id " + id + " deleted successfully.");
                 systemOutputLabel.setForeground(new Color(0, 100, 0));
-            } catch (EntityNotFoundException ex) {
+            } catch (ParseException | EntityNotFoundException ex) {
                 systemOutputLabel.setText("Error: " + ex.getMessage());
                 systemOutputLabel.setForeground(Color.RED);
             }

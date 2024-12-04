@@ -2,6 +2,7 @@ package edu.bbte.idde.bvim2209.spring.backend.repo.mem;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.BaseEntity;
 import edu.bbte.idde.bvim2209.spring.backend.repo.Dao;
+import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
@@ -23,27 +24,39 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
 
     @Override
     public T findById(Long id) {
-        return entities.get(id);
+        T entity = entities.get(id);
+        if (entity == null) {
+            throw new EntityNotFoundException("Entity with ID " + id + " not found in memory");
+        }
+        return entity;
     }
 
     @Override
-    public void create(T entity) {
+    public void create(T entity) throws IllegalArgumentException {
         if (entity.getId() == null) {
             entity.setId(idCounter.getAndIncrement());
+        } else if (entities.containsKey(entity.getId())) {
+            throw new IllegalArgumentException("Entity with ID " + entity.getId() + " already exists");
         }
         entities.put(entity.getId(), entity);
     }
 
     @Override
-    public void update(T entity) {
+    public void update(T entity) throws EntityNotFoundException {
         Long id = entity.getId();
         if (entities.containsKey(id)) {
             entities.put(id, entity);
+        } else {
+            throw new EntityNotFoundException("Entity with ID " + id + " not found in memory");
         }
     }
 
     @Override
-    public void delete(Long id) {
-        entities.remove(id);
+    public void delete(Long id) throws EntityNotFoundException {
+        if (entities.containsKey(id)) {
+            entities.remove(id);
+        } else {
+            throw new EntityNotFoundException("Entity with ID " + id + " not found in memory");
+        }
     }
 }

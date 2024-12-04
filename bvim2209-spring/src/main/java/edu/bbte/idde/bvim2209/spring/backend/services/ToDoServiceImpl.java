@@ -2,6 +2,7 @@ package edu.bbte.idde.bvim2209.spring.backend.services;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDao;
+import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,18 +25,18 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
-    public void updateToDo(ToDo toDo) {
+    public void updateToDo(ToDo toDo) throws EntityNotFoundException, IllegalArgumentException {
         validateToDo(toDo);
         toDoDao.update(toDo);
     }
 
     @Override
-    public void deleteToDo(Long id) {
+    public void deleteToDo(Long id) throws EntityNotFoundException {
         toDoDao.delete(id);
     }
 
     @Override
-    public ToDo findById(Long id) {
+    public ToDo findById(Long id) throws EntityNotFoundException {
         return toDoDao.findById(id);
     }
 
