@@ -10,4 +10,9 @@ repositories {
 dependencies {
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: '3.4.0'
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-jdbc
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: '3.4.0'
+    // https://mvnrepository.com/artifact/org.projectlombok/lombok
+    implementation 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
 }
