@@ -21,6 +21,7 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
 
     @Autowired
     public ToDoJdbcDao(DataSource dataSource) {
+        super();
         this.dataSource = dataSource;
     }
 

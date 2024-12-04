@@ -1,7 +1,5 @@
 package edu.bbte.idde.bvim2209.spring.backend.model;
 
-import edu.bbte.idde.bvim2209.spring.backend.model.BaseEntity;
-
 import java.util.Date;
 
 public class ToDo extends BaseEntity {
