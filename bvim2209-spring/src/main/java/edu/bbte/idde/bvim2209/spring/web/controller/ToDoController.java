@@ -41,4 +41,18 @@ public class ToDoController {
         toDoService.createToDo(toDo);
         return "New ToDo created successfully";
     }
+
+    @PutMapping("/{toDoId}")
+    public String updateToDo(@PathVariable("toDoId") Long id, @Valid @RequestBody ToDoDto toDoDto) throws ParseException {
+        ToDo toDo = toDoMapper.dtoToModel(toDoDto);
+        toDo.setId(id);
+        toDoService.updateToDo(toDo);
+        return "ToDo with id: " + id + " updated successfully";
+    }
+
+    @DeleteMapping("/{toDoId}")
+    public String deleteToDo(@PathVariable("toDoId") Long id) throws ParseException {
+        toDoService.deleteToDo(id);
+        return "ToDo with id: " + id + " deleted successfully";
+    }
 }
