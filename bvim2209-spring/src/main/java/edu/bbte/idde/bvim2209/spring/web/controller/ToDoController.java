@@ -6,6 +6,7 @@ import edu.bbte.idde.bvim2209.spring.web.dto.ToDoDto;
 import edu.bbte.idde.bvim2209.spring.web.mapper.ToDoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,9 +26,16 @@ public class ToDoController {
     }
 
     @GetMapping()
-    public Collection<ToDoDto> findAllToDos()
+    public Collection<ToDoDto> findAll()
     {
         Collection<ToDo> todos = toDoService.findAll();
         return toDoMapper.modelsToDto(todos);
+    }
+
+    @GetMapping("/{toDoId}")
+    public ToDoDto findById(@PathVariable("toDoId") Long id)
+    {
+        ToDo toDo = toDoService.findById(id);
+        return  toDoMapper.modelToDto(toDo);
     }
 }
