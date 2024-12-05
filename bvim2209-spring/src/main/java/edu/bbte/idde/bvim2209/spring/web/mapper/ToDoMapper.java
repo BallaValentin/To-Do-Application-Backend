@@ -14,4 +14,6 @@ public  abstract class ToDoMapper {
 
     public abstract ToDoDto modelToDto(ToDo model);
 
+    public abstract ToDo dtoToModel(ToDoDto toDoDto);
+
 }

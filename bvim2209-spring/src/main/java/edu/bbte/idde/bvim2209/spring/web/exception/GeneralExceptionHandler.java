@@ -16,4 +16,12 @@ public class GeneralExceptionHandler {
     {
         return exception.getMessage();
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public String handleBadRequest(IllegalArgumentException exception)
+    {
+        return exception.getMessage();
+    }
 }
