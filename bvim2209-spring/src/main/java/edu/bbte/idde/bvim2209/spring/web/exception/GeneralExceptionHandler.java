@@ -12,16 +12,14 @@ public class GeneralExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public String handleNotFound(EntityNotFoundException exception)
-    {
+    public String handleNotFound(EntityNotFoundException exception) {
         return exception.getMessage();
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public String handleBadRequest(IllegalArgumentException exception)
-    {
+    public String handleBadRequest(IllegalArgumentException exception) {
         return exception.getMessage();
     }
 }

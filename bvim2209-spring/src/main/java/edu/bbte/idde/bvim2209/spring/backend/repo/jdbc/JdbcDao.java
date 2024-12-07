@@ -20,7 +20,8 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
 
     protected abstract void setStatementForInsert(PreparedStatement preparedStatement, T entity) throws SQLException;
 
-    protected abstract void setStatementForInsertWithId(PreparedStatement preparedStatement, T entity) throws SQLException;
+    protected abstract void setStatementForInsertWithId(
+            PreparedStatement preparedStatement, T entity) throws SQLException;
 
     protected abstract void setStatementForUpdate(PreparedStatement preparedStatement, T entity) throws SQLException;
 
