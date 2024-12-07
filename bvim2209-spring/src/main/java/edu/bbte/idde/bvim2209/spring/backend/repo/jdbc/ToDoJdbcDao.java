@@ -47,6 +47,16 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
     }
 
     @Override
+    protected void setStatementForInsertWithId(PreparedStatement preparedStatement, ToDo entity) throws SQLException {
+        log.info("Setting parameters for PreparedStatement to insert ToDo entity");
+        preparedStatement.setLong(1, entity.getId());
+        preparedStatement.setString(2, entity.getTitle());
+        preparedStatement.setString(3, entity.getDescription());
+        preparedStatement.setDate(4, new java.sql.Date(entity.getDueDate().getTime()));
+        preparedStatement.setInt(5, entity.getLevelOfImportance());
+    }
+
+    @Override
     protected void setStatementForUpdate(PreparedStatement preparedStatement, ToDo entity) throws SQLException {
         log.info("Setting parameters for PreparedStatement to update ToDo entity");
         preparedStatement.setString(1, entity.getTitle());
@@ -70,6 +80,15 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
         Connection connection = dataSource.getConnection();
         PreparedStatement preparedStatement;
         preparedStatement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
+        return preparedStatement;
+    }
+
+    @Override
+    protected PreparedStatement prepareStatementForInsertWithId() throws SQLException {
+        String query = "INSERT INTO ToDo (ID, Title, Description, DueDate, ImportanceLevel) VALUES (?, ?, ?, ?, ?)";
+        Connection connection = dataSource.getConnection();
+        PreparedStatement preparedStatement;
+        preparedStatement = connection.prepareStatement(query);
         return preparedStatement;
     }
 

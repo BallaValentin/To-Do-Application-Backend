@@ -2,9 +2,11 @@ package edu.bbte.idde.bvim2209.spring.web.controller;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.spring.backend.services.ToDoService;
+import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.spring.web.dto.ToDoDto;
 import edu.bbte.idde.bvim2209.spring.web.mapper.ToDoMapper;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,11 +51,15 @@ public class ToDoController {
 
     @PutMapping("/{toDoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public String updateToDo(@PathVariable("toDoId") Long id, @Valid @RequestBody ToDoDto toDoDto) throws ParseException {
+    public ResponseEntity<ToDo> updateToDo(@PathVariable("toDoId") Long id, @Valid @RequestBody ToDoDto toDoDto) throws ParseException {
         ToDo toDo = toDoMapper.dtoToModel(toDoDto);
         toDo.setId(id);
-        toDoService.updateToDo(toDo);
-        return "ToDo with id: " + id + " updated successfully";
+        try {
+            toDoService.updateToDo(toDo);
+        } catch (EntityNotFoundException exception) {
+            toDoService.createToDo(toDo);
+        }
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{toDoId}")

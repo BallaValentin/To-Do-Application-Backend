@@ -20,11 +20,15 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
 
     protected abstract void setStatementForInsert(PreparedStatement preparedStatement, T entity) throws SQLException;
 
+    protected abstract void setStatementForInsertWithId(PreparedStatement preparedStatement, T entity) throws SQLException;
+
     protected abstract void setStatementForUpdate(PreparedStatement preparedStatement, T entity) throws SQLException;
 
     protected abstract PreparedStatement prepareStatementForFindAll() throws SQLException;
 
     protected abstract PreparedStatement prepareStatementForInsert() throws SQLException;
+
+    protected abstract PreparedStatement prepareStatementForInsertWithId() throws SQLException;
 
     protected abstract PreparedStatement prepareStatementForFindById(Long id) throws SQLException;
 
@@ -58,21 +62,12 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     @Override
     public void create(T entity) throws IllegalArgumentException {
         log.info("Trying to insert new entity in database");
-        try (
-                PreparedStatement preparedStatement = prepareStatementForInsert()
-        ) {
-            setStatementForInsert(preparedStatement, entity);
-            int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected > 0) {
-                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        entity.setId(generatedKeys.getLong(getPrimaryKeyIndex()));
-                    }
-                }
-            }
-        } catch (SQLException exception) {
-            log.error("Error creating entity in database", exception);
-            throw new IllegalArgumentException("Could not create entity", exception);
+
+        if (entity.getId() != null && !findAll().contains(entity)) {
+            log.debug("Inserting new entity with id in database");
+            createWithId(entity);
+        } else {
+            createWithoutId(entity);
         }
         log.info("New entity has been successfully inserted into database");
     }
@@ -129,5 +124,36 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
             log.error("Error deleting entity from database", e);
         }
         log.info("Entity with id {} has been successfully deleted from database", id);
+    }
+
+    private void createWithoutId(T entity) {
+        try (
+                PreparedStatement preparedStatement = prepareStatementForInsert()
+        ) {
+            setStatementForInsert(preparedStatement, entity);
+            int rowsAffected = preparedStatement.executeUpdate();
+            if (rowsAffected > 0) {
+                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        entity.setId(generatedKeys.getLong(getPrimaryKeyIndex()));
+                    }
+                }
+            }
+        } catch (SQLException exception) {
+            log.error("Error creating entity in database", exception);
+            throw new IllegalArgumentException("Could not create entity", exception);
+        }
+    }
+
+    private void createWithId(T entity) {
+        try (
+                PreparedStatement preparedStatement = prepareStatementForInsertWithId()
+        ) {
+            setStatementForInsertWithId(preparedStatement, entity);
+            preparedStatement.executeUpdate();
+        } catch (SQLException exception) {
+            log.error("Error creating entity in database", exception);
+            throw new IllegalArgumentException("Could not create entity", exception);
+        }
     }
 }
