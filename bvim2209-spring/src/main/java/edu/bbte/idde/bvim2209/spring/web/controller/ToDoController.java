@@ -6,8 +6,11 @@ import edu.bbte.idde.bvim2209.spring.web.dto.ToDoDto;
 import edu.bbte.idde.bvim2209.spring.web.mapper.ToDoMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.text.ParseException;
 import java.util.Collection;
 
@@ -36,10 +39,12 @@ public class ToDoController {
     }
 
     @PostMapping()
-    public String createToDo(@Valid @RequestBody ToDoDto toDoDto) throws ParseException {
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<ToDo> createToDo(@Valid @RequestBody ToDoDto toDoDto) throws ParseException {
         ToDo toDo = toDoMapper.dtoToModel(toDoDto);
         toDoService.createToDo(toDo);
-        return "New ToDo created successfully";
+        URI createURI = URI.create("api/todos/" + toDo.getId());
+        return ResponseEntity.created(createURI).body(toDo);
     }
 
     @PutMapping("/{toDoId}")
