@@ -49,7 +49,6 @@ public class ToDoController {
     }
 
     @PutMapping("/{toDoId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<ToDo> updateToDo(
             @PathVariable("toDoId") Long id,
             @Valid @RequestBody ToDoDto toDoDto) throws ParseException {
@@ -60,7 +59,7 @@ public class ToDoController {
         } catch (EntityNotFoundException exception) {
             toDoService.createToDo(toDo);
         }
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body(toDo);
     }
 
     @DeleteMapping("/{toDoId}")
