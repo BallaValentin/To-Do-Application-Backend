@@ -48,6 +48,7 @@ public class ToDoController {
     }
 
     @PutMapping("/{toDoId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public String updateToDo(@PathVariable("toDoId") Long id, @Valid @RequestBody ToDoDto toDoDto) throws ParseException {
         ToDo toDo = toDoMapper.dtoToModel(toDoDto);
         toDo.setId(id);
@@ -56,8 +57,8 @@ public class ToDoController {
     }
 
     @DeleteMapping("/{toDoId}")
-    public String deleteToDo(@PathVariable("toDoId") Long id) throws ParseException {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteToDo(@PathVariable("toDoId") Long id) throws ParseException {
         toDoService.deleteToDo(id);
-        return "ToDo with id: " + id + " deleted successfully";
     }
 }
