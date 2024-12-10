@@ -3,18 +3,12 @@ package edu.bbte.idde.bvim2209.spring.web.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.Date;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class ToDoDto {
+@Data
+public class ToDoRequestDTO {
     private Long id;
 
     @NotBlank(message = "Title cannot be empty")

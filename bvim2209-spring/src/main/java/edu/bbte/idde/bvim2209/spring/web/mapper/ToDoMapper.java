@@ -1,7 +1,8 @@
 package edu.bbte.idde.bvim2209.spring.web.mapper;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
-import edu.bbte.idde.bvim2209.spring.web.dto.ToDoDto;
+import edu.bbte.idde.bvim2209.spring.web.dto.ToDoRequestDTO;
+import edu.bbte.idde.bvim2209.spring.web.dto.ToDoResponseDTO;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 
@@ -9,11 +10,16 @@ import java.util.Collection;
 
 @Mapper(componentModel = "spring")
 public  abstract class ToDoMapper {
-    @IterableMapping(elementTargetType = ToDoDto.class)
-    public abstract Collection<ToDoDto> modelsToDto(Iterable<ToDo> model);
+    @IterableMapping(elementTargetType = ToDoRequestDTO.class)
+    public abstract Collection<ToDoRequestDTO> modelsToRequestDTO(Iterable<ToDo> model);
 
-    public abstract ToDoDto modelToDto(ToDo model);
+    @IterableMapping(elementTargetType = ToDoResponseDTO.class)
+    public abstract Collection<ToDoResponseDTO> modelsToResponseDTO(Iterable<ToDo> model);
 
-    public abstract ToDo dtoToModel(ToDoDto toDoDto);
+    public abstract ToDoRequestDTO modelToRequestDTO(ToDo model);
+
+    public abstract ToDoResponseDTO modelToResponseDTO(ToDo model);
+
+    public abstract ToDo requestDTOToModel(ToDoRequestDTO toDoDto);
 
 }
