@@ -1,4 +1,4 @@
-package edu.bbte.idde.bvim2209.spring.desktop;
+package edu.bbte.idde.bvim2209.spring;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
