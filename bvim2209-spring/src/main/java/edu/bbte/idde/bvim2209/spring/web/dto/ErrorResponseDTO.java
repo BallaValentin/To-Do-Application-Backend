@@ -10,6 +10,7 @@ public class ErrorResponseDTO {
     private Integer statusCode;
     private String error;
     private String path;
+
     public ErrorResponseDTO(LocalDateTime timestamp, Integer statusCode, String error, String path) {
         this.timestamp = timestamp;
         this.statusCode = statusCode;
