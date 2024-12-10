@@ -56,11 +56,7 @@ public class ToDoController {
             @Valid @RequestBody ToDoRequestDTO toDoDto) throws ParseException {
         ToDo toDo = toDoMapper.requestDTOToModel(toDoDto);
         toDo.setId(id);
-        try {
-            toDoService.updateToDo(toDo);
-        } catch (EntityNotFoundException exception) {
-            toDoService.createToDo(toDo);
-        }
+        toDoService.updateToDo(toDo);
         return ResponseEntity.ok().body(toDoMapper.modelToResponseDTO(toDo));
     }
 

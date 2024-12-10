@@ -3,7 +3,6 @@ package edu.bbte.idde.bvim2209.spring.web.exception;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.spring.web.dto.ErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.time.LocalDateTime;
 
 @ControllerAdvice
-@Slf4j
 public class GeneralExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
