@@ -10,9 +10,6 @@ import java.util.Collection;
 
 @Mapper(componentModel = "spring")
 public  abstract class ToDoMapper {
-    @IterableMapping(elementTargetType = ToDoRequestDTO.class)
-    public abstract Collection<ToDoRequestDTO> modelsToRequestDTO(Iterable<ToDo> model);
-
     @IterableMapping(elementTargetType = ToDoResponseDTO.class)
     public abstract Collection<ToDoResponseDTO> modelsToResponseDTO(Iterable<ToDo> model);
 
