@@ -2,7 +2,6 @@ package edu.bbte.idde.bvim2209.spring.web.controller;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.spring.backend.services.ToDoService;
-import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.spring.web.dto.ToDoRequestDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.ToDoResponseDTO;
 import edu.bbte.idde.bvim2209.spring.web.mapper.ToDoMapper;

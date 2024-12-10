@@ -1,7 +1,16 @@
 package edu.bbte.idde.bvim2209.spring.backend.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.Date;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ToDo extends BaseEntity {
 
     private String title;
@@ -9,48 +18,15 @@ public class ToDo extends BaseEntity {
     private Date dueDate;
     private Integer levelOfImportance;
 
-    public ToDo() {
-        super();
-    }
-
-    public ToDo(Long id, String title, String description, Date dueDate, Integer levelOfImportance) {
-        super(id);
-        this.title = title;
-        this.description = description;
-        this.dueDate = new Date(dueDate.getTime());
-        this.levelOfImportance = levelOfImportance;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Date getDueDate() {
         return new Date(dueDate.getTime());
     }
 
     public void setDueDate(Date dueDate) {
-        this.dueDate = new Date(dueDate.getTime());
-    }
-
-    public Integer getLevelOfImportance() {
-        return levelOfImportance;
-    }
-
-    public void setLevelOfImportance(Integer levelOfImportance) {
-        this.levelOfImportance = levelOfImportance;
+        if (dueDate == null) {
+            throw new IllegalArgumentException("Due date cannot be null");
+        }
+        this.dueDate = dueDate;
     }
 
     @Override
