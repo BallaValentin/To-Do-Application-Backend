@@ -20,7 +20,6 @@ public class GeneralExceptionHandler {
     @ResponseBody
     public ErrorResponseDTO handleNotFound(
             EntityNotFoundException exception, HttpServletRequest request) {
-        log.debug("Im here...");
         LocalDateTime timestamp = LocalDateTime.now();
         Integer statusCode = HttpStatus.NOT_FOUND.value();
         String error = exception.getMessage();
