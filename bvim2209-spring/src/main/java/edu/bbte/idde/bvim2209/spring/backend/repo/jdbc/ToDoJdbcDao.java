@@ -12,6 +12,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Repository
 @Profile("jdbc")
@@ -127,5 +130,24 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
     @Override
     protected Integer getNumberOfColumnsToUpdate() {
         return 4;
+    }
+
+    @Override
+    public Collection<ToDo> findByImportance(Integer levelOfImportance) {
+        Collection<ToDo> toDos = new ArrayList<>();
+        String query = "SELECT * FROM ToDo WHERE ImportanceLevel = ?";
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery();
+        ) {
+            while (resultSet.next()) {
+                ToDo toDo = mapResultSetToEntity(resultSet);
+                toDos.add(toDo);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return toDos;
     }
 }
