@@ -5,10 +5,12 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import javax.sql.DataSource;
 
 @Configuration
+@Profile("jdbc")
 public class DataSourceConfig {
     @Value("${spring.datasource.url}")
     private String jdbcUrl;
@@ -22,6 +24,7 @@ public class DataSourceConfig {
     private Integer maximumPoolSize;
 
     @Bean
+    @Profile("jdbc")
     public DataSource dataSource() {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(jdbcUrl);
