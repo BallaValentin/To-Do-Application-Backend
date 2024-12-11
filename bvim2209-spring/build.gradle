@@ -10,21 +10,31 @@ repositories {
 dependencies {
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: '3.4.0'
+
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-jdbc
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: '3.4.0'
+
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '3.4.0'
+
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '3.4.0'
-    // https://mvnrepository.com/artifact/org.projectlombok/lombok
-    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.36'
-    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.36'
+
+    // https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
+    runtimeOnly group: 'com.mysql', name: 'mysql-connector-j', version: '9.1.0'
+
+    // https://mvnrepository.com/artifact/com.zaxxer/HikariCP
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: '6.2.1'
+
     // https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api
     implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.1.0'
+
     // https://mvnrepository.com/artifact/org.mapstruct/mapstruct
     implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.6.3'
+
     // https://mvnrepository.com/artifact/org.mapstruct/mapstruct-processor
     annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.6.3'
+
     // https://mvnrepository.com/artifact/com.h2database/h2
     implementation group: 'com.h2database', name: 'h2', version: '2.3.232'
 }
