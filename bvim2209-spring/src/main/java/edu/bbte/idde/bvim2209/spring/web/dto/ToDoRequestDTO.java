@@ -10,7 +10,6 @@ import java.util.Date;
 
 @Data
 public class ToDoRequestDTO {
-    private Long id;
 
     @NotBlank(message = "Title cannot be blank")
     private String title;
