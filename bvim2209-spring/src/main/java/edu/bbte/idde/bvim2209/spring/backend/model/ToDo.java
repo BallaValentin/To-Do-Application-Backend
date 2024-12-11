@@ -22,13 +22,6 @@ public class ToDo extends BaseEntity {
         return new Date(dueDate.getTime());
     }
 
-    public void setDueDate(Date dueDate) {
-        if (dueDate == null) {
-            throw new IllegalArgumentException("Due date cannot be null");
-        }
-        this.dueDate = dueDate;
-    }
-
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("ToDoList{");

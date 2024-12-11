@@ -5,10 +5,10 @@ import edu.bbte.idde.bvim2209.spring.backend.services.ToDoService;
 import edu.bbte.idde.bvim2209.spring.web.dto.ToDoRequestDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.ToDoResponseDTO;
 import edu.bbte.idde.bvim2209.spring.web.mapper.ToDoMapper;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -49,7 +49,7 @@ public class ToDoController {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ToDoResponseDTO> createToDo(
-            @Valid @RequestBody ToDoRequestDTO toDoDto) throws ParseException {
+            @Validated @RequestBody ToDoRequestDTO toDoDto) throws ParseException {
         ToDo toDo = toDoMapper.requestDTOToModel(toDoDto);
         toDoService.createToDo(toDo);
         URI createURI = URI.create("api/todos/" + toDo.getId());
@@ -59,7 +59,7 @@ public class ToDoController {
     @PutMapping("/{toDoId}")
     public ResponseEntity<ToDoResponseDTO> updateToDo(
             @PathVariable("toDoId") Long id,
-            @Valid @RequestBody ToDoRequestDTO toDoDto) throws ParseException {
+            @Validated @RequestBody ToDoRequestDTO toDoDto) throws ParseException {
         ToDo toDo = toDoMapper.requestDTOToModel(toDoDto);
         toDo.setId(id);
         toDoService.updateToDo(toDo);
