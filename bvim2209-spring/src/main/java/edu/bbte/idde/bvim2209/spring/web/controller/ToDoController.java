@@ -39,6 +39,13 @@ public class ToDoController {
         return toDoMapper.modelToResponseDTO(toDo);
     }
 
+    @GetMapping("/search")
+    public Collection<ToDoResponseDTO> findByImportance(
+            @RequestParam(value = "levelOfImportance", required = false) Integer levelOfImportance) {
+        Collection<ToDo> todos = toDoService.findByImportance(levelOfImportance);
+        return toDoMapper.modelsToResponseDTO(todos);
+    }
+
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ToDoResponseDTO> createToDo(

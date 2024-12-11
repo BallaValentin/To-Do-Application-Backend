@@ -14,7 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @Repository
 @Profile("jdbc")
@@ -139,14 +138,15 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
-                ResultSet resultSet = preparedStatement.executeQuery();
         ) {
+            preparedStatement.setInt(1, levelOfImportance);
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 ToDo toDo = mapResultSetToEntity(resultSet);
                 toDos.add(toDo);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException exception) {
+            log.error("Error fetching all entities by importance from database", exception);
         }
         return toDos;
     }

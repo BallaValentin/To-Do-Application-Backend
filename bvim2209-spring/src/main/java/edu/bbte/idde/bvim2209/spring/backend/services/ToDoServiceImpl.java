@@ -75,4 +75,9 @@ public class ToDoServiceImpl implements ToDoService {
     public Collection<ToDo> findAll() {
         return toDoDao.findAll();
     }
+
+    @Override
+    public Collection<ToDo> findByImportance(Integer levelOfImportance) {
+        return toDoDao.findByImportance(levelOfImportance);
+    }
 }
