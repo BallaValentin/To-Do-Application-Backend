@@ -1,6 +1,5 @@
 package edu.bbte.idde.bvim2209.backend.repo;
 
-import edu.bbte.idde.bvim2209.backend.conf.Configuration;
 import edu.bbte.idde.bvim2209.backend.conf.ConfigurationFactory;
 import edu.bbte.idde.bvim2209.backend.repo.jdbc.JdbcDaoFactory;
 import edu.bbte.idde.bvim2209.backend.repo.mem.MemDaoFactory;
@@ -20,8 +19,8 @@ public abstract class DaoFactory {
      */
     public static synchronized DaoFactory getInstance() {
         if (instance == null) {
-            Configuration activeConfiguration = ConfigurationFactory.getActiveProfileConfig();
-            if ("jdbc".equals(activeConfiguration.getDaoImplementation())) {
+            String activeProfile = ConfigurationFactory.getActiveProfileConfig();
+            if ("jdbc".equals(activeProfile)) {
                 logger.info("Creating instance of JdbcDaoFactory...");
                 instance = new JdbcDaoFactory();
             } else {
