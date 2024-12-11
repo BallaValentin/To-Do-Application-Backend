@@ -13,8 +13,6 @@ public  abstract class ToDoMapper {
     @IterableMapping(elementTargetType = ToDoResponseDTO.class)
     public abstract Collection<ToDoResponseDTO> modelsToResponseDTO(Iterable<ToDo> model);
 
-    public abstract ToDoRequestDTO modelToRequestDTO(ToDo model);
-
     public abstract ToDoResponseDTO modelToResponseDTO(ToDo model);
 
     public abstract ToDo requestDTOToModel(ToDoRequestDTO toDoDto);
