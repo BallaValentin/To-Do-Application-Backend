@@ -28,7 +28,7 @@ public class ToDoController {
     }
 
     @GetMapping()
-    public Collection<ToDoResponseDTO> findAll(
+    public Collection<ToDoResponseDTO> getTodos(
             @RequestParam(value = "levelOfImportance", required = false) Integer levelOfImportance
     ) {
         if (levelOfImportance == null) {
@@ -39,7 +39,7 @@ public class ToDoController {
     }
 
     @GetMapping("/{toDoId}")
-    public ToDoResponseDTO findById(@PathVariable("toDoId") Long id) {
+    public ToDoResponseDTO getTodo(@PathVariable("toDoId") Long id) {
         ToDo toDo = toDoService.findById(id);
         return toDoMapper.modelToResponseDTO(toDo);
     }
