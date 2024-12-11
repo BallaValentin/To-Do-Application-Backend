@@ -28,22 +28,20 @@ public class ToDoController {
     }
 
     @GetMapping()
-    public Collection<ToDoResponseDTO> findAll() {
-        Collection<ToDo> todos = toDoService.findAll();
-        return toDoMapper.modelsToResponseDTO(todos);
+    public Collection<ToDoResponseDTO> findAll(
+            @RequestParam(value = "levelOfImportance", required = false) Integer levelOfImportance
+    ) {
+        if (levelOfImportance == null) {
+            return toDoMapper.modelsToResponseDTO(toDoService.findAll());
+        } else {
+            return toDoMapper.modelsToResponseDTO(toDoService.findByImportance(levelOfImportance));
+        }
     }
 
     @GetMapping("/{toDoId}")
     public ToDoResponseDTO findById(@PathVariable("toDoId") Long id) {
         ToDo toDo = toDoService.findById(id);
         return toDoMapper.modelToResponseDTO(toDo);
-    }
-
-    @GetMapping("/search")
-    public Collection<ToDoResponseDTO> findByImportance(
-            @RequestParam(value = "levelOfImportance", required = false) Integer levelOfImportance) {
-        Collection<ToDo> todos = toDoService.findByImportance(levelOfImportance);
-        return toDoMapper.modelsToResponseDTO(todos);
     }
 
     @PostMapping()
