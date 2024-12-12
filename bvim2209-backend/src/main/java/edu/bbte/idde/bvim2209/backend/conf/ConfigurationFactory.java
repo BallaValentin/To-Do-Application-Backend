@@ -2,6 +2,7 @@ package edu.bbte.idde.bvim2209.backend.conf;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.bbte.idde.bvim2209.backend.exceptions.ConfigurationException;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,13 +11,15 @@ import java.io.InputStream;
 
 public class ConfigurationFactory {
     private static final String CONFIG_FILE = "config.json";
-    private static final MainConfiguration mainConfiguration;
+    @Getter
+    private static final Configuration configuration;
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationFactory.class);
 
     static {
+        logger.info("Loading configuration file: " + CONFIG_FILE);
         ObjectMapper mapper = new ObjectMapper();
         try (InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream(CONFIG_FILE)) {
-            mainConfiguration = mapper.readValue(input, MainConfiguration.class);
+            configuration = mapper.readValue(input, Configuration.class);
             logger.info("The main configuration has been loaded");
         } catch (IOException exception) {
             logger.error(exception.getMessage(), exception);
@@ -24,18 +27,18 @@ public class ConfigurationFactory {
         }
     }
 
-    public static MainConfiguration getMainConfiguration() {
-        return mainConfiguration;
+    public static JdbcConfiguration getJdbcConfiguration() {
+        return configuration.getJdbcConfiguration();
     }
 
-    public static Object getActiveProfileConfig() {
+    public static String getActiveProfileConfig() {
         String activeProfile = System.getenv("ACTIVE_PROFILE");
         if ("jdbc".equals(activeProfile)) {
             logger.info("Active profile is jdbc");
-            return mainConfiguration.getProfiles().getJdbcConfiguration();
+            return "jdbc";
         } else {
             logger.info("Active profile is not inMemory");
-            return mainConfiguration.getProfiles().getInMemoryConfiguration();
+            return "inMemory";
         }
     }
 }

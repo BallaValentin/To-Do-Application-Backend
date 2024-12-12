@@ -9,6 +9,7 @@ import java.util.Collection;
  * Egy bizonyos entitásra specifikus CRUD műveletek.
  */
 
+
 public interface ToDoDao extends Dao<ToDo> {
 
     /**
