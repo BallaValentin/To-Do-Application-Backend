@@ -17,6 +17,7 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("/api/todos")
+@CrossOrigin("http://localhost:5173")
 public class ToDoController {
     ToDoMapper toDoMapper;
     ToDoService toDoService;
