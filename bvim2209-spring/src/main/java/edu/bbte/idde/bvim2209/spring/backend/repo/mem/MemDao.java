@@ -6,6 +6,7 @@ import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -19,7 +20,7 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
     }
 
     @Override
-    public T findById(Long id) {
+    public T getById(Long id) {
         T entity = entities.get(id);
         if (entity == null) {
             throw new EntityNotFoundException("Entity with ID " + id + " not found in memory");
@@ -28,13 +29,14 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
     }
 
     @Override
-    public void create(T entity) throws IllegalArgumentException {
+    public T saveAndFlush(T entity) throws IllegalArgumentException {
         if (entity.getId() == null) {
             entity.setId(idCounter.getAndIncrement());
         } else if (entities.containsKey(entity.getId())) {
             throw new IllegalArgumentException("Entity with ID " + entity.getId() + " already exists");
         }
         entities.put(entity.getId(), entity);
+        return entity;
     }
 
     @Override
@@ -48,7 +50,7 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
     }
 
     @Override
-    public void delete(Long id) throws EntityNotFoundException {
+    public void deleteById(Long id) throws EntityNotFoundException {
         if (entities.containsKey(id)) {
             entities.remove(id);
         } else {

@@ -19,9 +19,6 @@ import java.util.Objects;
 @Setter
 @EqualsAndHashCode
 public abstract class BaseEntity implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;

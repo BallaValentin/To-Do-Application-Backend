@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 public class ToDoServiceImpl implements ToDoService {
@@ -21,7 +22,7 @@ public class ToDoServiceImpl implements ToDoService {
     @Override
     public void createToDo(ToDo toDo) throws IllegalArgumentException {
         validateToDo(toDo);
-        toDoDao.create(toDo);
+        toDoDao.saveAndFlush(toDo);
     }
 
     @Override
@@ -32,12 +33,12 @@ public class ToDoServiceImpl implements ToDoService {
 
     @Override
     public void deleteToDo(Long id) throws EntityNotFoundException {
-        toDoDao.delete(id);
+        toDoDao.deleteById(id);
     }
 
     @Override
-    public ToDo findById(Long id) throws EntityNotFoundException {
-        return toDoDao.findById(id);
+    public ToDo  getById(Long id) throws EntityNotFoundException {
+        return toDoDao.getById(id);
     }
 
     private void validateToDo(ToDo toDo) {
@@ -78,6 +79,6 @@ public class ToDoServiceImpl implements ToDoService {
 
     @Override
     public Collection<ToDo> findByImportance(Integer levelOfImportance) {
-        return toDoDao.findByImportance(levelOfImportance);
+        return toDoDao.findByLevelOfImportance(levelOfImportance);
     }
 }

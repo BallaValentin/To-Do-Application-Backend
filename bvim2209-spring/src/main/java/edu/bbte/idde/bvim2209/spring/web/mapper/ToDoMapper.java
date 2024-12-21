@@ -7,6 +7,7 @@ import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Mapper(componentModel = "spring")
 public  abstract class ToDoMapper {

@@ -5,6 +5,7 @@ import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.Optional;
 
 public interface ToDoService {
     void createToDo(ToDo toDo) throws ParseException, IllegalArgumentException;
@@ -13,7 +14,7 @@ public interface ToDoService {
 
     void deleteToDo(Long id) throws EntityNotFoundException, ParseException;
 
-    ToDo findById(Long id) throws EntityNotFoundException;
+    ToDo getById(Long id) throws EntityNotFoundException;
 
     Collection<ToDo> findAll();
 

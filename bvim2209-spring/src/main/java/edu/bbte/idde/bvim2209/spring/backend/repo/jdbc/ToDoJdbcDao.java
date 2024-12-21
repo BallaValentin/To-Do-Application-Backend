@@ -132,7 +132,7 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
     }
 
     @Override
-    public Collection<ToDo> findByImportance(Integer levelOfImportance) {
+    public Collection<ToDo> findByLevelOfImportance(Integer levelOfImportance) {
         Collection<ToDo> toDos = new ArrayList<>();
         String query = "SELECT * FROM ToDo WHERE ImportanceLevel = ?";
         try (

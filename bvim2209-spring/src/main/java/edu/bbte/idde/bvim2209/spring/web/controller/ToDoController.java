@@ -41,7 +41,7 @@ public class ToDoController {
 
     @GetMapping("/{toDoId}")
     public ToDoResponseDTO getTodo(@PathVariable("toDoId") Long id) {
-        ToDo toDo = toDoService.findById(id);
+        ToDo toDo = toDoService.getById(id);
         return toDoMapper.modelToResponseDTO(toDo);
     }
 

@@ -13,7 +13,8 @@ import java.util.Date;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString
-@Table(name = "ToDo")
+@Entity
+@Table(name = "db_todo")
 public class ToDo extends BaseEntity {
 
     @Column(nullable = false)
