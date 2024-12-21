@@ -1,4 +1,4 @@
-package edu.bbte.idde.bvim2209.spring.web.dto;
+package edu.bbte.idde.bvim2209.spring.web.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;

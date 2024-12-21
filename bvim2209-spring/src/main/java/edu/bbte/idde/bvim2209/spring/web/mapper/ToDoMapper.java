@@ -1,13 +1,12 @@
 package edu.bbte.idde.bvim2209.spring.web.mapper;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
-import edu.bbte.idde.bvim2209.spring.web.dto.ToDoRequestDTO;
-import edu.bbte.idde.bvim2209.spring.web.dto.ToDoResponseDTO;
+import edu.bbte.idde.bvim2209.spring.web.dto.request.ToDoRequestDTO;
+import edu.bbte.idde.bvim2209.spring.web.dto.response.ToDoResponseDTO;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Mapper(componentModel = "spring")
 public  abstract class ToDoMapper {

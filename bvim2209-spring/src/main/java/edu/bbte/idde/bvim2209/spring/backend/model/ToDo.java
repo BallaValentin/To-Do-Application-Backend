@@ -1,10 +1,10 @@
 package edu.bbte.idde.bvim2209.spring.backend.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 @Getter
@@ -12,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@ToString
+@ToString(callSuper = true)
 @Entity
 @Table(name = "db_todo")
 public class ToDo extends BaseEntity {
@@ -25,6 +25,9 @@ public class ToDo extends BaseEntity {
     private Date dueDate;
     @Column(nullable = false)
     private Integer levelOfImportance;
+
+    @OneToMany(mappedBy = "toDo", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Collection<ToDoDetail> details = new ArrayList<>();
 
     public Date getDueDate() {
         return new Date(dueDate.getTime());
