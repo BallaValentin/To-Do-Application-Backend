@@ -2,6 +2,7 @@ package edu.bbte.idde.bvim2209.spring.web.dto.response;
 
 import lombok.Data;
 
+import java.util.Collection;
 import java.util.Date;
 
 @Data
@@ -11,4 +12,5 @@ public class ToDoResponseDTO {
     private String description;
     private Date dueDate;
     private Integer levelOfImportance;
+    private Collection<ToDoDetailResponseDTO> details;
 }
