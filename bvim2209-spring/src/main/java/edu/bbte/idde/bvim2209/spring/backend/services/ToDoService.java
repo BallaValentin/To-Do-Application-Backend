@@ -1,6 +1,7 @@
 package edu.bbte.idde.bvim2209.spring.backend.services;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
+import edu.bbte.idde.bvim2209.spring.backend.model.ToDoDetail;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 
 import java.text.ParseException;
@@ -18,4 +19,6 @@ public interface ToDoService {
     Collection<ToDo> findAll();
 
     Collection<ToDo> findByImportance(Integer importanceLevel);
+
+    void addDetailToToDo(Long id, ToDoDetail toDoDetail) throws EntityNotFoundException;
 }

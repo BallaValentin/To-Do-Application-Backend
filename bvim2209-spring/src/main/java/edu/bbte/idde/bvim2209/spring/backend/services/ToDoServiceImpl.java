@@ -1,22 +1,25 @@
 package edu.bbte.idde.bvim2209.spring.backend.services;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
+import edu.bbte.idde.bvim2209.spring.backend.model.ToDoDetail;
 import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDao;
+import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDetailDao;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Service
 public class ToDoServiceImpl implements ToDoService {
 
     private final ToDoDao toDoDao;
+    private final ToDoDetailDao toDoDetailDao;
 
     @Autowired
-    public ToDoServiceImpl(ToDoDao toDoDao) {
+    public ToDoServiceImpl(ToDoDao toDoDao, ToDoDetailDao toDoDetailDao) {
         this.toDoDao = toDoDao;
+        this.toDoDetailDao = toDoDetailDao;
     }
 
     @Override
@@ -80,5 +83,14 @@ public class ToDoServiceImpl implements ToDoService {
     @Override
     public Collection<ToDo> findByImportance(Integer levelOfImportance) {
         return toDoDao.findByLevelOfImportance(levelOfImportance);
+    }
+
+    @Override
+    public void addDetailToToDo(Long id, ToDoDetail toDoDetail) throws EntityNotFoundException {
+        ToDo toDo = getById(id);
+        toDo.getDetails().add(toDoDetail);
+        toDoDetail.setToDo(toDo);
+        toDoDetailDao.saveAndFlush(toDoDetail);
+        toDoDao.update(toDo);
     }
 }

@@ -11,7 +11,7 @@ import org.mapstruct.Mapper;
 import java.util.Collection;
 
 @Mapper(componentModel = "spring")
-public  abstract class ToDoMapper {
+public abstract class ToDoMapper {
     @IterableMapping(elementTargetType = ToDoResponseDTO.class)
     public abstract Collection<ToDoResponseDTO> modelsToResponseDTO(Iterable<ToDo> model);
 
