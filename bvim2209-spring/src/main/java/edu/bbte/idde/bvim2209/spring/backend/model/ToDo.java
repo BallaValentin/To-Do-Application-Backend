@@ -1,9 +1,9 @@
 package edu.bbte.idde.bvim2209.spring.backend.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.*;
 
 import java.util.Date;
 
@@ -11,27 +11,22 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ToString
+@Table(name = "ToDo")
 public class ToDo extends BaseEntity {
 
+    @Column(nullable = false)
     private String title;
+    @Column(nullable = false)
     private String description;
+    @Column(nullable = false)
     private Date dueDate;
+    @Column(nullable = false)
     private Integer levelOfImportance;
 
     public Date getDueDate() {
         return new Date(dueDate.getTime());
-    }
-
-    @Override
-    public String toString() {
-        final StringBuffer sb = new StringBuffer("ToDoList{");
-        sb.append("id=").append(id);
-        sb.append(", title='").append(title).append('\'');
-        sb.append(", description='").append(description).append('\'');
-        sb.append(", dueDate='").append(dueDate).append('\'');
-        sb.append(", levelOfImportance=").append(levelOfImportance);
-        sb.append('}');
-        return sb.toString();
     }
 
 }
