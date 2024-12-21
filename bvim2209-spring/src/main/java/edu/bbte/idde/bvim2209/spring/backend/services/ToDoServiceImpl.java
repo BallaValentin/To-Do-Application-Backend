@@ -93,4 +93,13 @@ public class ToDoServiceImpl implements ToDoService {
         toDoDetailDao.saveAndFlush(toDoDetail);
         toDoDao.update(toDo);
     }
+
+    @Override
+    public void deleteDetailById(Long toDoId, Long toDoDetailId) throws EntityNotFoundException {
+        ToDo toDo = getById(toDoId);
+        ToDoDetail toDoDetail = toDoDetailDao.getById(toDoDetailId);
+        toDo.getDetails().remove(toDoDetail);
+        toDoDao.update(toDo);
+        toDoDetailDao.deleteById(toDoDetailId);
+    }
 }

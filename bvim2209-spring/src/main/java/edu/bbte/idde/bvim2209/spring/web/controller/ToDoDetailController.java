@@ -49,4 +49,11 @@ public class ToDoDetailController {
                 toDoDetailMapper.modelToResponseDTO(toDoDetail)
         );
     }
+
+    @DeleteMapping("/{todo-id}/details/{todo-detail-id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteToDoDetail(
+            @PathVariable("todo-id") Long toDoId, @PathVariable("todo-detail-id") Long toDoDetailId) {
+        toDoService.deleteDetailById(toDoId, toDoDetailId);
+    }
 }
