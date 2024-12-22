@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class ToDoServiceImpl implements ToDoService {
@@ -83,6 +84,12 @@ public class ToDoServiceImpl implements ToDoService {
     @Override
     public Collection<ToDo> findByImportance(Integer levelOfImportance) {
         return toDoDao.findByLevelOfImportance(levelOfImportance);
+    }
+
+    @Override
+    public Collection<ToDoDetail> getDetails(Long id) {
+        ToDo toDo = getById(id);
+        return toDo.getDetails();
     }
 
     @Override

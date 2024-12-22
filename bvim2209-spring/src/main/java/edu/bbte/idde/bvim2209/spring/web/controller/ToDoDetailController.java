@@ -33,9 +33,7 @@ public class ToDoDetailController {
 
     @GetMapping("/{id}/details")
     public Collection<ToDoDetailResponseDTO> getToDetails(@PathVariable Long id) {
-        ToDo toDo = toDoService.getById(id);
-        Collection<ToDoDetail> details = toDo.getDetails();
-        return toDoMapper.detailsToResponseDTOs(details);
+        return toDoMapper.detailsToResponseDTOs(toDoService.getDetails(id));
     }
 
     @PostMapping("/{id}/details")

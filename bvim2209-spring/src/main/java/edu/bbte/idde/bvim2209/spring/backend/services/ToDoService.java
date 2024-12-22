@@ -20,6 +20,8 @@ public interface ToDoService {
 
     Collection<ToDo> findByImportance(Integer importanceLevel);
 
+    Collection<ToDoDetail> getDetails(Long id);
+
     void addDetailToToDo(Long id, ToDoDetail toDoDetail) throws EntityNotFoundException;
 
     void deleteDetailById(Long toDoId, Long toDoDetailId) throws EntityNotFoundException;
