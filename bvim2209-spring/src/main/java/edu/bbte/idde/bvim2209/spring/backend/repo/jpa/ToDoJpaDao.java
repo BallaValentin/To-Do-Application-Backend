@@ -12,9 +12,16 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @Profile("jpa")
-public interface ToDoJpaDao extends ToDoDao, JpaRepository<ToDo, Long>, edu.bbte.idde.bvim2209.spring.backend.repo.Dao<ToDo> {
+public interface ToDoJpaDao extends
+        ToDoDao, JpaRepository<ToDo, Long>, edu.bbte.idde.bvim2209.spring.backend.repo.Dao<ToDo> {
+    @Override
     @Modifying
     @Transactional
-    @Query("update ToDo t set t.title=:#{#toDo.title}, t.description=:#{#toDo.description}, t.dueDate=:#{#toDo.dueDate}, t.levelOfImportance=:#{#toDo.levelOfImportance} where t.id=:#{#toDo.id}")
+    @Query("update ToDo t "
+            + "set t.title=:#{#toDo.title}, "
+            + "t.description=:#{#toDo.description}, "
+            + "t.dueDate=:#{#toDo.dueDate}, "
+            + "t.levelOfImportance=:#{#toDo.levelOfImportance} "
+            + "where t.id=:#{#toDo.id}")
     void update(@Param("toDo") ToDo toDo);
 }

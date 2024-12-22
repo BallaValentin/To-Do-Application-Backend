@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
 
 @Slf4j
 public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {

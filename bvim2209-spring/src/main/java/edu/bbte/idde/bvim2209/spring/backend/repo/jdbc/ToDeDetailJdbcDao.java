@@ -20,6 +20,7 @@ public class ToDeDetailJdbcDao extends JdbcDao<ToDoDetail> implements ToDoDetail
 
     @Autowired
     public ToDeDetailJdbcDao(DataSource dataSource) {
+        super();
         this.dataSource = dataSource;
     }
 
@@ -34,7 +35,8 @@ public class ToDeDetailJdbcDao extends JdbcDao<ToDoDetail> implements ToDoDetail
     }
 
     @Override
-    protected void setStatementForInsertWithId(PreparedStatement preparedStatement, ToDoDetail entity) throws SQLException {
+    protected void setStatementForInsertWithId(
+            PreparedStatement preparedStatement, ToDoDetail entity) throws SQLException {
 
     }
 

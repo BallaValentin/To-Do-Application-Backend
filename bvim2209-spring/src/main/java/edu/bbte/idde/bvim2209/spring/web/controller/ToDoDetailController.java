@@ -1,6 +1,5 @@
 package edu.bbte.idde.bvim2209.spring.web.controller;
 
-import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDoDetail;
 import edu.bbte.idde.bvim2209.spring.backend.services.ToDoService;
 import edu.bbte.idde.bvim2209.spring.web.dto.request.ToDoDetailRequestDTO;
