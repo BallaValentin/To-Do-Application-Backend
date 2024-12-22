@@ -6,6 +6,7 @@ import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -19,12 +20,8 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
     }
 
     @Override
-    public T getById(Long id) {
-        T entity = entities.get(id);
-        if (entity == null) {
-            throw new EntityNotFoundException("Entity with ID " + id + " not found in memory");
-        }
-        return entity;
+    public Optional<T> findById(Long id) {
+        return Optional.ofNullable(entities.get(id));
     }
 
     @Override

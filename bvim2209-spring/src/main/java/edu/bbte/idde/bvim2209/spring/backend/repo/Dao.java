@@ -4,11 +4,12 @@ import edu.bbte.idde.bvim2209.spring.backend.model.BaseEntity;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface Dao<T extends BaseEntity> {
     Collection<T> findAll();
 
-    T getById(Long id) throws EntityNotFoundException;
+    Optional<T> findById(Long id);
 
     T saveAndFlush(T entity) throws IllegalArgumentException;
 

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 public class ToDoServiceImpl implements ToDoService {
@@ -30,18 +31,24 @@ public class ToDoServiceImpl implements ToDoService {
 
     @Override
     public void updateToDo(ToDo toDo) throws EntityNotFoundException, IllegalArgumentException {
+        validateId(toDo.getId());
         validateToDo(toDo);
         toDoDao.update(toDo);
     }
 
     @Override
     public void deleteToDo(Long id) throws EntityNotFoundException {
+        validateId(id);
         toDoDao.deleteById(id);
     }
 
     @Override
-    public ToDo  getById(Long id) throws EntityNotFoundException {
-        return toDoDao.getById(id);
+    public ToDo getById(Long id) throws EntityNotFoundException {
+        Optional<ToDo> toDo = toDoDao.findById(id);
+        if (toDo.isEmpty()) {
+            throw new EntityNotFoundException("ToDo with id " + id + " not found");
+        }
+        return toDo.get();
     }
 
     private void validateToDo(ToDo toDo) {
@@ -75,6 +82,10 @@ public class ToDoServiceImpl implements ToDoService {
         }
     }
 
+    private void validateId(Long id) {
+        getById(id);
+    }
+
     @Override
     public Collection<ToDo> findAll() {
         return toDoDao.findAll();
@@ -103,9 +114,13 @@ public class ToDoServiceImpl implements ToDoService {
     @Override
     public void deleteDetailById(Long toDoId, Long toDoDetailId) throws EntityNotFoundException {
         ToDo toDo = getById(toDoId);
-        ToDoDetail toDoDetail = toDoDetailDao.getById(toDoDetailId);
-        toDo.getDetails().remove(toDoDetail);
-        toDoDao.update(toDo);
-        toDoDetailDao.deleteById(toDoDetailId);
+        Optional<ToDoDetail> toDoDetail = toDoDetailDao.findById(toDoDetailId);
+        if (toDoDetail.isEmpty()) {
+            throw new EntityNotFoundException("ToDoDetail with id " + toDoDetailId + " not found");
+        } else {
+            toDo.getDetails().remove(toDoDetail.get());
+            toDoDao.update(toDo);
+            toDoDetailDao.deleteById(toDoDetailId);
+        }
     }
 }

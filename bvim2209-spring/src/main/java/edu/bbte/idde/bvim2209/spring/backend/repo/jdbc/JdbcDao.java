@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 @Slf4j
 public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
@@ -73,19 +74,16 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     }
 
     @Override
-    public T getById(Long id) throws EntityNotFoundException {
+    public Optional<T> findById(Long id) {
         log.info("Trying to find entity by id: {} in database", id);
         try (
                 PreparedStatement preparedStatement = prepareStatementForFindById(id)) {
             preparedStatement.setLong(getPrimaryKeyIndex(), id);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    log.info("Entity with id {} has been successfully found in database", id);
-                    return mapResultSetToEntity(resultSet);
-                } else {
-                    throw new EntityNotFoundException("Entity with ID " + id + " not found");
-                }
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(mapResultSetToEntity(resultSet));
             }
+            return Optional.empty();
         } catch (SQLException exception) {
             log.error("Error finding entity by ID in database", exception);
             throw new EntityNotFoundException("Entity with ID " + id + " not found.");
