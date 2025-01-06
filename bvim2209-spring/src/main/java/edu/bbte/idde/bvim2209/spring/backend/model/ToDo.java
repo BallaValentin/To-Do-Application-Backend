@@ -26,6 +26,10 @@ public class ToDo extends BaseEntity {
     @Column(nullable = false)
     private Integer levelOfImportance;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @OneToMany(mappedBy = "toDo", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Collection<ToDoDetail> details = new ArrayList<>();
 

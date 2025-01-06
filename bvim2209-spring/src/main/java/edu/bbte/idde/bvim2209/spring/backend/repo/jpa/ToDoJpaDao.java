@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Profile("jpa")
 public interface ToDoJpaDao extends
-        ToDoDao, JpaRepository<ToDo, Long>, edu.bbte.idde.bvim2209.spring.backend.repo.Dao<ToDo> {
+        ToDoDao, JpaRepository<ToDo, Long> {
     @Override
     @Modifying
     @Transactional
