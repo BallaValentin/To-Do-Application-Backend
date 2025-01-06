@@ -29,11 +29,9 @@ public class UserController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRegisterReqDTO requestDTO) {
+    public void createUser(@Valid @RequestBody UserRegisterReqDTO requestDTO) {
         User user = userMapper.registerDTOToModel(requestDTO);
         userService.registerUser(user);
-        URI createUri = URI.create("/api/users/" + user.getId());
-        return ResponseEntity.created(createUri).body(userMapper.userToResponseDTO(user));
     }
 
     @PostMapping("/login")

@@ -40,12 +40,12 @@ public class GeneralExceptionHandler {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
     public ErrorResponseDTO handleBadCredentials(
             BadCredentialsException exception, HttpServletRequest request) {
         LocalDateTime timestamp = LocalDateTime.now();
-        Integer statusCode = HttpStatus.BAD_REQUEST.value();
+        Integer statusCode = HttpStatus.UNAUTHORIZED.value();
         String error = exception.getMessage();
         String path = request.getRequestURI();
         return new ErrorResponseDTO(timestamp, statusCode, error, path);
