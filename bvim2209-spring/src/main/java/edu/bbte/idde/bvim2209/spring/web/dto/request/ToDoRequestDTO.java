@@ -24,8 +24,4 @@ public class ToDoRequestDTO {
     @NotNull(message = "LevelOfImportance cannot be null")
     @Positive(message = "LevelOfImportance level must be positive")
     private Integer levelOfImportance;
-
-    @NotNull(message = "Jwt token cannot be null")
-    @NotBlank(message = "Jwt token cannot be blank")
-    private String jwtToken;
 }

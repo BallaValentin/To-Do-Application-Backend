@@ -20,8 +20,4 @@ public class UserMemDao extends MemDao<User> implements UserDao {
         return Optional.empty();
     }
 
-    @Override
-    public Optional<User> findByJwtToken(String jwtToken) {
-        return Optional.empty();
-    }
 }

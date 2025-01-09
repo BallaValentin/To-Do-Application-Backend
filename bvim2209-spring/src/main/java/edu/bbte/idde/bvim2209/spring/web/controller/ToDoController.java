@@ -48,9 +48,10 @@ public class ToDoController {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ToDoResponseDTO> createToDo(
-            @Valid @RequestBody ToDoRequestDTO toDoDto) throws ParseException {
+            @Valid @RequestBody ToDoRequestDTO toDoDto,
+            @RequestHeader("Authorization") String authorizationHeader) throws ParseException {
         ToDo toDo = toDoMapper.requestDTOToModel(toDoDto);
-        String jwtToken = toDoDto.getJwtToken();
+        String jwtToken = authorizationHeader.substring(7);
         toDoService.createToDo(toDo, jwtToken);
         URI createURI = URI.create("api/todos/" + toDo.getId());
         return ResponseEntity.created(createURI).body(toDoMapper.modelToResponseDTO(toDo));
@@ -59,10 +60,11 @@ public class ToDoController {
     @PutMapping("/{toDoId}")
     public ResponseEntity<ToDoResponseDTO> updateToDo(
             @PathVariable("toDoId") Long id,
-            @Valid @RequestBody ToDoRequestDTO toDoDto) throws ParseException {
+            @Valid @RequestBody ToDoRequestDTO toDoDto,
+            @RequestHeader("Authorization") String authorizationHeader) throws ParseException {
         ToDo toDo = toDoMapper.requestDTOToModel(toDoDto);
         toDo.setId(id);
-        String jwtToken = toDoDto.getJwtToken();
+        String jwtToken = authorizationHeader.substring(7);
         toDoService.updateToDo(toDo, jwtToken);
         return ResponseEntity.ok().body(toDoMapper.modelToResponseDTO(toDo));
     }
@@ -71,7 +73,8 @@ public class ToDoController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteToDo(
             @PathVariable("toDoId") Long id,
-            @RequestBody String jwtToken) throws ParseException {
+            @RequestHeader("Authorization") String authorizationHeader) throws ParseException {
+        String jwtToken = authorizationHeader.substring(7);
         toDoService.deleteToDo(id, jwtToken);
     }
 }

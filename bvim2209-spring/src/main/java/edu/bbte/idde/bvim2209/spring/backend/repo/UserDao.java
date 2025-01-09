@@ -9,5 +9,4 @@ public interface UserDao extends Dao<User> {
 
     Optional<User> findByEmail(String email);
 
-    Optional<User> findByJwtToken(String jwtToken);
 }
