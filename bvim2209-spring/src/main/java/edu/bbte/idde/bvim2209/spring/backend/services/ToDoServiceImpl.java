@@ -12,6 +12,7 @@ import edu.bbte.idde.bvim2209.spring.web.util.JwtUtil;
 import edu.bbte.idde.bvim2209.spring.web.util.ToDoServiceUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -71,18 +72,22 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     private void validateToken(ToDo toDo, String jwtToken) {
-        Jws<Claims> parsedToken = jwtUtil.parseToken(jwtToken);
-        Date expirationDate = parsedToken.getBody().getExpiration();
-        if (expirationDate.after(new Date())) {
-            String username = parsedToken.getBody().getSubject();
-            Optional<User> user = userDao.findByUsername(username);
-            if (user.isEmpty()) {
-                throw new InvalidJwtException("Invalid JWT token");
+        try {
+            Jws<Claims> parsedToken = jwtUtil.parseToken(jwtToken);
+            Date expirationDate = parsedToken.getBody().getExpiration();
+            if (expirationDate.after(new Date())) {
+                String username = parsedToken.getBody().getSubject();
+                Optional<User> user = userDao.findByUsername(username);
+                if (user.isEmpty()) {
+                    throw new InvalidJwtException("Invalid JWT token");
+                } else {
+                    toDo.setUser(user.get());
+                }
             } else {
-                toDo.setUser(user.get());
+                throw new InvalidJwtException("Invalid JWT token");
             }
-        } else {
-            throw new InvalidJwtException("Expired JWT token");
+        } catch (JwtException exception) {
+            throw new InvalidJwtException("Invalid JWT token");
         }
     }
 
