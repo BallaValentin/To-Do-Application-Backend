@@ -6,13 +6,12 @@ import edu.bbte.idde.bvim2209.spring.web.dto.request.UserLoginReqDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.request.UserRegisterReqDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.response.UserResponseDTO;
 import edu.bbte.idde.bvim2209.spring.web.mapper.UserMapper;
+import edu.bbte.idde.bvim2209.spring.web.util.JwtUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
 
 @RestController
 @RequestMapping("/api/users")
@@ -20,9 +19,11 @@ import java.net.URI;
 public class UserController {
     UserMapper userMapper;
     UserService userService;
+    JwtUtil jwtUtil;
 
     @Autowired
     public UserController(UserMapper userMapper, UserService userService) {
+        jwtUtil = new JwtUtil();
         this.userMapper = userMapper;
         this.userService = userService;
     }
@@ -38,6 +39,9 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> loginUser(@Valid @RequestBody UserLoginReqDTO requestDTO) {
         User user = userMapper.loginDTOToModel(requestDTO);
         User user2 = userService.loginUser(user);
-        return ResponseEntity.ok(userMapper.userToResponseDTO(user2));
+        String jwtToken = jwtUtil.generateToken(user2.getUsername());
+        UserResponseDTO userResponseDTO = userMapper.userToResponseDTO(user2);
+        userResponseDTO.setJwtToken(jwtToken);
+        return ResponseEntity.ok(userResponseDTO);
     }
 }

@@ -82,4 +82,9 @@ public class UserJdbcDao extends JdbcDao<User> implements UserDao {
     public Optional<User> findByEmail(String email) {
         return Optional.empty();
     }
+
+    @Override
+    public Optional<User> findByJwtToken(String jwtToken) {
+        return Optional.empty();
+    }
 }

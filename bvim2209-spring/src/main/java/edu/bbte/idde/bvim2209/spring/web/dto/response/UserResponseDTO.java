@@ -7,4 +7,5 @@ public class UserResponseDTO {
     private Long id;
     private String username;
     private String fullname;
+    private String jwtToken;
 }

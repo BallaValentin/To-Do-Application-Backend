@@ -50,7 +50,8 @@ public class ToDoController {
     public ResponseEntity<ToDoResponseDTO> createToDo(
             @Valid @RequestBody ToDoRequestDTO toDoDto) throws ParseException {
         ToDo toDo = toDoMapper.requestDTOToModel(toDoDto);
-        toDoService.createToDo(toDo);
+        String jwtToken = toDoDto.getJwtToken();
+        toDoService.createToDo(toDo, jwtToken);
         URI createURI = URI.create("api/todos/" + toDo.getId());
         return ResponseEntity.created(createURI).body(toDoMapper.modelToResponseDTO(toDo));
     }
@@ -61,13 +62,16 @@ public class ToDoController {
             @Valid @RequestBody ToDoRequestDTO toDoDto) throws ParseException {
         ToDo toDo = toDoMapper.requestDTOToModel(toDoDto);
         toDo.setId(id);
-        toDoService.updateToDo(toDo);
+        String jwtToken = toDoDto.getJwtToken();
+        toDoService.updateToDo(toDo, jwtToken);
         return ResponseEntity.ok().body(toDoMapper.modelToResponseDTO(toDo));
     }
 
     @DeleteMapping("/{toDoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteToDo(@PathVariable("toDoId") Long id) throws ParseException {
-        toDoService.deleteToDo(id);
+    public void deleteToDo(
+            @PathVariable("toDoId") Long id,
+            @RequestBody String jwtToken) throws ParseException {
+        toDoService.deleteToDo(id, jwtToken);
     }
 }

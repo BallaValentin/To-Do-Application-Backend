@@ -8,4 +8,6 @@ public interface UserDao extends Dao<User> {
     Optional<User> findByUsername(String username);
 
     Optional<User> findByEmail(String email);
+
+    Optional<User> findByJwtToken(String jwtToken);
 }

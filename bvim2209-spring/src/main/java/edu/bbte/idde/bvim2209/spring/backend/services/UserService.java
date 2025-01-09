@@ -48,4 +48,5 @@ public class UserService {
             throw new BadCredentialsException("Invalid username or password");
         }
     }
+
 }

@@ -3,16 +3,20 @@ package edu.bbte.idde.bvim2209.spring.backend.services;
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDoDetail;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
+import edu.bbte.idde.bvim2209.spring.exceptions.InvalidJwtException;
 
 import java.text.ParseException;
 import java.util.Collection;
 
 public interface ToDoService {
-    void createToDo(ToDo toDo) throws ParseException, IllegalArgumentException;
+    void createToDo(ToDo toDo, String jwtToken) throws
+            ParseException, IllegalArgumentException, InvalidJwtException;
 
-    void updateToDo(ToDo toDo) throws EntityNotFoundException, ParseException;
+    void updateToDo(ToDo toDo, String jwtToken) throws
+            EntityNotFoundException, ParseException, InvalidJwtException;
 
-    void deleteToDo(Long id) throws EntityNotFoundException, ParseException;
+    void deleteToDo(Long id, String jwtToken) throws
+            EntityNotFoundException, ParseException, InvalidJwtException;
 
     ToDo getById(Long id) throws EntityNotFoundException;
 

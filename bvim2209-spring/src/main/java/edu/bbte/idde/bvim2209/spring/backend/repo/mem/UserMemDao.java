@@ -19,4 +19,9 @@ public class UserMemDao extends MemDao<User> implements UserDao {
     public Optional<User> findByEmail(String email) {
         return Optional.empty();
     }
+
+    @Override
+    public Optional<User> findByJwtToken(String jwtToken) {
+        return Optional.empty();
+    }
 }
