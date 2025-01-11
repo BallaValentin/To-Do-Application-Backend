@@ -8,6 +8,7 @@ import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDetailDao;
 import edu.bbte.idde.bvim2209.spring.backend.repo.UserDao;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.spring.exceptions.InvalidJwtException;
+import edu.bbte.idde.bvim2209.spring.exceptions.UnauthorizedException;
 import edu.bbte.idde.bvim2209.spring.web.util.JwtUtil;
 import edu.bbte.idde.bvim2209.spring.web.util.ToDoServiceUtil;
 import io.jsonwebtoken.Claims;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -40,7 +42,8 @@ public class ToDoServiceImpl implements ToDoService {
     public void createToDo(ToDo toDo, String jwtToken) throws
             IllegalArgumentException, InvalidJwtException, EntityNotFoundException {
         toDoServiceUtil.validateToDo(toDo);
-        validateToken(toDo, jwtToken);
+        User user = getUserFromToken(jwtToken);
+        toDo.setUser(user);
         toDoDao.saveAndFlush(toDo);
     }
 
@@ -49,8 +52,15 @@ public class ToDoServiceImpl implements ToDoService {
             EntityNotFoundException, IllegalArgumentException, InvalidJwtException {
         validateId(toDo.getId());
         toDoServiceUtil.validateToDo(toDo);
-        validateToken(toDo, jwtToken);
-        toDoDao.update(toDo);
+        Optional<ToDo> toDoToUpdate = toDoDao.findById(toDo.getId());
+        if (toDoToUpdate.isPresent()) {
+            User user = getUserFromToken(jwtToken);
+            if (Objects.equals(toDoToUpdate.get().getUser().getId(), user.getId())) {
+                toDoDao.update(toDo);
+            } else {
+                throw new UnauthorizedException("You are not allowed to update this entity");
+            }
+        }
     }
 
     @Override
@@ -58,8 +68,14 @@ public class ToDoServiceImpl implements ToDoService {
             EntityNotFoundException, InvalidJwtException {
         validateId(id);
         Optional<ToDo> toDo = toDoDao.findById(id);
-        toDo.ifPresent(todo -> validateToken(todo, jwtToken));
-        toDoDao.deleteById(id);
+        if (toDo.isPresent()) {
+            User user = getUserFromToken(jwtToken);
+            if (Objects.equals(toDo.get().getUser().getId(), user.getId())) {
+                toDoDao.deleteById(id);
+            } else {
+                throw new UnauthorizedException("You are not allowed to delete this entity");
+            }
+        }
     }
 
     @Override
@@ -71,17 +87,17 @@ public class ToDoServiceImpl implements ToDoService {
         return toDo.get();
     }
 
-    private void validateToken(ToDo toDo, String jwtToken) {
+    private User getUserFromToken(String jwtToken) {
         try {
             Jws<Claims> parsedToken = jwtUtil.parseToken(jwtToken);
             Date expirationDate = parsedToken.getBody().getExpiration();
             if (expirationDate.after(new Date())) {
-                String username = parsedToken.getBody().getSubject();
+                String username = parsedToken.getBody().getSubject().split("-")[0];
                 Optional<User> user = userDao.findByUsername(username);
                 if (user.isEmpty()) {
                     throw new InvalidJwtException("Invalid JWT token");
                 } else {
-                    toDo.setUser(user.get());
+                    return user.get();
                 }
             } else {
                 throw new InvalidJwtException("Invalid JWT token");

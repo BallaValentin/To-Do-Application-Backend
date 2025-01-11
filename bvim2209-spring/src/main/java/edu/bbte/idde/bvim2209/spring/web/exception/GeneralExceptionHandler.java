@@ -2,6 +2,7 @@ package edu.bbte.idde.bvim2209.spring.web.exception;
 
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.spring.exceptions.InvalidJwtException;
+import edu.bbte.idde.bvim2209.spring.exceptions.UnauthorizedException;
 import edu.bbte.idde.bvim2209.spring.web.dto.ErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -57,6 +58,19 @@ public class GeneralExceptionHandler {
     @ResponseBody
     public ErrorResponseDTO handleInvalidJwtException(
             InvalidJwtException exception, HttpServletRequest request
+    ) {
+        LocalDateTime timestamp = LocalDateTime.now();
+        Integer statusCode = HttpStatus.UNAUTHORIZED.value();
+        String error = exception.getMessage();
+        String path = request.getRequestURI();
+        return new ErrorResponseDTO(timestamp, statusCode, error, path);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ErrorResponseDTO handleUnauthorizedException(
+            UnauthorizedException exception, HttpServletRequest request
     ) {
         LocalDateTime timestamp = LocalDateTime.now();
         Integer statusCode = HttpStatus.UNAUTHORIZED.value();

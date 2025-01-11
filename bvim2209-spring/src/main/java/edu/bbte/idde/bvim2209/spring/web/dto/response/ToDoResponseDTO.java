@@ -12,5 +12,6 @@ public class ToDoResponseDTO {
     private String description;
     private Date dueDate;
     private Integer levelOfImportance;
+    private String createdBy;
     private Collection<ToDoDetailResponseDTO> details;
 }

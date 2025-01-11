@@ -39,7 +39,7 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> loginUser(@Valid @RequestBody UserLoginReqDTO requestDTO) {
         User user = userMapper.loginDTOToModel(requestDTO);
         User user2 = userService.loginUser(user);
-        String jwtToken = jwtUtil.generateToken(user2.getUsername());
+        String jwtToken = jwtUtil.generateToken(user2.getUsername(), user2.getFullname());
         UserResponseDTO userResponseDTO = userMapper.userToResponseDTO(user2);
         userResponseDTO.setJwtToken(jwtToken);
         return ResponseEntity.ok(userResponseDTO);

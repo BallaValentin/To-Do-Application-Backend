@@ -9,9 +9,9 @@ public class JwtUtil {
             "a6RTEew6dfwFDG7dv732vwveuGRTGfw23742dby32r42fvwefuef3ftv3SADVU32DEEHWFVU"
                     + "34YFV43RVF34VF3UFVFAJSHHbs2y8r723fewfvet3fv4fdsvgfru43byid243yfu4vevferfv";
 
-    public String generateToken(String username) {
+    public String generateToken(String username, String fullname) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(username + '-' + fullname)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10))
                 .signWith(SignatureAlgorithm.HS512, secret)
