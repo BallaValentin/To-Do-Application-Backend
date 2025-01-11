@@ -9,4 +9,5 @@ public class UserLoginReqDTO {
     private String username;
     @NotBlank(message = "Password cannot be blank")
     private String password;
+    private Boolean rememberMe;
 }

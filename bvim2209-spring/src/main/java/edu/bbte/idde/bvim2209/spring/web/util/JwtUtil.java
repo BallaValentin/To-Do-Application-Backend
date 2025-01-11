@@ -9,11 +9,11 @@ public class JwtUtil {
             "a6RTEew6dfwFDG7dv732vwveuGRTGfw23742dby32r42fvwefuef3ftv3SADVU32DEEHWFVU"
                     + "34YFV43RVF34VF3UFVFAJSHHbs2y8r723fewfvet3fv4fdsvgfru43byid243yfu4vevferfv";
 
-    public String generateToken(String username, String fullname) {
+    public String generateToken(String username, String fullname, Long age) {
         return Jwts.builder()
                 .setSubject(username + '-' + fullname)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10))
+                .setExpiration(new Date(System.currentTimeMillis() + age))
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
     }
