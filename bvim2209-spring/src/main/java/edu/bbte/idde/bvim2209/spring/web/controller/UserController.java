@@ -4,6 +4,8 @@ import edu.bbte.idde.bvim2209.spring.backend.model.User;
 import edu.bbte.idde.bvim2209.spring.backend.services.UserService;
 import edu.bbte.idde.bvim2209.spring.web.dto.request.UserLoginReqDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.request.UserRegisterReqDTO;
+import edu.bbte.idde.bvim2209.spring.web.dto.request.UserUpdateDTO;
+import edu.bbte.idde.bvim2209.spring.web.dto.response.AdminUserRespDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.response.UserResponseDTO;
 import edu.bbte.idde.bvim2209.spring.web.mapper.UserMapper;
 import edu.bbte.idde.bvim2209.spring.web.util.JwtUtil;
@@ -13,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/api/users")
@@ -46,12 +50,41 @@ public class UserController {
         String jwtToken;
         if (requestDTO.getRememberMe()) {
             jwtToken = jwtUtil.generateToken(
-                    user2.getUsername(), user2.getFullname(), user2.getRole(),  60000 * 1440 * 365L);
+                    user2.getUsername(), user2.getFullname(), user2.getRole(), 60000 * 1440 * 365L);
         } else {
             jwtToken = jwtUtil.generateToken(
                     user2.getUsername(), user2.getFullname(), user2.getRole(), 600000L);
         }
         userResponseDTO.setJwtToken(jwtToken);
         return ResponseEntity.ok(userResponseDTO);
+    }
+
+    @GetMapping
+    public Collection<AdminUserRespDTO> getAllUsers(
+            @RequestHeader("Authorization") String authorizationHeader
+    ) {
+        String jwtToken = authorizationHeader.substring(7);
+        Collection<User> users = userService.getAllUsers(jwtToken);
+        return userMapper.usersToAdminRespDTOs(users);
+    }
+
+    @DeleteMapping("/userId")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUser(@RequestParam Long userId,
+            @RequestHeader("Authorization") String authorizationHeader
+    ) {
+        String jwtToken = authorizationHeader.substring(7);
+        User user = userService.getById(userId);
+        userService.deleteUser(user, jwtToken);
+    }
+
+    @PutMapping("/{userId}")
+    public void updateUser(@RequestParam Long userId,
+                           @Valid @RequestBody UserUpdateDTO userUpdateDTO,
+                           @RequestHeader("Authorization") String authorizationHeader
+    ) {
+        String newRole = userUpdateDTO.getRole();
+        String jwtToken = authorizationHeader.substring(7);
+        userService.updateUser(userId, newRole, jwtToken);
     }
 }

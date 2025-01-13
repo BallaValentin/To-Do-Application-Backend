@@ -20,7 +20,8 @@ public interface UserJpaDao extends JpaRepository<User, Long>, UserDao {
             + "set u.username=:#{#user.username}, "
             + "u.fullname=:#{#user.fullname}, "
             + "u.email=:#{#user.email}, "
-            + "u.password=:#{#user.password} "
+            + "u.password=:#{#user.password}, "
+            + "u.role=:#{#user.role} "
             + "where u.id=:#{#user.id}")
     void update(@Param("user") User user);
 }

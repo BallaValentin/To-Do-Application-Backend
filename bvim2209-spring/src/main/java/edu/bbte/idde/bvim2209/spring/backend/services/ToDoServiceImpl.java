@@ -5,20 +5,14 @@ import edu.bbte.idde.bvim2209.spring.backend.model.ToDoDetail;
 import edu.bbte.idde.bvim2209.spring.backend.model.User;
 import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDao;
 import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDetailDao;
-import edu.bbte.idde.bvim2209.spring.backend.repo.UserDao;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.spring.exceptions.InvalidJwtException;
 import edu.bbte.idde.bvim2209.spring.exceptions.UnauthorizedException;
-import edu.bbte.idde.bvim2209.spring.web.util.JwtUtil;
 import edu.bbte.idde.bvim2209.spring.web.util.ToDoServiceUtil;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -27,13 +21,13 @@ public class ToDoServiceImpl implements ToDoService {
 
     private final ToDoDao toDoDao;
     private final ToDoDetailDao toDoDetailDao;
-    private final UserDao userDao;
-    private final JwtUtil jwtUtil = new JwtUtil();
     private final ToDoServiceUtil toDoServiceUtil = new ToDoServiceUtil();
+    private final UserService userService;
 
     @Autowired
-    public ToDoServiceImpl(ToDoDao toDoDao, ToDoDetailDao toDoDetailDao, UserDao userDao) {
-        this.userDao = userDao;
+    public ToDoServiceImpl(
+            ToDoDao toDoDao, ToDoDetailDao toDoDetailDao, UserService userService) {
+        this.userService = userService;
         this.toDoDao = toDoDao;
         this.toDoDetailDao = toDoDetailDao;
     }
@@ -42,7 +36,7 @@ public class ToDoServiceImpl implements ToDoService {
     public void createToDo(ToDo toDo, String jwtToken) throws
             IllegalArgumentException, InvalidJwtException, EntityNotFoundException {
         toDoServiceUtil.validateToDo(toDo);
-        User user = getUserFromToken(jwtToken);
+        User user = userService.getUserFromToken(jwtToken);
         toDo.setUser(user);
         toDoDao.saveAndFlush(toDo);
     }
@@ -54,7 +48,7 @@ public class ToDoServiceImpl implements ToDoService {
         toDoServiceUtil.validateToDo(toDo);
         Optional<ToDo> toDoToUpdate = toDoDao.findById(toDo.getId());
         if (toDoToUpdate.isPresent()) {
-            User user = getUserFromToken(jwtToken);
+            User user = userService.getUserFromToken(jwtToken);
             if (Objects.equals(toDoToUpdate.get().getUser().getId(), user.getId())) {
                 toDoDao.update(toDo);
             } else {
@@ -69,7 +63,7 @@ public class ToDoServiceImpl implements ToDoService {
         validateId(id);
         Optional<ToDo> toDo = toDoDao.findById(id);
         if (toDo.isPresent()) {
-            User user = getUserFromToken(jwtToken);
+            User user = userService.getUserFromToken(jwtToken);
             if (Objects.equals(toDo.get().getUser().getId(), user.getId())) {
                 toDoDao.deleteById(id);
             } else {
@@ -85,26 +79,6 @@ public class ToDoServiceImpl implements ToDoService {
             throw new EntityNotFoundException("ToDo with id " + id + " not found");
         }
         return toDo.get();
-    }
-
-    private User getUserFromToken(String jwtToken) {
-        try {
-            Jws<Claims> parsedToken = jwtUtil.parseToken(jwtToken);
-            Date expirationDate = parsedToken.getBody().getExpiration();
-            if (expirationDate.after(new Date())) {
-                String username = parsedToken.getBody().getSubject().split("-")[0];
-                Optional<User> user = userDao.findByUsername(username);
-                if (user.isEmpty()) {
-                    throw new InvalidJwtException("Invalid JWT token");
-                } else {
-                    return user.get();
-                }
-            } else {
-                throw new InvalidJwtException("Invalid JWT token");
-            }
-        } catch (JwtException exception) {
-            throw new InvalidJwtException("Invalid JWT token");
-        }
     }
 
     private void validateId(Long id) {

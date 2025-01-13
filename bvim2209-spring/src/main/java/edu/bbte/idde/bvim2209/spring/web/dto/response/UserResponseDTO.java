@@ -8,4 +8,5 @@ public class UserResponseDTO {
     private String username;
     private String fullname;
     private String jwtToken;
+    private String role;
 }
