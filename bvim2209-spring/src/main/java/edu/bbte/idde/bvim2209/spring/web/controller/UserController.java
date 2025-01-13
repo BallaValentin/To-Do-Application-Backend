@@ -34,6 +34,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createUser(@Valid @RequestBody UserRegisterReqDTO requestDTO) {
         User user = userMapper.registerDTOToModel(requestDTO);
+        user.setRole("user");
         userService.registerUser(user);
     }
 
@@ -44,13 +45,11 @@ public class UserController {
         UserResponseDTO userResponseDTO = userMapper.userToResponseDTO(user2);
         String jwtToken;
         if (requestDTO.getRememberMe()) {
-            log.debug("RememberMe is true");
             jwtToken = jwtUtil.generateToken(
-                    user2.getUsername(), user2.getFullname(), 60000 * 1440 * 365L);
+                    user2.getUsername(), user2.getFullname(), user2.getRole(),  60000 * 1440 * 365L);
         } else {
-            log.debug("RememberMe is false");
             jwtToken = jwtUtil.generateToken(
-                    user2.getUsername(), user2.getFullname(), 600000L);
+                    user2.getUsername(), user2.getFullname(), user2.getRole(), 600000L);
         }
         userResponseDTO.setJwtToken(jwtToken);
         return ResponseEntity.ok(userResponseDTO);
