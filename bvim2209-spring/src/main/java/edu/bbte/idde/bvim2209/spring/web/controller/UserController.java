@@ -65,13 +65,13 @@ public class UserController {
         return userMapper.usersToAdminRespDTOs(users);
     }
 
-    @DeleteMapping("/userId")
+    @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@RequestParam Long userId,
+    public void deleteUser(@PathVariable("userId") Long id,
             @RequestHeader("Authorization") String authorizationHeader
     ) {
         String jwtToken = authorizationHeader.substring(7);
-        User user = userService.getById(userId);
+        User user = userService.getById(id);
         userService.deleteUser(user, jwtToken);
     }
 }

@@ -8,4 +8,5 @@ public class AdminUserRespDTO {
     String fullname;
     String username;
     String email;
+    String role;
 }

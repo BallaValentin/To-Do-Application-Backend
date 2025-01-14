@@ -100,10 +100,14 @@ public class UserService {
 
     public void deleteUser(User user, String jwtToken) {
         User userFromToken = getUserFromToken(jwtToken);
-        if ("admin".equals(userFromToken.getRole())) {
-            userDao.deleteById(user.getId());
+        if (user.equals(userFromToken)) {
+            throw new UnauthorizedException("You are not authorized to delete this User");
         } else {
-            throw new UnauthorizedException("You are not an admin");
+            if ("admin".equals(userFromToken.getRole())) {
+                userDao.deleteById(user.getId());
+            } else {
+                throw new UnauthorizedException("You are not an admin");
+            }
         }
     }
 }
