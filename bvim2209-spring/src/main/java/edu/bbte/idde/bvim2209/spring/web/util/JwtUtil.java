@@ -11,8 +11,7 @@ public class JwtUtil {
 
     public String generateToken(String username, String fullname, String role, Long age) {
         return Jwts.builder()
-                .claim("role", role)
-                .setSubject(username + '-' + fullname)
+                .setSubject(username + '|' + fullname + '|' + role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + age))
                 .signWith(SignatureAlgorithm.HS512, secret)

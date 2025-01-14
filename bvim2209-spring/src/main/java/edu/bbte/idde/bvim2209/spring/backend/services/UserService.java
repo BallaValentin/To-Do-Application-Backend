@@ -9,6 +9,7 @@ import edu.bbte.idde.bvim2209.spring.web.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +20,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class UserService {
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
@@ -35,7 +37,7 @@ public class UserService {
             Jws<Claims> parsedToken = jwtUtil.parseToken(jwtToken);
             Date expirationDate = parsedToken.getBody().getExpiration();
             if (expirationDate.after(new Date())) {
-                String username = parsedToken.getBody().getSubject().split("-")[0];
+                String username = parsedToken.getBody().getSubject().split("\\|")[0];
                 Optional<User> user = userDao.findByUsername(username);
                 if (user.isEmpty()) {
                     throw new InvalidJwtException("Invalid JWT token");
@@ -81,14 +83,10 @@ public class UserService {
 
     public Collection<User> getAllUsers(String jwtToken) {
         User userFromToken = getUserFromToken(jwtToken);
-        if (userFromToken != null) {
-            if ("admin".equals(userFromToken.getRole())) {
-                return userDao.findAll();
-            } else {
-                throw new BadCredentialsException("You are not an admin");
-            }
+        if ("admin".equals(userFromToken.getRole())) {
+            return userDao.findAll();
         } else {
-            throw new BadCredentialsException("Invalid JWT token");
+            throw new UnauthorizedException("You are not an admin");
         }
     }
 
@@ -102,30 +100,10 @@ public class UserService {
 
     public void deleteUser(User user, String jwtToken) {
         User userFromToken = getUserFromToken(jwtToken);
-        if (userFromToken == null) {
-            throw new BadCredentialsException("Invalid JWT token");
+        if ("admin".equals(userFromToken.getRole())) {
+            userDao.deleteById(user.getId());
         } else {
-            if ("admin".equals(userFromToken.getRole())) {
-                userDao.deleteById(user.getId());
-            } else {
-                throw new BadCredentialsException("You are not an admin");
-            }
+            throw new UnauthorizedException("You are not an admin");
         }
     }
-
-    public void updateUser(Long id, String newRole, String jwtToken) {
-        User userFromToken = getUserFromToken(jwtToken);
-        if (userFromToken == null) {
-            throw new BadCredentialsException("Invalid JWT token");
-        } else {
-            if ("admin".equals(userFromToken.getRole())) {
-                User user = getById(id);
-                user.setRole(newRole);
-                userDao.update(user);
-            } else {
-                throw new UnauthorizedException("You are not an admin");
-            }
-        }
-    }
-
 }

@@ -4,13 +4,11 @@ import edu.bbte.idde.bvim2209.spring.backend.model.User;
 import edu.bbte.idde.bvim2209.spring.backend.services.UserService;
 import edu.bbte.idde.bvim2209.spring.web.dto.request.UserLoginReqDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.request.UserRegisterReqDTO;
-import edu.bbte.idde.bvim2209.spring.web.dto.request.UserUpdateDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.response.AdminUserRespDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.response.UserResponseDTO;
 import edu.bbte.idde.bvim2209.spring.web.mapper.UserMapper;
 import edu.bbte.idde.bvim2209.spring.web.util.JwtUtil;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +19,6 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin("http://localhost:5173")
-@Slf4j
 public class UserController {
     UserMapper userMapper;
     UserService userService;
@@ -59,7 +56,7 @@ public class UserController {
         return ResponseEntity.ok(userResponseDTO);
     }
 
-    @GetMapping
+    @GetMapping()
     public Collection<AdminUserRespDTO> getAllUsers(
             @RequestHeader("Authorization") String authorizationHeader
     ) {
@@ -76,15 +73,5 @@ public class UserController {
         String jwtToken = authorizationHeader.substring(7);
         User user = userService.getById(userId);
         userService.deleteUser(user, jwtToken);
-    }
-
-    @PutMapping("/{userId}")
-    public void updateUser(@RequestParam Long userId,
-                           @Valid @RequestBody UserUpdateDTO userUpdateDTO,
-                           @RequestHeader("Authorization") String authorizationHeader
-    ) {
-        String newRole = userUpdateDTO.getRole();
-        String jwtToken = authorizationHeader.substring(7);
-        userService.updateUser(userId, newRole, jwtToken);
     }
 }
