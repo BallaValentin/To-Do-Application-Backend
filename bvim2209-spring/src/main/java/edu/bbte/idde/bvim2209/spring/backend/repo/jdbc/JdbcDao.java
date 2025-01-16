@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 @Slf4j
 public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
@@ -61,32 +62,28 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     }
 
     @Override
-    public void create(T entity) throws IllegalArgumentException {
+    public T saveAndFlush(T entity) throws IllegalArgumentException {
         log.info("Trying to insert new entity in database");
 
         if (entity.getId() != null && !findAll().contains(entity)) {
             log.debug("Inserting new entity with id in database");
-            createWithId(entity);
+            return createWithId(entity);
         } else {
-            createWithoutId(entity);
+            return createWithoutId(entity);
         }
-        log.info("New entity has been successfully inserted into database");
     }
 
     @Override
-    public T findById(Long id) throws EntityNotFoundException {
+    public Optional<T> findById(Long id) {
         log.info("Trying to find entity by id: {} in database", id);
         try (
                 PreparedStatement preparedStatement = prepareStatementForFindById(id)) {
             preparedStatement.setLong(getPrimaryKeyIndex(), id);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    log.info("Entity with id {} has been successfully found in database", id);
-                    return mapResultSetToEntity(resultSet);
-                } else {
-                    throw new EntityNotFoundException("Entity with ID " + id + " not found");
-                }
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(mapResultSetToEntity(resultSet));
             }
+            return Optional.empty();
         } catch (SQLException exception) {
             log.error("Error finding entity by ID in database", exception);
             throw new EntityNotFoundException("Entity with ID " + id + " not found.");
@@ -111,7 +108,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     }
 
     @Override
-    public void delete(Long id) throws EntityNotFoundException {
+    public void deleteById(Long id) throws EntityNotFoundException {
         log.info("Trying to delete entity with id {} from database", id);
         try (
                 PreparedStatement preparedStatement = prepareStatementForDeleteById(id)) {
@@ -127,7 +124,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
         log.info("Entity with id {} has been successfully deleted from database", id);
     }
 
-    private void createWithoutId(T entity) {
+    private T createWithoutId(T entity) {
         try (
                 PreparedStatement preparedStatement = prepareStatementForInsert()
         ) {
@@ -140,21 +137,29 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
                     }
                 }
             }
+            logEntityCreated();
+            return entity;
         } catch (SQLException exception) {
             log.error("Error creating entity in database", exception);
             throw new IllegalArgumentException("Could not create entity", exception);
         }
     }
 
-    private void createWithId(T entity) {
+    private T createWithId(T entity) {
         try (
                 PreparedStatement preparedStatement = prepareStatementForInsertWithId()
         ) {
             setStatementForInsertWithId(preparedStatement, entity);
             preparedStatement.executeUpdate();
+            logEntityCreated();
+            return entity;
         } catch (SQLException exception) {
             log.error("Error creating entity in database", exception);
             throw new IllegalArgumentException("Could not create entity", exception);
         }
+    }
+
+    private void logEntityCreated() {
+        log.info("New entity has been successfully inserted into database");
     }
 }

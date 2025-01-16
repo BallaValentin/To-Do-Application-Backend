@@ -10,10 +10,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Repository
-@Profile("!jdbc")
+@Profile("!jdbc && !jpa")
 public class ToDoMemDao extends MemDao<ToDo> implements ToDoDao {
     @Override
-    public Collection<ToDo> findByImportance(Integer levelOfImportance) {
+    public Collection<ToDo> findByLevelOfImportance(Integer levelOfImportance) {
         return entities
                 .values()
                 .stream()
