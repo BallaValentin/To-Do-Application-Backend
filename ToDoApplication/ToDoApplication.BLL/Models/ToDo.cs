@@ -8,15 +8,11 @@ using System.Threading.Tasks;
 public class ToDo
 {
     [Key]
-    private long Id { get; set; }
-    [Required]
-    private string Title { get; set; }
-    [Required]
-    private string Description { get; set; }
-    [Required]
-    private DateOnly dueDate { get; set; }
-    [Required]
-    private int Priority { get; set; }
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public DateOnly DueDate { get; set; }
+    public int Priority { get; set; }
 
-    private List<ToDoDetail> Details { get; set; }
+    public List<ToDoDetail> Details { get; set; } = new List<ToDoDetail>();
 }

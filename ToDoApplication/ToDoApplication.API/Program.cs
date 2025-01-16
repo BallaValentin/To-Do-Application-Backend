@@ -15,8 +15,8 @@ public class Program
 
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
         builder.Services.AddDbContext<ToDoDbContext>(options =>
-        options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
-        );
+        options.UseSqlServer(connectionString)
+        ) ;
 
         var app = builder.Build();
 
