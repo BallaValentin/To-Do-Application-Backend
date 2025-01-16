@@ -6,15 +6,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class ToDoDetail
+namespace ToDoApplication.BLL.Models
 {
-    [Key]
-    public int Id { get; set; }
+    public class ToDoDetail
+    {
+        [Key]
+        public int Id { get; set; }
 
-    [ForeignKey("ToDo")]
-    public int ToDoId { get; set; }
+        [ForeignKey("ToDo")]
+        public int ToDoId { get; set; }
 
-    public virtual ToDo ToDo { get; set; }
+        public virtual ToDo ToDo { get; set; }
 
-    public string Text { get; set; }
+        public string Text { get; set; }
+    }
 }

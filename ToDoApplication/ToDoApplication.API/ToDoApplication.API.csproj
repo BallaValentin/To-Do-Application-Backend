@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.1" />
@@ -19,6 +20,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ToDoApplication.BLL\ToDoApplication.BLL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DTOs\Get\ToDoDetail\" />
+    <Folder Include="DTOs\Post\ToDoDetail\" />
+    <Folder Include="DTOs\Put\ToDo\" />
   </ItemGroup>
 
 </Project>
