@@ -14,7 +14,7 @@ namespace ToDoApplication.BLL.Contexts
         {
             var optionsBuilder = new DbContextOptionsBuilder<ToDoDbContext>();
 
-            optionsBuilder.UseSqlServer("YourConnectionString");
+            optionsBuilder.UseSqlServer("Server=DESKTOP-7289R3V;Database=ToDoDatabase;Trusted_Connection=True;TrustServerCertificate=True;");
 
             return new ToDoDbContext(optionsBuilder.Options);
         }

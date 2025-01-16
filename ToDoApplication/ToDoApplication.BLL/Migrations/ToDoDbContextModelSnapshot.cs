@@ -22,7 +22,7 @@ namespace ToDoApplication.BLL.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ToDo", b =>
+            modelBuilder.Entity("ToDoApplication.BLL.Models.ToDo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -49,7 +49,7 @@ namespace ToDoApplication.BLL.Migrations
                     b.ToTable("ToDos");
                 });
 
-            modelBuilder.Entity("ToDoDetail", b =>
+            modelBuilder.Entity("ToDoApplication.BLL.Models.ToDoDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -71,9 +71,9 @@ namespace ToDoApplication.BLL.Migrations
                     b.ToTable("ToDoDetails");
                 });
 
-            modelBuilder.Entity("ToDoDetail", b =>
+            modelBuilder.Entity("ToDoApplication.BLL.Models.ToDoDetail", b =>
                 {
-                    b.HasOne("ToDo", "ToDo")
+                    b.HasOne("ToDoApplication.BLL.Models.ToDo", "ToDo")
                         .WithMany("Details")
                         .HasForeignKey("ToDoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -82,7 +82,7 @@ namespace ToDoApplication.BLL.Migrations
                     b.Navigation("ToDo");
                 });
 
-            modelBuilder.Entity("ToDo", b =>
+            modelBuilder.Entity("ToDoApplication.BLL.Models.ToDo", b =>
                 {
                     b.Navigation("Details");
                 });

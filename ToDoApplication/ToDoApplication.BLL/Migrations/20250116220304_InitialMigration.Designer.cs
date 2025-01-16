@@ -12,8 +12,8 @@ using ToDoApplication.BLL.Contexts;
 namespace ToDoApplication.BLL.Migrations
 {
     [DbContext(typeof(ToDoDbContext))]
-    [Migration("20250116192348_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250116220304_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace ToDoApplication.BLL.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ToDo", b =>
+            modelBuilder.Entity("ToDoApplication.BLL.Models.ToDo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -52,7 +52,7 @@ namespace ToDoApplication.BLL.Migrations
                     b.ToTable("ToDos");
                 });
 
-            modelBuilder.Entity("ToDoDetail", b =>
+            modelBuilder.Entity("ToDoApplication.BLL.Models.ToDoDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -74,9 +74,9 @@ namespace ToDoApplication.BLL.Migrations
                     b.ToTable("ToDoDetails");
                 });
 
-            modelBuilder.Entity("ToDoDetail", b =>
+            modelBuilder.Entity("ToDoApplication.BLL.Models.ToDoDetail", b =>
                 {
-                    b.HasOne("ToDo", "ToDo")
+                    b.HasOne("ToDoApplication.BLL.Models.ToDo", "ToDo")
                         .WithMany("Details")
                         .HasForeignKey("ToDoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -85,7 +85,7 @@ namespace ToDoApplication.BLL.Migrations
                     b.Navigation("ToDo");
                 });
 
-            modelBuilder.Entity("ToDo", b =>
+            modelBuilder.Entity("ToDoApplication.BLL.Models.ToDo", b =>
                 {
                     b.Navigation("Details");
                 });
