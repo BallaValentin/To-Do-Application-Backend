@@ -41,5 +41,14 @@ namespace ToDoApplication.API.Controllers
             var toDosDto = Mapper.Map<List<GetToDoDTO>>(toDosBll);
             return toDosDto;
         }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType<List<GetToDoDTO>>(StatusCodes.Status200OK)]
+        public async Task<ActionResult<GetToDoDTO>> GetToDoById(int id)
+        {
+            var toDoBll = await Manager.GetToDoByIdAsync(id);
+            var toDoDto = Mapper.Map<GetToDoDTO>(toDoBll);
+            return toDoDto;
+        }
     }
 }
