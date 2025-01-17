@@ -55,12 +55,20 @@ namespace ToDoApplication.API.Controllers
 
         [HttpPut("{id}")]
         [ProducesResponseType<GetToDoDTO>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<GetToDoDTO>> UpdateToDoById(PutToDoDTO toDoDTO, int id)
+        public async Task<ActionResult<GetToDoDTO>> UpdateToDoById([FromBody] PutToDoDTO toDoDTO, int id)
         {
             var toDoBll = Mapper.Map<PutToDoBLL>(toDoDTO);
             var updatedToDoBll = await Manager.UpdateToDoByIdAsync(toDoBll, id);
             var updatedToDoDto = Mapper.Map<GetToDoDTO>(updatedToDoBll);
             return updatedToDoDto;
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType<ObjectResult>(StatusCodes.Status200OK)]
+        public async Task<ActionResult> DeleteToDoById(int id)
+        {
+            var response = await Manager.DeleteToDoByIdAsync(id);
+            return response;
         }
     }
 }

@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 using ToDoApplication.BLL.BLLs.Get.ToDo;
 using ToDoApplication.BLL.BLLs.Post.ToDo;
 using ToDoApplication.BLL.BLLs.Put.ToDo;
@@ -53,6 +56,17 @@ namespace ToDoApplication.BLL.Managers
             await DbContext.SaveChangesAsync();
             GetToDoBLL updatedToDo = Mapper.Map<GetToDoBLL>(toDo);
             return updatedToDo;
+        }
+
+        public async Task<Microsoft.AspNetCore.Mvc.ActionResult> DeleteToDoByIdAsync(int id)
+        {
+            ToDo toDo = await DbContext.ToDos.FirstOrDefaultAsync(t => t.Id == id);
+            DbContext.ToDos.Remove(toDo);
+            await DbContext.SaveChangesAsync();
+            return new ObjectResult($"ToDo Deleted Successfully")
+            {
+                StatusCode = StatusCodes.Status200OK
+            };
         }
     }
 }
