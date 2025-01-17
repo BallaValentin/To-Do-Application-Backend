@@ -24,13 +24,22 @@ namespace ToDoApplication.API.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType<GetToDoDTO>(StatusCodes.Status200OK)]
+        [ProducesResponseType<GetToDoDTO>(StatusCodes.Status201Created)]
         public async Task<ActionResult<GetToDoDTO>> CreateToDo([FromBody] PostToDoDTO toDoDto)
         {
             var toDoBll = Mapper.Map<PostToDoBLL>(toDoDto);
             var createdToDoBll = await Manager.CreateToDoAsync(toDoBll);
             var createdToDoDto = Mapper.Map<GetToDoDTO>(createdToDoBll);
             return createdToDoDto;
+        }
+
+        [HttpGet]
+        [ProducesResponseType<List<GetToDoDTO>>(StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<GetToDoDTO>>> GetToDos()
+        {
+            var toDosBll = await Manager.GetToDosAsync();
+            var toDosDto = Mapper.Map<List<GetToDoDTO>>(toDosBll);
+            return toDosDto;
         }
     }
 }

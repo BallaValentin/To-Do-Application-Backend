@@ -30,5 +30,12 @@ namespace ToDoApplication.BLL.Managers
             var toDoBll = Mapper.Map<GetToDoBLL>(toDo);
             return toDoBll;
         }
+
+        public async Task<List<GetToDoBLL>> GetToDosAsync()
+        {
+            List<ToDo> todos = await DbContext.ToDos.ToListAsync();
+            List<GetToDoBLL> todosBll = Mapper.Map<List<GetToDoBLL>>(todos);
+            return todosBll;
+        }
     }
 }
