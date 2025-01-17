@@ -1,5 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using ToDoApplication.API.DTOs.Get.ToDoDetail;
+using ToDoApplication.API.DTOs.Post.ToDoDetail;
+using ToDoApplication.BLL.BLLs.Post.ToDoDetail;
+using ToDoApplication.BLL.Contexts;
+using ToDoApplication.BLL.Exceptions;
 using ToDoApplication.BLL.Managers;
 
 namespace ToDoApplication.API.Controllers
@@ -12,10 +17,39 @@ namespace ToDoApplication.API.Controllers
         private readonly ToDoDetailManager Manager;
         public IMapper Mapper { get; set; }
 
-        public ToDoDetailController(ToDoDetailManager manager, IMapper mapper)
+        public ToDoDetailController(ToDoDbContext dbContext, IMapper mapper)
         {
-            Manager = manager;
             Mapper = mapper;
+            Manager = new ToDoDetailManager(dbContext, mapper);
+        }
+
+        [HttpPost("{todoId}/details")]
+        [ProducesResponseType<GetToDoDetailDTO>(StatusCodes.Status201Created)]
+        [ProducesResponseType<ObjectResult>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<ObjectResult>(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<GetToDoDetailDTO>> CreateToDoDetail([FromBody] PostToDoDetailDTO toDoDetailDTO, int todoId)
+        {
+            try
+            {
+                var toDoDetailBll = Mapper.Map<PostToDoDetailBLL>(toDoDetailDTO);
+                var newToDoDetailBll = await Manager.CreateToDoDetailAsync(toDoDetailBll, todoId);
+                var newToDoDetailDto = Mapper.Map<GetToDoDetailDTO>(newToDoDetailBll);
+                return newToDoDetailDto;
+            }
+            catch (NotFoundException ex)
+            {
+                return new ObjectResult($"Error: {ex.Message}")
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ObjectResult($"Error: {ex.Message}")
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
         }
     }
 }

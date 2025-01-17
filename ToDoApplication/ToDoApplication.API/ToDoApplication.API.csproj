@@ -22,9 +22,4 @@
     <ProjectReference Include="..\ToDoApplication.BLL\ToDoApplication.BLL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTOs\Get\ToDoDetail\" />
-    <Folder Include="DTOs\Post\ToDoDetail\" />
-  </ItemGroup>
-
 </Project>
