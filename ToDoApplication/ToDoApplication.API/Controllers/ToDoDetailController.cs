@@ -79,5 +79,32 @@ namespace ToDoApplication.API.Controllers
                 };
             }
         }
+
+        [HttpDelete("{todoId}/details/{todoDetailId}")]
+        [ProducesResponseType<List<GetToDoDetailDTO>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ObjectResult>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<ObjectResult>(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<List<GetToDoDetailDTO>>> DeleteToDoDetailById(int todoId, int todoDetailId)
+        {
+            try
+            {
+                var response = await Manager.DeleteToDoDetailByIdAsync(todoId, todoDetailId);
+                return response;
+            }
+            catch (NotFoundException ex)
+            {
+                return new ObjectResult($"Error: {ex.Message}")
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ObjectResult($"Error: {ex.Message}")
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
     }
 }

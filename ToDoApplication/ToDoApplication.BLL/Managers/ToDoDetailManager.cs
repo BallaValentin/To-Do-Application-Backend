@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -50,6 +52,28 @@ namespace ToDoApplication.BLL.Managers
             var toDoDetails = await DbContext.ToDoDetails.Where(td => td.ToDoId == todoId).ToListAsync();
             var toDoDetailsBll = Mapper.Map<List<GetToDoDetailBLL>>(toDoDetails);
             return toDoDetailsBll;
+        }
+
+        public async Task<ActionResult> DeleteToDoDetailByIdAsync(int toDoId, int toDoDetailId)
+        {
+            ToDo toDo = await DbContext.ToDos.FirstOrDefaultAsync(t => t.Id == toDoId);
+            if (toDo == null)
+            {
+                throw new NotFoundException("ToDo not found");
+            }
+
+            ToDoDetail toDoDetail = await DbContext.ToDoDetails.FirstOrDefaultAsync(td => td.Id == toDoDetailId && td.ToDoId == toDoId);
+            if (toDoDetail == null)
+            {
+                throw new NotFoundException("ToDoDetail not found");
+            }
+
+            DbContext.ToDoDetails.Remove(toDoDetail);
+            await DbContext.SaveChangesAsync();
+            return new ObjectResult($"ToDoDetail Deleted Successfully")
+            {
+                StatusCode = StatusCodes.Status200OK
+            };
         }
     }
 }
