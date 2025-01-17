@@ -51,5 +51,33 @@ namespace ToDoApplication.API.Controllers
                 };
             }
         }
+
+        [HttpGet("{todoId}/details")]
+        [ProducesResponseType<List<GetToDoDetailDTO>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ObjectResult>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<ObjectResult>(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<List<GetToDoDetailDTO>>> GetToDoDetails(int todoId)
+        {
+            try
+            {
+                var toDoDetailsBll = await Manager.GetToDoDetailsAsync(todoId);
+                var toDoDetailsDto = Mapper.Map<List<GetToDoDetailDTO>>(toDoDetailsBll);
+                return toDoDetailsDto;
+            }
+            catch (NotFoundException ex)
+            {
+                return new ObjectResult($"Error: {ex.Message}")
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ObjectResult($"Error: {ex.Message}")
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
     }
 }

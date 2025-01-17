@@ -39,5 +39,17 @@ namespace ToDoApplication.BLL.Managers
             var newToDoDetailBll = Mapper.Map<GetToDoDetailBLL>(newToDoDetail);
             return newToDoDetailBll;
         }
+
+        public async Task<List<GetToDoDetailBLL>> GetToDoDetailsAsync(int todoId)
+        {
+            var toDo = await DbContext.ToDos.FirstOrDefaultAsync(t => t.Id == todoId);
+            if (toDo == null)
+            {
+                throw new NotFoundException("ToDo not found");
+            }
+            var toDoDetails = await DbContext.ToDoDetails.Where(td => td.ToDoId == todoId).ToListAsync();
+            var toDoDetailsBll = Mapper.Map<List<GetToDoDetailBLL>>(toDoDetails);
+            return toDoDetailsBll;
+        }
     }
 }
