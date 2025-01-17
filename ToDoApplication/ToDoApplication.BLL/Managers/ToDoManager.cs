@@ -12,6 +12,7 @@ using ToDoApplication.BLL.BLLs.Get.ToDo;
 using ToDoApplication.BLL.BLLs.Post.ToDo;
 using ToDoApplication.BLL.BLLs.Put.ToDo;
 using ToDoApplication.BLL.Contexts;
+using ToDoApplication.BLL.Exceptions;
 using ToDoApplication.BLL.Models;
 
 namespace ToDoApplication.BLL.Managers
@@ -45,6 +46,10 @@ namespace ToDoApplication.BLL.Managers
         public async Task<GetToDoBLL> GetToDoByIdAsync(int id)
         {
             ToDo toDo = await DbContext.ToDos.FirstOrDefaultAsync(t => t.Id == id);
+            if (toDo == null)
+            {
+                throw new NotFoundException("ToDo not found");
+            }
             GetToDoBLL toDoBll = Mapper.Map<GetToDoBLL>(toDo);
             return toDoBll;
         }
@@ -52,6 +57,10 @@ namespace ToDoApplication.BLL.Managers
         public async Task<GetToDoBLL> UpdateToDoByIdAsync(PutToDoBLL toDoBll, int id)
         {
             ToDo toDo = await DbContext.ToDos.FirstOrDefaultAsync(t =>t.Id == id);
+            if (toDo == null)
+            {
+                throw new NotFoundException("ToDo not found");
+            }
             Mapper.Map(toDoBll, toDo);
             await DbContext.SaveChangesAsync();
             GetToDoBLL updatedToDo = Mapper.Map<GetToDoBLL>(toDo);
@@ -61,6 +70,10 @@ namespace ToDoApplication.BLL.Managers
         public async Task<Microsoft.AspNetCore.Mvc.ActionResult> DeleteToDoByIdAsync(int id)
         {
             ToDo toDo = await DbContext.ToDos.FirstOrDefaultAsync(t => t.Id == id);
+            if (toDo == null)
+            {
+                throw new NotFoundException("ToDo not found");
+            }
             DbContext.ToDos.Remove(toDo);
             await DbContext.SaveChangesAsync();
             return new ObjectResult($"ToDo Deleted Successfully")
