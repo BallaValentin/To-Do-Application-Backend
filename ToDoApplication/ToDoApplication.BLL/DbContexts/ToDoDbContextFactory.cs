@@ -10,11 +10,17 @@ namespace ToDoApplication.BLL.Contexts
 {
     public class ToDoDbContextFactory : IDesignTimeDbContextFactory<ToDoDbContext>
     {
+        private readonly string ConnectionString;
+
+        public ToDoDbContextFactory(string connectionString)
+        {
+            this.ConnectionString = connectionString;
+        }
         public ToDoDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<ToDoDbContext>();
 
-            optionsBuilder.UseSqlServer("Server=DESKTOP-7289R3V;Database=ToDoDatabase;Trusted_Connection=True;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer(ConnectionString);
 
             return new ToDoDbContext(optionsBuilder.Options);
         }

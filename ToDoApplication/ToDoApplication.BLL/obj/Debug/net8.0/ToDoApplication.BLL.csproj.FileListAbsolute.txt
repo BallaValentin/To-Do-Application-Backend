@@ -1,0 +1,15 @@
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.BLL\bin\Debug\net8.0\ToDoApplication.BLL.deps.json
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.BLL\bin\Debug\net8.0\ToDoApplication.BLL.runtimeconfig.json
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.BLL\bin\Debug\net8.0\ToDoApplication.BLL.dll
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.BLL\bin\Debug\net8.0\ToDoApplication.BLL.pdb
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.BLL\obj\Debug\net8.0\ToDoApplication.BLL.csproj.AssemblyReference.cache
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.BLL\obj\Debug\net8.0\ToDoApplication.BLL.GeneratedMSBuildEditorConfig.editorconfig
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.BLL\obj\Debug\net8.0\ToDoApplication.BLL.AssemblyInfoInputs.cache
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.BLL\obj\Debug\net8.0\ToDoApplication.BLL.AssemblyInfo.cs
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.BLL\obj\Debug\net8.0\ToDoApplication.BLL.csproj.CoreCompileInputs.cache
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.BLL\obj\Debug\net8.0\ToDoApplication.BLL.sourcelink.json
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.BLL\obj\Debug\net8.0\ToDoApplication.BLL.dll
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.BLL\obj\Debug\net8.0\refint\ToDoApplication.BLL.dll
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.BLL\obj\Debug\net8.0\ToDoApplication.BLL.pdb
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.BLL\obj\Debug\net8.0\ToDoApplication.BLL.genruntimeconfig.cache
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.BLL\obj\Debug\net8.0\ref\ToDoApplication.BLL.dll

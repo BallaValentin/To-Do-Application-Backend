@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using ToDoApplication.BLL.Contexts;
 
 public class Program
@@ -16,6 +17,7 @@ public class Program
 
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
         builder.Services.AddDbContext<ToDoDbContext>(options => options.UseSqlServer(connectionString));
+        builder.Services.AddScoped(_ => new ToDoDbContextFactory(connectionString));
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         var app = builder.Build();
