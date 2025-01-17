@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ToDoApplication.BLL.BLLs.Get.ToDo;
 using ToDoApplication.BLL.BLLs.Post.ToDo;
+using ToDoApplication.BLL.BLLs.Put.ToDo;
 using ToDoApplication.BLL.Contexts;
 using ToDoApplication.BLL.Models;
 
@@ -40,9 +41,18 @@ namespace ToDoApplication.BLL.Managers
 
         public async Task<GetToDoBLL> GetToDoByIdAsync(int id)
         {
-            ToDo toDo = await DbContext.ToDos.FindAsync(id);
+            ToDo toDo = await DbContext.ToDos.FirstOrDefaultAsync(t => t.Id == id);
             GetToDoBLL toDoBll = Mapper.Map<GetToDoBLL>(toDo);
             return toDoBll;
+        }
+
+        public async Task<GetToDoBLL> UpdateToDoByIdAsync(PutToDoBLL toDoBll, int id)
+        {
+            ToDo toDo = await DbContext.ToDos.FirstOrDefaultAsync(t =>t.Id == id);
+            Mapper.Map(toDoBll, toDo);
+            await DbContext.SaveChangesAsync();
+            GetToDoBLL updatedToDo = Mapper.Map<GetToDoBLL>(toDo);
+            return updatedToDo;
         }
     }
 }

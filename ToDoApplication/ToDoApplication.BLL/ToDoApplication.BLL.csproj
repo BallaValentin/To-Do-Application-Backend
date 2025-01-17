@@ -24,7 +24,6 @@
   <ItemGroup>
     <Folder Include="BLLs\Get\ToDoDetail\" />
     <Folder Include="BLLs\Post\ToDoDetail\" />
-    <Folder Include="BLLs\Put\ToDo\" />
   </ItemGroup>
 
 </Project>

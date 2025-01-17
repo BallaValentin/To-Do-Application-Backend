@@ -25,7 +25,6 @@
   <ItemGroup>
     <Folder Include="DTOs\Get\ToDoDetail\" />
     <Folder Include="DTOs\Post\ToDoDetail\" />
-    <Folder Include="DTOs\Put\ToDo\" />
   </ItemGroup>
 
 </Project>

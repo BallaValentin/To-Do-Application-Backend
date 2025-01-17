@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using ToDoApplication.API.DTOs.Get.ToDo;
 using ToDoApplication.API.DTOs.Post.ToDo;
+using ToDoApplication.API.DTOs.Put.ToDo;
 using ToDoApplication.BLL.BLLs.Post.ToDo;
+using ToDoApplication.BLL.BLLs.Put.ToDo;
 using ToDoApplication.BLL.Contexts;
 using ToDoApplication.BLL.Managers;
 
@@ -43,12 +45,22 @@ namespace ToDoApplication.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType<List<GetToDoDTO>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<GetToDoDTO>(StatusCodes.Status200OK)]
         public async Task<ActionResult<GetToDoDTO>> GetToDoById(int id)
         {
             var toDoBll = await Manager.GetToDoByIdAsync(id);
             var toDoDto = Mapper.Map<GetToDoDTO>(toDoBll);
             return toDoDto;
+        }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType<GetToDoDTO>(StatusCodes.Status200OK)]
+        public async Task<ActionResult<GetToDoDTO>> UpdateToDoById(PutToDoDTO toDoDTO, int id)
+        {
+            var toDoBll = Mapper.Map<PutToDoBLL>(toDoDTO);
+            var updatedToDoBll = await Manager.UpdateToDoByIdAsync(toDoBll, id);
+            var updatedToDoDto = Mapper.Map<GetToDoDTO>(updatedToDoBll);
+            return updatedToDoDto;
         }
     }
 }
