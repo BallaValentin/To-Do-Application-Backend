@@ -1,4 +1,4 @@
-package edu.bbte.idde.bvim2209.spring.web.util;
+package edu.bbte.idde.bvim2209.spring.backend.util;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
 

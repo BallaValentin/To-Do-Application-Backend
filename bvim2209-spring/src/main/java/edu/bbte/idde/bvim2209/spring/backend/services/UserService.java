@@ -3,12 +3,9 @@ package edu.bbte.idde.bvim2209.spring.backend.services;
 import edu.bbte.idde.bvim2209.spring.backend.model.User;
 import edu.bbte.idde.bvim2209.spring.backend.repo.UserDao;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
-import edu.bbte.idde.bvim2209.spring.exceptions.InvalidJwtException;
+import edu.bbte.idde.bvim2209.spring.exceptions.AuthenticationException;
 import edu.bbte.idde.bvim2209.spring.exceptions.UnauthorizedException;
-import edu.bbte.idde.bvim2209.spring.web.util.JwtUtil;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
+import edu.bbte.idde.bvim2209.spring.backend.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -16,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -33,22 +29,12 @@ public class UserService {
     }
 
     public User getUserFromToken(String jwtToken) {
-        try {
-            Jws<Claims> parsedToken = jwtUtil.parseToken(jwtToken);
-            Date expirationDate = parsedToken.getBody().getExpiration();
-            if (expirationDate.after(new Date())) {
-                String username = parsedToken.getBody().getSubject().split("\\|")[0];
-                Optional<User> user = userDao.findByUsername(username);
-                if (user.isEmpty()) {
-                    throw new InvalidJwtException("Invalid JWT token");
-                } else {
-                    return user.get();
-                }
-            } else {
-                throw new InvalidJwtException("Invalid JWT token");
-            }
-        } catch (JwtException exception) {
-            throw new InvalidJwtException("Invalid JWT token");
+        String username = jwtUtil.extractUsername(jwtToken);
+        Optional<User> user = userDao.findByUsername(username);
+        if (user.isEmpty()) {
+            throw new AuthenticationException("Invalid JWT token");
+        } else {
+            return user.get();
         }
     }
 
@@ -68,17 +54,32 @@ public class UserService {
         }
     }
 
-    public User loginUser(User loginData) {
+    public String loginUser(User loginData, Boolean rememberMe) {
         Optional<User> user = userDao.findByUsername(loginData.getUsername());
         if (user.isPresent()) {
             if (passwordEncoder.matches(loginData.getPassword(), user.get().getPassword())) {
-                return user.get();
+                String jwtToken;
+                if (rememberMe) {
+                    jwtToken = jwtUtil.generateToken(
+                            user.get().getUsername(),
+                            user.get().getFullname(),
+                            user.get().getRole(), 60000 * 1440 * 365L);
+                } else {
+                    jwtToken = jwtUtil.generateToken(
+                            user.get().getUsername(),
+                            user.get().getFullname(), user.get().getRole(), 600000L);
+                }
+                return jwtToken;
             } else {
                 throw new BadCredentialsException("Invalid username or password");
             }
         } else {
             throw new BadCredentialsException("Invalid username or password");
         }
+    }
+
+    public void logoutUser(String jwtToken) {
+        getUserFromToken(jwtToken);
     }
 
     public Collection<User> getAllUsers(String jwtToken) {

@@ -1,9 +1,12 @@
-package edu.bbte.idde.bvim2209.spring.web.util;
+package edu.bbte.idde.bvim2209.spring.backend.util;
 
+import edu.bbte.idde.bvim2209.spring.exceptions.AuthenticationException;
 import io.jsonwebtoken.*;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+@Component
 public class JwtUtil {
     private static final String secret =
             "a6RTEew6dfwFDG7dv732vwveuGRTGfw23742dby32r42fvwefuef3ftv3SADVU32DEEHWFVU"
@@ -16,6 +19,15 @@ public class JwtUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + age))
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
+    }
+
+    public String extractUsername(String jwtToken) {
+        try {
+            Jws<Claims> parsedToken = parseToken(jwtToken);
+            return parsedToken.getBody().getSubject().split("\\|")[0];
+        } catch (JwtException exception) {
+            throw new AuthenticationException("Invalid JWT token");
+        }
     }
 
     public Jws<Claims> parseToken(String token) {

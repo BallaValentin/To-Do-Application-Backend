@@ -6,9 +6,9 @@ import edu.bbte.idde.bvim2209.spring.backend.model.User;
 import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDao;
 import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDetailDao;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
-import edu.bbte.idde.bvim2209.spring.exceptions.InvalidJwtException;
+import edu.bbte.idde.bvim2209.spring.exceptions.AuthenticationException;
 import edu.bbte.idde.bvim2209.spring.exceptions.UnauthorizedException;
-import edu.bbte.idde.bvim2209.spring.web.util.ToDoServiceUtil;
+import edu.bbte.idde.bvim2209.spring.backend.util.ToDoServiceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +34,7 @@ public class ToDoServiceImpl implements ToDoService {
 
     @Override
     public void createToDo(ToDo toDo, String jwtToken) throws
-            IllegalArgumentException, InvalidJwtException, EntityNotFoundException {
+            IllegalArgumentException, AuthenticationException, EntityNotFoundException {
         toDoServiceUtil.validateToDo(toDo);
         User user = userService.getUserFromToken(jwtToken);
         toDo.setUser(user);
@@ -43,7 +43,7 @@ public class ToDoServiceImpl implements ToDoService {
 
     @Override
     public void updateToDo(ToDo toDo, String jwtToken) throws
-            EntityNotFoundException, IllegalArgumentException, InvalidJwtException {
+            EntityNotFoundException, IllegalArgumentException, AuthenticationException {
         validateId(toDo.getId());
         toDoServiceUtil.validateToDo(toDo);
         Optional<ToDo> toDoToUpdate = toDoDao.findById(toDo.getId());
@@ -59,7 +59,7 @@ public class ToDoServiceImpl implements ToDoService {
 
     @Override
     public void deleteToDo(Long id, String jwtToken) throws
-            EntityNotFoundException, InvalidJwtException {
+            EntityNotFoundException, AuthenticationException {
         validateId(id);
         Optional<ToDo> toDo = toDoDao.findById(id);
         if (toDo.isPresent()) {
