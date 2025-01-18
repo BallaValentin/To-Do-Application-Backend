@@ -27,7 +27,7 @@ public interface ToDoService {
 
     Collection<ToDoDetail> getDetails(Long id);
 
-    void addDetailToToDo(Long id, ToDoDetail toDoDetail) throws EntityNotFoundException;
+    void addDetailToToDo(Long id, ToDoDetail toDoDetail, String jwtToken) throws EntityNotFoundException;
 
-    void deleteDetailById(Long toDoId, Long toDoDetailId) throws EntityNotFoundException;
+    void deleteDetailById(Long toDoId, Long toDoDetailId, String jwtToken) throws EntityNotFoundException;
 }
