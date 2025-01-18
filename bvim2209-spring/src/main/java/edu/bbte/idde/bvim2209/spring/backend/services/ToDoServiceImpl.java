@@ -37,6 +37,7 @@ public class ToDoServiceImpl implements ToDoService {
         toDoServiceUtil.validateToDo(toDo);
         User user = userService.getUserFromToken(jwtToken);
         toDo.setUser(user);
+        toDo.setCreatedBy(user.getUsername());
         toDoDao.saveAndFlush(toDo);
     }
 
