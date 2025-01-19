@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Profile("!jdbc && !jpa")
 public class ToDoDetailMemDao extends MemDao<ToDoDetail> implements ToDoDetailDao {
-
 }

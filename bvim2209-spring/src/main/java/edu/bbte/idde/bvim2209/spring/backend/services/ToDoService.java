@@ -19,9 +19,7 @@ public interface ToDoService {
 
     Collection<ToDo> findAll(Specification<ToDo> toDoSpecification);
 
-    Collection<ToDo> findByImportance(Integer importanceLevel);
-
-    Collection<ToDoDetail> getDetails(Long id);
+    Collection<ToDoDetail> getDetails(Specification<ToDoDetail> specification);
 
     void addDetailToToDo(Long id, ToDoDetail toDoDetail) throws EntityNotFoundException;
 

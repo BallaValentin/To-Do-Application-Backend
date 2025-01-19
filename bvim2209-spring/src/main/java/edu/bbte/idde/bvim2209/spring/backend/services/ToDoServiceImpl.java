@@ -61,14 +61,8 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
-    public Collection<ToDo> findByImportance(Integer levelOfImportance) {
-        return toDoDao.findByLevelOfImportance(levelOfImportance);
-    }
-
-    @Override
-    public Collection<ToDoDetail> getDetails(Long id) {
-        ToDo toDo = getById(id);
-        return toDo.getDetails();
+    public Collection<ToDoDetail> getDetails(Specification<ToDoDetail> specification) {
+        return toDoDetailDao.findAll(specification);
     }
 
     @Override

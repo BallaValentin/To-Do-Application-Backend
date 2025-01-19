@@ -1,13 +1,16 @@
 package edu.bbte.idde.bvim2209.spring.web.controller;
 
+import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDoDetail;
 import edu.bbte.idde.bvim2209.spring.backend.services.ToDoService;
+import edu.bbte.idde.bvim2209.spring.backend.specification.ToDoDetailSpecification;
 import edu.bbte.idde.bvim2209.spring.web.dto.request.ToDoDetailRequestDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.response.ToDoDetailResponseDTO;
 import edu.bbte.idde.bvim2209.spring.web.mapper.ToDoDetailMapper;
 import edu.bbte.idde.bvim2209.spring.web.mapper.ToDoMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +34,16 @@ public class ToDoDetailController {
     }
 
     @GetMapping("/{id}/details")
-    public Collection<ToDoDetailResponseDTO> getToDetails(@PathVariable Long id) {
-        return toDoMapper.detailsToResponseDTOs(toDoService.getDetails(id));
+    public Collection<ToDoDetailResponseDTO> getToDetails(
+            @PathVariable Long id,
+            @RequestParam(required = false) String text
+    ) {
+        ToDo toDo = toDoService.getById(id);
+        Specification<ToDoDetail> specification = Specification.where(
+                ToDoDetailSpecification.withParent(toDo))
+                .and(ToDoDetailSpecification.withText(text));
+
+        return toDoMapper.detailsToResponseDTOs(toDoService.getDetails(specification));
     }
 
     @PostMapping("/{id}/details")
