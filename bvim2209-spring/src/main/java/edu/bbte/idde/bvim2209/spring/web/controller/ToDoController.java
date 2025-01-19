@@ -33,7 +33,7 @@ public class ToDoController {
     }
 
     @GetMapping()
-    public Page<ToDo> getTodos(
+    public Page<ToDoResponseDTO> getTodos(
             @RequestParam Optional<Integer> levelOfImportance,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size,
@@ -47,7 +47,7 @@ public class ToDoController {
         } else {
             todoPage = toDoService.findAll(page, size, sortBy, order);
         }
-        return todoPage;
+        return todoPage.map(toDo -> toDoMapper.modelToResponseDTO(toDo));
     }
 
     @GetMapping("/{toDoId}")
