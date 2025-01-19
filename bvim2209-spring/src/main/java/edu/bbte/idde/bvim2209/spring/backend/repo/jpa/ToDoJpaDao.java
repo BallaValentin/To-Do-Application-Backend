@@ -1,10 +1,12 @@
 package edu.bbte.idde.bvim2209.spring.backend.repo.jpa;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
+import edu.bbte.idde.bvim2209.spring.backend.repo.Dao;
 import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDao;
 import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Profile("jpa")
 public interface ToDoJpaDao extends
-        ToDoDao, JpaRepository<ToDo, Long>, edu.bbte.idde.bvim2209.spring.backend.repo.Dao<ToDo> {
+        ToDoDao, JpaRepository<ToDo, Long>, Dao<ToDo>, JpaSpecificationExecutor<ToDo> {
     @Override
     @Modifying
     @Transactional

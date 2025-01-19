@@ -2,15 +2,18 @@ package edu.bbte.idde.bvim2209.spring.web.controller;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.spring.backend.services.ToDoService;
+import edu.bbte.idde.bvim2209.spring.backend.specification.ToDoSpecification;
 import edu.bbte.idde.bvim2209.spring.web.dto.request.ToDoRequestDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.response.ToDoResponseDTO;
 import edu.bbte.idde.bvim2209.spring.web.mapper.ToDoMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.HTMLDocument;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.Collection;
@@ -30,13 +33,12 @@ public class ToDoController {
 
     @GetMapping()
     public Collection<ToDoResponseDTO> getTodos(
-            @RequestParam(value = "levelOfImportance", required = false) Integer levelOfImportance
+            @RequestParam(required = false) Integer levelOfImportance
     ) {
-        if (levelOfImportance == null) {
-            return toDoMapper.modelsToResponseDTO(toDoService.findAll());
-        } else {
-            return toDoMapper.modelsToResponseDTO(toDoService.findByImportance(levelOfImportance));
-        }
+        Specification<ToDo> specification = Specification.where
+                (ToDoSpecification.hasPriority(levelOfImportance));
+
+        return toDoMapper.modelsToResponseDTO(toDoService.findAll(specification));
     }
 
     @GetMapping("/{toDoId}")
