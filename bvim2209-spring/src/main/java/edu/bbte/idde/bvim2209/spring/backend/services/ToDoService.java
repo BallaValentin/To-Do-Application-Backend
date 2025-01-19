@@ -6,7 +6,6 @@ import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 
 import java.text.ParseException;
-import java.util.Collection;
 
 public interface ToDoService {
     void createToDo(ToDo toDo) throws ParseException, IllegalArgumentException;
@@ -21,7 +20,7 @@ public interface ToDoService {
 
     Page<ToDo> findByImportance(Integer importanceLevel, Integer page, Integer size, String sortBy, String order);
 
-    Collection<ToDoDetail> getDetails(Long id);
+    Page<ToDoDetail> getDetails(Long id, Integer page, Integer size, String sortBy, String order);
 
     void addDetailToToDo(Long id, ToDoDetail toDoDetail) throws EntityNotFoundException;
 

@@ -17,7 +17,7 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
 
     @Override
     public Page<T> findAll(Pageable pageable) {
-        return null;
+        return Page.empty();
     }
 
     @Override

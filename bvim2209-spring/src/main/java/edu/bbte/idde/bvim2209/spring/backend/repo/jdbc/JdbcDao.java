@@ -10,8 +10,6 @@ import org.springframework.data.domain.Pageable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Optional;
 
 @Slf4j
@@ -46,13 +44,13 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
 
     @Override
     public Page<T> findAll(Pageable pageable) {
-        return null;
+        return Page.empty();
     }
 
     @Override
     public T saveAndFlush(T entity) throws IllegalArgumentException {
         log.info("Trying to insert new entity in database");
-            return createWithoutId(entity);
+        return createWithoutId(entity);
     }
 
     @Override
@@ -119,20 +117,6 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
                     }
                 }
             }
-            logEntityCreated();
-            return entity;
-        } catch (SQLException exception) {
-            log.error("Error creating entity in database", exception);
-            throw new IllegalArgumentException("Could not create entity", exception);
-        }
-    }
-
-    private T createWithId(T entity) {
-        try (
-                PreparedStatement preparedStatement = prepareStatementForInsertWithId()
-        ) {
-            setStatementForInsertWithId(preparedStatement, entity);
-            preparedStatement.executeUpdate();
             logEntityCreated();
             return entity;
         } catch (SQLException exception) {

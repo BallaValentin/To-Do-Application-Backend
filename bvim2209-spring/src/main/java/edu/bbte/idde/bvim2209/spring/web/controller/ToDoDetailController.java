@@ -5,34 +5,38 @@ import edu.bbte.idde.bvim2209.spring.backend.services.ToDoService;
 import edu.bbte.idde.bvim2209.spring.web.dto.request.ToDoDetailRequestDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.response.ToDoDetailResponseDTO;
 import edu.bbte.idde.bvim2209.spring.web.mapper.ToDoDetailMapper;
-import edu.bbte.idde.bvim2209.spring.web.mapper.ToDoMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Collection;
 
 @RestController
 @RequestMapping("/api/todos")
 public class ToDoDetailController {
     ToDoService toDoService;
-    ToDoMapper toDoMapper;
     ToDoDetailMapper toDoDetailMapper;
 
     @Autowired
     public ToDoDetailController(
-            ToDoMapper toDoMapper, ToDoDetailMapper toDoDetailMapper, ToDoService toDoService) {
-        this.toDoMapper = toDoMapper;
+            ToDoDetailMapper toDoDetailMapper, ToDoService toDoService) {
         this.toDoDetailMapper = toDoDetailMapper;
         this.toDoService = toDoService;
     }
 
     @GetMapping("/{id}/details")
-    public Collection<ToDoDetailResponseDTO> getToDetails(@PathVariable Long id) {
-        return toDoMapper.detailsToResponseDTOs(toDoService.getDetails(id));
+    public Page<ToDoDetailResponseDTO> getToDetails(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "5") Integer size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String order
+    ) {
+        Page<ToDoDetail> detailsPage = toDoService.getDetails(id, page, size, sortBy, order);
+        return detailsPage.map(toDoDetailMapper::modelToResponseDTO);
     }
 
     @PostMapping("/{id}/details")

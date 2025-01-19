@@ -11,14 +11,16 @@ import java.util.Date;
 @Data
 public class ToDoRequestDTO {
 
+    @NotNull(message = "Title cannot be null")
     @NotBlank(message = "Title cannot be blank")
     private String title;
 
+    @NotNull(message = "Description cannot be null")
     @NotBlank(message = "Description cannot be blank")
     private String description;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @NotNull(message = "DueDate cannot be null")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dueDate;
 
     @NotNull(message = "LevelOfImportance cannot be null")

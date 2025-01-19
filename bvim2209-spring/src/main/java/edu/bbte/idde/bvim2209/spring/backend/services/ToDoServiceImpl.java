@@ -6,13 +6,9 @@ import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDao;
 import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDetailDao;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -29,14 +25,12 @@ public class ToDoServiceImpl implements ToDoService {
 
     @Override
     public void createToDo(ToDo toDo) throws IllegalArgumentException {
-        validateToDo(toDo);
         toDoDao.saveAndFlush(toDo);
     }
 
     @Override
     public void updateToDo(ToDo toDo) throws EntityNotFoundException, IllegalArgumentException {
         validateId(toDo.getId());
-        validateToDo(toDo);
         toDoDao.update(toDo);
     }
 
@@ -53,37 +47,6 @@ public class ToDoServiceImpl implements ToDoService {
             throw new EntityNotFoundException("ToDo with id " + id + " not found");
         }
         return toDo.get();
-    }
-
-    private void validateToDo(ToDo toDo) {
-        validateTitle(toDo);
-        validateDescription(toDo);
-        validateDueDate(toDo);
-        validateImportanceLevel(toDo);
-    }
-
-    private void validateTitle(ToDo toDo) {
-        if (toDo.getTitle() == null || toDo.getTitle().isBlank()) {
-            throw new IllegalArgumentException("Title cannot be empty or null");
-        }
-    }
-
-    private void validateDescription(ToDo toDo) {
-        if (toDo.getDescription() == null || toDo.getDescription().isBlank()) {
-            throw new IllegalArgumentException("Description cannot be null or empty");
-        }
-    }
-
-    private void validateDueDate(ToDo toDo) {
-        if (toDo.getDueDate() == null) {
-            throw new IllegalArgumentException("Due date cannot be null");
-        }
-    }
-
-    private void validateImportanceLevel(ToDo toDo) {
-        if (toDo.getLevelOfImportance() == null) {
-            throw new IllegalArgumentException("Importance level cannot be null");
-        }
     }
 
     private void validateId(Long id) {
@@ -116,9 +79,10 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
-    public Collection<ToDoDetail> getDetails(Long id) {
-        ToDo toDo = getById(id);
-        return toDo.getDetails();
+    public Page<ToDoDetail> getDetails(Long id, Integer page, Integer size, String sortBy, String order) {
+        Pageable pageable = getPageable(page, size, sortBy, order);
+        getById(id);
+        return toDoDetailDao.findByToDoId(id, pageable);
     }
 
     @Override

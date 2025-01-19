@@ -6,17 +6,14 @@ import edu.bbte.idde.bvim2209.spring.web.dto.request.ToDoRequestDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.response.ToDoResponseDTO;
 import edu.bbte.idde.bvim2209.spring.web.mapper.ToDoMapper;
 import jakarta.validation.Valid;
-import org.hibernate.query.SortDirection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.text.ParseException;
-import java.util.Collection;
 import java.util.Optional;
 
 @RestController
@@ -37,9 +34,9 @@ public class ToDoController {
             @RequestParam Optional<Integer> levelOfImportance,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size,
-            @RequestParam(defaultValue =  "id") String sortBy,
+            @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String order
-            ) {
+    ) {
         Page<ToDo> todoPage;
         if (levelOfImportance.isPresent()) {
             todoPage = toDoService.findByImportance(
@@ -47,7 +44,7 @@ public class ToDoController {
         } else {
             todoPage = toDoService.findAll(page, size, sortBy, order);
         }
-        return todoPage.map(toDo -> toDoMapper.modelToResponseDTO(toDo));
+        return todoPage.map(toDoMapper::modelToResponseDTO);
     }
 
     @GetMapping("/{toDoId}")

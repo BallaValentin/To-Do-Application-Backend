@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
@@ -83,5 +85,10 @@ public class ToDeDetailJdbcDao extends JdbcDao<ToDoDetail> implements ToDoDetail
     @Override
     protected Integer getNumberOfColumnsToUpdate() {
         return 0;
+    }
+
+    @Override
+    public Page<ToDoDetail> findByToDoId(Long id, Pageable pageable) {
+        return null;
     }
 }
