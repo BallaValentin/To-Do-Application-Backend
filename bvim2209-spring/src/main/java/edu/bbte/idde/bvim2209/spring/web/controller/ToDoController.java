@@ -9,14 +9,15 @@ import edu.bbte.idde.bvim2209.spring.web.mapper.ToDoMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.HTMLDocument;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/todos")
@@ -33,10 +34,18 @@ public class ToDoController {
 
     @GetMapping()
     public Collection<ToDoResponseDTO> getTodos(
-            @RequestParam(required = false) Integer levelOfImportance
+            @RequestParam(required = false) Integer levelOfImportance,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date beforeDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date afterDate
     ) {
-        Specification<ToDo> specification = Specification.where
-                (ToDoSpecification.hasPriority(levelOfImportance));
+        Specification<ToDo> specification = Specification.where(
+                ToDoSpecification.withPriority(levelOfImportance))
+                .and(ToDoSpecification.withTitle(title))
+                .and(ToDoSpecification.withDescription(description))
+                .and(ToDoSpecification.withDueDateBefore(beforeDate))
+                .and(ToDoSpecification.withDueDateAfter(afterDate));
 
         return toDoMapper.modelsToResponseDTO(toDoService.findAll(specification));
     }
