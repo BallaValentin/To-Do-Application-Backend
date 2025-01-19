@@ -6,7 +6,6 @@ import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,18 +16,13 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
     private static final AtomicLong idCounter = new AtomicLong(1);
 
     @Override
-    public Collection<T> findAll() {
-        return entities.values();
+    public Page<T> findAll(Pageable pageable) {
+        return null;
     }
 
     @Override
     public Optional<T> findById(Long id) {
         return Optional.ofNullable(entities.get(id));
-    }
-
-    @Override
-    public Page<T> findAllPage(Pageable pageable) {
-        return null;
     }
 
     @Override

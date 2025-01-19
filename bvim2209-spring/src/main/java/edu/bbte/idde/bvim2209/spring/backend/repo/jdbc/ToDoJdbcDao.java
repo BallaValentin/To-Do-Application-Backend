@@ -134,27 +134,7 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
     }
 
     @Override
-    public Collection<ToDo> findByLevelOfImportance(Integer levelOfImportance) {
-        Collection<ToDo> toDos = new ArrayList<>();
-        String query = "SELECT * FROM ToDo WHERE ImportanceLevel = ?";
-        try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(query);
-        ) {
-            preparedStatement.setInt(1, levelOfImportance);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                ToDo toDo = mapResultSetToEntity(resultSet);
-                toDos.add(toDo);
-            }
-        } catch (SQLException exception) {
-            log.error("Error fetching all entities by importance from database", exception);
-        }
-        return toDos;
-    }
-
-    @Override
-    public Page<ToDo> findByLevelOfImportancePage(Integer levelOfImportance, Pageable pageable) {
+    public Page<ToDo> findByLevelOfImportance(Integer levelOfImportance, Pageable pageable) {
         return null;
     }
 }

@@ -14,18 +14,9 @@ import java.util.stream.Collectors;
 @Repository
 @Profile("!jdbc && !jpa")
 public class ToDoMemDao extends MemDao<ToDo> implements ToDoDao {
-    @Override
-    public Collection<ToDo> findByLevelOfImportance(Integer levelOfImportance) {
-        return entities
-                .values()
-                .stream()
-                .filter(e ->
-                        Objects.equals(e.getLevelOfImportance(), levelOfImportance))
-                .collect(Collectors.toList());
-    }
 
     @Override
-    public Page<ToDo> findByLevelOfImportancePage(Integer levelOfImportance, Pageable pageable) {
+    public Page<ToDo> findByLevelOfImportance(Integer levelOfImportance, Pageable pageable) {
         return null;
     }
 }

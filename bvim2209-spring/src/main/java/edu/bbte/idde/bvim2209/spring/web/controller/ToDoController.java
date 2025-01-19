@@ -35,7 +35,7 @@ public class ToDoController {
     @GetMapping()
     public Page<ToDo> getTodos(
             @RequestParam Optional<Integer> levelOfImportance,
-            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size,
             @RequestParam(defaultValue =  "id") String sortBy,
             @RequestParam(defaultValue = "asc") String order

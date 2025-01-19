@@ -7,6 +7,5 @@ import org.springframework.data.domain.Pageable;
 import java.util.Collection;
 
 public interface ToDoDao extends Dao<ToDo> {
-    Collection<ToDo> findByLevelOfImportance(Integer levelOfImportance);
-    Page<ToDo> findByLevelOfImportancePage(Integer levelOfImportance, Pageable pageable);
+    Page<ToDo> findByLevelOfImportance(Integer levelOfImportance, Pageable pageable);
 }

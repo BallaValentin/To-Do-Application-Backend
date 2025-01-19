@@ -9,9 +9,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface Dao<T extends BaseEntity> {
-    Collection<T> findAll();
-
-    Page<T> findAllPage(Pageable pageable);
+    Page<T> findAll(Pageable pageable);
 
     Optional<T> findById(Long id);
 

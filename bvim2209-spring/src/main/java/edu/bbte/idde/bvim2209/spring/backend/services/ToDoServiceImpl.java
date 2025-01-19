@@ -104,7 +104,7 @@ public class ToDoServiceImpl implements ToDoService {
     @Override
     public Page<ToDo> findAll(Integer page, Integer size, String sortBy, String order) {
         Pageable pageable = getPageable(page, size, sortBy, order);
-        return toDoDao.findAllPage(pageable);
+        return toDoDao.findAll(pageable);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class ToDoServiceImpl implements ToDoService {
             Integer importanceLevel, Integer page, Integer size, String sortBy, String order
     ) {
         Pageable pageable = getPageable(page, size, sortBy, order);
-        return toDoDao.findByLevelOfImportancePage(importanceLevel, pageable);
+        return toDoDao.findByLevelOfImportance(importanceLevel, pageable);
     }
 
     @Override

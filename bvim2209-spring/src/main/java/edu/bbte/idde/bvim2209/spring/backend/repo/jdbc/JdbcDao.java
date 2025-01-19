@@ -45,39 +45,14 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     protected abstract Integer getNumberOfColumnsToUpdate();
 
     @Override
-    public Collection<T> findAll() {
-        log.info("Trying to fetch all entities from database");
-        Collection<T> entities = new ArrayList<>();
-        try (
-                PreparedStatement preparedStatement = prepareStatementForFindAll();
-                ResultSet resultSet = preparedStatement.executeQuery()
-        ) {
-            while (resultSet.next()) {
-                T entity = mapResultSetToEntity(resultSet);
-                entities.add(entity);
-            }
-        } catch (SQLException exception) {
-            log.error("Error fetching all entities from database", exception);
-        }
-        log.info("All entities have been successfully fetched from database");
-        return entities;
-    }
-
-    @Override
-    public Page<T> findAllPage(Pageable pageable) {
+    public Page<T> findAll(Pageable pageable) {
         return null;
     }
 
     @Override
     public T saveAndFlush(T entity) throws IllegalArgumentException {
         log.info("Trying to insert new entity in database");
-
-        if (entity.getId() != null && !findAll().contains(entity)) {
-            log.debug("Inserting new entity with id in database");
-            return createWithId(entity);
-        } else {
             return createWithoutId(entity);
-        }
     }
 
     @Override
