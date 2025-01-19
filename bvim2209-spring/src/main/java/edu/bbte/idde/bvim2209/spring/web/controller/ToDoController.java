@@ -68,6 +68,7 @@ public class ToDoController {
     @DeleteMapping("/{toDoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteToDo(@PathVariable("toDoId") Long id) throws ParseException {
-        toDoService.deleteToDo(id);
+        ToDo toDo = toDoService.getById(id);
+        toDoService.deleteToDo(toDo);
     }
 }

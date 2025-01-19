@@ -12,7 +12,7 @@ public interface ToDoService {
 
     void updateToDo(ToDo toDo) throws EntityNotFoundException, ParseException;
 
-    void deleteToDo(Long id) throws EntityNotFoundException, ParseException;
+    void deleteToDo(ToDo toDo) throws EntityNotFoundException, ParseException;
 
     ToDo getById(Long id) throws EntityNotFoundException;
 
@@ -20,9 +20,9 @@ public interface ToDoService {
 
     Collection<ToDo> findByImportance(Integer importanceLevel);
 
-    Collection<ToDoDetail> getDetails(Long id);
+    Collection<ToDoDetail> getDetails(ToDo toDo);
 
-    void addDetailToToDo(Long id, ToDoDetail toDoDetail) throws EntityNotFoundException;
+    void addDetailToToDo(ToDo toDo, ToDoDetail toDoDetail) throws EntityNotFoundException;
 
-    void deleteDetailById(Long toDoId, Long toDoDetailId) throws EntityNotFoundException;
+    void deleteDetailById(ToDo toDo, Long toDoDetailId) throws EntityNotFoundException;
 }

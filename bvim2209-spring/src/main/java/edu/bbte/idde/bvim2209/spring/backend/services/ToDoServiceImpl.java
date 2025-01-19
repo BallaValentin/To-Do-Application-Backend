@@ -27,31 +27,34 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
-    @CacheEvict(value = "todos", key = "'allTodos'")
+    @Caching(evict =
+            {@CacheEvict(value = "todos", key = "'allTodos'"), @CacheEvict(
+                    value = "todos", key = "'allTodos' + #toDo.levelOfImportance")
+        })
     public void createToDo(ToDo toDo) throws IllegalArgumentException {
         validateToDo(toDo);
         toDoDao.saveAndFlush(toDo);
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "todos", key = "'allTodos'"),
-            @CacheEvict(value = "todos", key = "#toDo.id")
-    })
+    @Caching(evict =
+            {@CacheEvict(value = "todos", key = "'allTodos'"), @CacheEvict(
+                    value = "todos", key = "'allTodos' + #toDo.levelOfImportance"),
+             @CacheEvict(value = "todos", key = "#toDo.id")
+        })
     public void updateToDo(ToDo toDo) throws EntityNotFoundException, IllegalArgumentException {
-        validateId(toDo.getId());
         validateToDo(toDo);
         toDoDao.update(toDo);
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "todos", key = "'allTodos'"),
-            @CacheEvict(value = "todos", key="#id")
-    })
-    public void deleteToDo(Long id) throws EntityNotFoundException {
-        validateId(id);
-        toDoDao.deleteById(id);
+    @Caching(evict =
+            {@CacheEvict(value = "todos", key = "'allTodos'"), @CacheEvict(
+                    value = "todos", key = "'allTodos' + #toDo.levelOfImportance"),
+             @CacheEvict(value = "todos", key = "#toDo.id")
+        })
+    public void deleteToDo(ToDo toDo) throws EntityNotFoundException {
+        toDoDao.deleteById(toDo.getId());
     }
 
     @Override
@@ -95,34 +98,30 @@ public class ToDoServiceImpl implements ToDoService {
         }
     }
 
-    private void validateId(Long id) {
-        getById(id);
-    }
-
     @Override
-    @Cacheable(value = "todos", key="'allTodos'")
+    @Cacheable(value = "todos", key = "'allTodos'")
     public Collection<ToDo> findAll() {
         return toDoDao.findAll();
     }
 
     @Override
+    @Cacheable(value = "todos", key = "'allTodos' + #levelOfImportance")
     public Collection<ToDo> findByImportance(Integer levelOfImportance) {
         return toDoDao.findByLevelOfImportance(levelOfImportance);
     }
 
     @Override
-    public Collection<ToDoDetail> getDetails(Long id) {
-        ToDo toDo = getById(id);
+    public Collection<ToDoDetail> getDetails(ToDo toDo) {
         return toDo.getDetails();
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "todos", key = "'allTodos'"),
-            @CacheEvict(value = "todos", key = "#id")
-    })
-    public void addDetailToToDo(Long id, ToDoDetail toDoDetail) throws EntityNotFoundException {
-        ToDo toDo = getById(id);
+    @Caching(evict =
+            {@CacheEvict(value = "todos", key = "'allTodos'"), @CacheEvict(
+                    value = "todos", key = "'allTodos' + toDo.levelOfImportance"),
+             @CacheEvict(value = "todos", key = "#toDo.id")
+        })
+    public void addDetailToToDo(ToDo toDo, ToDoDetail toDoDetail) throws EntityNotFoundException {
         toDo.getDetails().add(toDoDetail);
         toDoDetail.setToDo(toDo);
         toDoDetailDao.saveAndFlush(toDoDetail);
@@ -130,12 +129,12 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "todos", key = "'allTodos'"),
-            @CacheEvict(value = "todos", key = "#toDoId")
-    })
-    public void deleteDetailById(Long toDoId, Long toDoDetailId) throws EntityNotFoundException {
-        ToDo toDo = getById(toDoId);
+    @Caching(evict =
+            {@CacheEvict(value = "todos", key = "'allTodos'"), @CacheEvict(
+                    value = "todos", key = "'allTodos' + #toDo.levelOfImportance"),
+             @CacheEvict(value = "todos", key = "#toDo.id")
+        })
+    public void deleteDetailById(ToDo toDo, Long toDoDetailId) throws EntityNotFoundException {
         Optional<ToDoDetail> toDoDetail = toDoDetailDao.findById(toDoDetailId);
         if (toDoDetail.isEmpty()) {
             throw new EntityNotFoundException("ToDoDetail with id " + toDoDetailId + " not found");

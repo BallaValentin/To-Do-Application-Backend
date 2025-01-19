@@ -1,5 +1,6 @@
 package edu.bbte.idde.bvim2209.spring.web.controller;
 
+import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDoDetail;
 import edu.bbte.idde.bvim2209.spring.backend.services.ToDoService;
 import edu.bbte.idde.bvim2209.spring.web.dto.request.ToDoDetailRequestDTO;
@@ -32,7 +33,8 @@ public class ToDoDetailController {
 
     @GetMapping("/{id}/details")
     public Collection<ToDoDetailResponseDTO> getToDetails(@PathVariable Long id) {
-        return toDoMapper.detailsToResponseDTOs(toDoService.getDetails(id));
+        ToDo toDo = toDoService.getById(id);
+        return toDoMapper.detailsToResponseDTOs(toDoService.getDetails(toDo));
     }
 
     @PostMapping("/{id}/details")
@@ -40,7 +42,8 @@ public class ToDoDetailController {
     public ResponseEntity<ToDoDetailResponseDTO> createToDoDetailDTO(
             @PathVariable Long id, @Valid @RequestBody ToDoDetailRequestDTO toDoDetailRequestDTO) {
         ToDoDetail toDoDetail = toDoDetailMapper.requestDTOToModel(toDoDetailRequestDTO);
-        toDoService.addDetailToToDo(id, toDoDetail);
+        ToDo toDo = toDoService.getById(id);
+        toDoService.addDetailToToDo(toDo, toDoDetail);
         URI createURI = URI.create("api/todos/" + id + "/details/" + toDoDetail.getId());
         return ResponseEntity.created(createURI).body(
                 toDoDetailMapper.modelToResponseDTO(toDoDetail)
@@ -51,6 +54,7 @@ public class ToDoDetailController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteToDoDetail(
             @PathVariable("todo-id") Long toDoId, @PathVariable("todo-detail-id") Long toDoDetailId) {
-        toDoService.deleteDetailById(toDoId, toDoDetailId);
+        ToDo toDo = toDoService.getById(toDoId);
+        toDoService.deleteDetailById(toDo, toDoDetailId);
     }
 }
