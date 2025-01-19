@@ -6,7 +6,10 @@ import edu.bbte.idde.bvim2209.spring.web.dto.request.ToDoRequestDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.response.ToDoResponseDTO;
 import edu.bbte.idde.bvim2209.spring.web.mapper.ToDoMapper;
 import jakarta.validation.Valid;
+import org.hibernate.query.SortDirection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/todos")
@@ -29,14 +33,21 @@ public class ToDoController {
     }
 
     @GetMapping()
-    public Collection<ToDoResponseDTO> getTodos(
-            @RequestParam(value = "levelOfImportance", required = false) Integer levelOfImportance
-    ) {
-        if (levelOfImportance == null) {
-            return toDoMapper.modelsToResponseDTO(toDoService.findAll());
+    public Page<ToDo> getTodos(
+            @RequestParam Optional<Integer> levelOfImportance,
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "5") Integer size,
+            @RequestParam(defaultValue =  "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String order
+            ) {
+        Page<ToDo> todoPage;
+        if (levelOfImportance.isPresent()) {
+            todoPage = toDoService.findByImportance(
+                    levelOfImportance.get(), page, size, sortBy, order);
         } else {
-            return toDoMapper.modelsToResponseDTO(toDoService.findByImportance(levelOfImportance));
+            todoPage = toDoService.findAll(page, size, sortBy, order);
         }
+        return todoPage;
     }
 
     @GetMapping("/{toDoId}")

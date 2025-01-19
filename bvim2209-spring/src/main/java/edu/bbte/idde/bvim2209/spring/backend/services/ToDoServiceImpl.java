@@ -6,6 +6,10 @@ import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDao;
 import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDetailDao;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -86,14 +90,29 @@ public class ToDoServiceImpl implements ToDoService {
         getById(id);
     }
 
-    @Override
-    public Collection<ToDo> findAll() {
-        return toDoDao.findAll();
+    private Pageable getPageable(Integer page, Integer size, String sortBy, String order) {
+        Sort sort = Sort.by(Sort.Order.by(sortBy));
+        if ("desc".equalsIgnoreCase(order)) {
+            sort = sort.descending();
+        } else {
+            sort = sort.ascending();
+        }
+
+        return PageRequest.of(page, size, sort);
     }
 
     @Override
-    public Collection<ToDo> findByImportance(Integer levelOfImportance) {
-        return toDoDao.findByLevelOfImportance(levelOfImportance);
+    public Page<ToDo> findAll(Integer page, Integer size, String sortBy, String order) {
+        Pageable pageable = getPageable(page, size, sortBy, order);
+        return toDoDao.findAllPage(pageable);
+    }
+
+    @Override
+    public Page<ToDo> findByImportance(
+            Integer importanceLevel, Integer page, Integer size, String sortBy, String order
+    ) {
+        Pageable pageable = getPageable(page, size, sortBy, order);
+        return toDoDao.findByLevelOfImportancePage(importanceLevel, pageable);
     }
 
     @Override

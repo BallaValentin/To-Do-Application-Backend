@@ -3,6 +3,8 @@ package edu.bbte.idde.bvim2209.spring.backend.repo.mem;
 import edu.bbte.idde.bvim2209.spring.backend.model.BaseEntity;
 import edu.bbte.idde.bvim2209.spring.backend.repo.Dao;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collection;
 import java.util.Map;
@@ -22,6 +24,11 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
     @Override
     public Optional<T> findById(Long id) {
         return Optional.ofNullable(entities.get(id));
+    }
+
+    @Override
+    public Page<T> findAllPage(Pageable pageable) {
+        return null;
     }
 
     @Override

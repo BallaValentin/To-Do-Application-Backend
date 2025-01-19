@@ -4,6 +4,8 @@ import edu.bbte.idde.bvim2209.spring.backend.model.BaseEntity;
 import edu.bbte.idde.bvim2209.spring.backend.repo.Dao;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -59,6 +61,11 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
         }
         log.info("All entities have been successfully fetched from database");
         return entities;
+    }
+
+    @Override
+    public Page<T> findAllPage(Pageable pageable) {
+        return null;
     }
 
     @Override
