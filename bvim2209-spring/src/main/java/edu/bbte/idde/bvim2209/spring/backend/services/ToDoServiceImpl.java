@@ -6,6 +6,9 @@ import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDao;
 import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDetailDao;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -24,12 +27,17 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
+    @CacheEvict(value = "todos", key = "'allTodos'")
     public void createToDo(ToDo toDo) throws IllegalArgumentException {
         validateToDo(toDo);
         toDoDao.saveAndFlush(toDo);
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "todos", key = "'allTodos'"),
+            @CacheEvict(value = "todos", key = "#toDo.id")
+    })
     public void updateToDo(ToDo toDo) throws EntityNotFoundException, IllegalArgumentException {
         validateId(toDo.getId());
         validateToDo(toDo);
@@ -37,12 +45,17 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "todos", key = "'allTodos'"),
+            @CacheEvict(value = "todos", key="#id")
+    })
     public void deleteToDo(Long id) throws EntityNotFoundException {
         validateId(id);
         toDoDao.deleteById(id);
     }
 
     @Override
+    @Cacheable(value = "todos", key = "#id")
     public ToDo getById(Long id) throws EntityNotFoundException {
         Optional<ToDo> toDo = toDoDao.findById(id);
         if (toDo.isEmpty()) {
@@ -87,6 +100,7 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
+    @Cacheable(value = "todos", key="'allTodos'")
     public Collection<ToDo> findAll() {
         return toDoDao.findAll();
     }
@@ -103,6 +117,10 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "todos", key = "'allTodos'"),
+            @CacheEvict(value = "todos", key = "#id")
+    })
     public void addDetailToToDo(Long id, ToDoDetail toDoDetail) throws EntityNotFoundException {
         ToDo toDo = getById(id);
         toDo.getDetails().add(toDoDetail);
@@ -112,6 +130,10 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "todos", key = "'allTodos'"),
+            @CacheEvict(value = "todos", key = "#toDoId")
+    })
     public void deleteDetailById(Long toDoId, Long toDoDetailId) throws EntityNotFoundException {
         ToDo toDo = getById(toDoId);
         Optional<ToDoDetail> toDoDetail = toDoDetailDao.findById(toDoDetailId);
