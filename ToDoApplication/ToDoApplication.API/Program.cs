@@ -15,9 +15,8 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         builder.Services.AddDbContext<ToDoDbContext>(options => options.UseSqlServer(connectionString));
-        builder.Services.AddScoped(_ => new ToDoDbContextFactory(connectionString));
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         var app = builder.Build();

@@ -180,3 +180,9 @@ C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.API\obj\
 C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.API\obj\Debug\net8.0\ToDoApplication.API.pdb
 C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.API\obj\Debug\net8.0\ToDoApplication.API.genruntimeconfig.cache
 C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.API\obj\Debug\net8.0\ref\ToDoApplication.API.dll
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.API\bin\Debug\net8.0\Microsoft.Extensions.Configuration.dll
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.API\bin\Debug\net8.0\Microsoft.Extensions.Configuration.FileExtensions.dll
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.API\bin\Debug\net8.0\Microsoft.Extensions.Configuration.Json.dll
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.API\bin\Debug\net8.0\Microsoft.Extensions.FileProviders.Abstractions.dll
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.API\bin\Debug\net8.0\Microsoft.Extensions.FileProviders.Physical.dll
+C:\Egyetem\III-ev\IDDE\Laborok\bvim2209\ToDoApplication\ToDoApplication.API\bin\Debug\net8.0\Microsoft.Extensions.FileSystemGlobbing.dll
