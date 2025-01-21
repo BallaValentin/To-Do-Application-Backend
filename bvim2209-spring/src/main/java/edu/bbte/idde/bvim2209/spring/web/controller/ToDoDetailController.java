@@ -30,7 +30,7 @@ public class ToDoDetailController {
     @GetMapping("/{id}/details")
     public Page<ToDoDetailResponseDTO> getToDetails(
             @PathVariable Long id,
-            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "git0") Integer page,
             @RequestParam(defaultValue = "5") Integer size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String order
