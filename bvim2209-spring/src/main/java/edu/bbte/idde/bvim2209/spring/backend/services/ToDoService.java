@@ -5,6 +5,7 @@ import edu.bbte.idde.bvim2209.spring.backend.model.ToDoDetail;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.spring.exceptions.AuthenticationException;
 import edu.bbte.idde.bvim2209.spring.exceptions.UnauthorizedException;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.text.ParseException;
 import java.util.Collection;
@@ -21,7 +22,7 @@ public interface ToDoService {
 
     ToDo getById(Long id) throws EntityNotFoundException;
 
-    Collection<ToDo> findAll();
+    Collection<ToDo> findAll(Specification<ToDo> toDoSpecification);
 
     Collection<ToDo> findByImportance(Integer importanceLevel);
 

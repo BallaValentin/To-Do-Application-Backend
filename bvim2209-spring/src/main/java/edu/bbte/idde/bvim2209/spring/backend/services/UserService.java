@@ -8,6 +8,7 @@ import edu.bbte.idde.bvim2209.spring.exceptions.UnauthorizedException;
 import edu.bbte.idde.bvim2209.spring.backend.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -84,8 +85,9 @@ public class UserService {
 
     public Collection<User> getAllUsers(String jwtToken) {
         User userFromToken = getUserFromToken(jwtToken);
+        Specification<User> userSpecification = Specification.where(null);
         if ("admin".equals(userFromToken.getRole())) {
-            return userDao.findAll();
+            return userDao.findAll(userSpecification);
         } else {
             throw new UnauthorizedException("You are not an admin");
         }

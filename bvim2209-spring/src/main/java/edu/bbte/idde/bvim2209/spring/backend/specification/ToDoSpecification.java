@@ -13,13 +13,13 @@ public class ToDoSpecification {
 
     public static Specification<ToDo> withDueDateBefore(Date dueDate) {
         return (root, query, criteriaBuilder) ->
-                dueDate != null ?
-                        criteriaBuilder.greaterThanOrEqualTo(root.get("dueDate"), dueDate) : null;
+                dueDate != null
+                        ? criteriaBuilder.greaterThanOrEqualTo(root.get("dueDate"), dueDate) : null;
     }
 
-    public static Specification<ToDo> withDueDateAfetr(Date dueDate) {
+    public static Specification<ToDo> withDueDateAfter(Date dueDate) {
         return (root, query, criteriaBuilder) ->
-                dueDate != null ?
-                criteriaBuilder.lessThanOrEqualTo(root.get("dueDate"), dueDate) : null;
+                dueDate != null
+                        ? criteriaBuilder.lessThanOrEqualTo(root.get("dueDate"), dueDate) : null;
     }
 }

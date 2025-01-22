@@ -10,6 +10,7 @@ import edu.bbte.idde.bvim2209.spring.exceptions.AuthenticationException;
 import edu.bbte.idde.bvim2209.spring.exceptions.UnauthorizedException;
 import edu.bbte.idde.bvim2209.spring.backend.util.ToDoServiceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -86,8 +87,9 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
-    public Collection<ToDo> findAll() {
-        return toDoDao.findAll();
+    public Collection<ToDo> findAll(Specification<ToDo> toDoSpecification) {
+
+        return toDoDao.findAll(toDoSpecification);
     }
 
     @Override

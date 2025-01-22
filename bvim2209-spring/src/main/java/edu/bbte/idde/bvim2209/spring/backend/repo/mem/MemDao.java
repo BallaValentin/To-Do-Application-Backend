@@ -3,6 +3,7 @@ package edu.bbte.idde.bvim2209.spring.backend.repo.mem;
 import edu.bbte.idde.bvim2209.spring.backend.model.BaseEntity;
 import edu.bbte.idde.bvim2209.spring.backend.repo.Dao;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Collection;
 import java.util.Map;
@@ -15,7 +16,7 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
     private static final AtomicLong idCounter = new AtomicLong(1);
 
     @Override
-    public Collection<T> findAll() {
+    public Collection<T> findAll(Specification<T> spec) {
         return entities.values();
     }
 

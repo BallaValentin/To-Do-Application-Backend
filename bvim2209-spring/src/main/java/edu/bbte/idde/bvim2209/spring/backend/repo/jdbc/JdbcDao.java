@@ -4,6 +4,7 @@ import edu.bbte.idde.bvim2209.spring.backend.model.BaseEntity;
 import edu.bbte.idde.bvim2209.spring.backend.repo.Dao;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -43,7 +44,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     protected abstract Integer getNumberOfColumnsToUpdate();
 
     @Override
-    public Collection<T> findAll() {
+    public Collection<T> findAll(Specification<T> spec) {
         log.info("Trying to fetch all entities from database");
         Collection<T> entities = new ArrayList<>();
         try (
@@ -64,13 +65,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     @Override
     public T saveAndFlush(T entity) throws IllegalArgumentException {
         log.info("Trying to insert new entity in database");
-
-        if (entity.getId() != null && !findAll().contains(entity)) {
-            log.debug("Inserting new entity with id in database");
-            return createWithId(entity);
-        } else {
-            return createWithoutId(entity);
-        }
+        return createWithoutId(entity);
     }
 
     @Override
@@ -137,20 +132,6 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
                     }
                 }
             }
-            logEntityCreated();
-            return entity;
-        } catch (SQLException exception) {
-            log.error("Error creating entity in database", exception);
-            throw new IllegalArgumentException("Could not create entity", exception);
-        }
-    }
-
-    private T createWithId(T entity) {
-        try (
-                PreparedStatement preparedStatement = prepareStatementForInsertWithId()
-        ) {
-            setStatementForInsertWithId(preparedStatement, entity);
-            preparedStatement.executeUpdate();
             logEntityCreated();
             return entity;
         } catch (SQLException exception) {
