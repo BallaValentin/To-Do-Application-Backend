@@ -11,3 +11,6 @@ C:\Tomcat\apache-tomcat-10.1.30\bin\startup.bat
 
 # Shutdown catalina
 C:\Tomcat\apache-tomcat-10.1.30\bin\shutdown.bat
+
+# Setting environment variable for config
+$env:ACTIVE_PROFILE="jdbc"
