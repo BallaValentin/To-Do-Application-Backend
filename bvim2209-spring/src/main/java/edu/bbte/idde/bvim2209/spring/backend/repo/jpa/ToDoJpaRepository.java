@@ -10,11 +10,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+import java.util.Optional;
+
 @Repository
 @Profile("jpa")
-public interface ToDoJpaDao extends
-        ToDoDao, JpaRepository<ToDo, Long>, edu.bbte.idde.bvim2209.spring.backend.repo.Dao<ToDo> {
-    @Override
+public interface ToDoJpaRepository extends
+        JpaRepository<ToDo, Long> {
     @Modifying
     @Transactional
     @Query("update ToDo t "
@@ -24,4 +26,10 @@ public interface ToDoJpaDao extends
             + "t.levelOfImportance=:#{#toDo.levelOfImportance} "
             + "where t.id=:#{#toDo.id}")
     void update(@Param("toDo") ToDo toDo);
+
+    void deleteById(Long id);
+
+    Optional<ToDo> findById(Long id);
+
+    Collection<ToDo> findByLevelOfImportance(Integer levelOfImportance);
 }
