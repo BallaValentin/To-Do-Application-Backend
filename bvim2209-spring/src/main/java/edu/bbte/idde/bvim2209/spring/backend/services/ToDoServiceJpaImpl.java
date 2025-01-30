@@ -106,6 +106,9 @@ public class ToDoServiceJpaImpl implements ToDoService {
 
     @Override
     public Collection<ToDo> findAll() {
+        if (timeWindow == 0) {
+            return toDoJpaRepository.findAll();
+        }
         return toDoJpaRepository.findByCreationDateAfter(Instant.now().minusSeconds(timeWindow));
     }
 
