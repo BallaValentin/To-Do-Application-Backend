@@ -1,7 +1,6 @@
 package edu.bbte.idde.bvim2209.spring.backend.repo.jpa;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
-import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDao;
 import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,8 +26,10 @@ public interface ToDoJpaRepository extends
             + "where t.id=:#{#toDo.id}")
     void update(@Param("toDo") ToDo toDo);
 
+    @Override
     void deleteById(Long id);
 
+    @Override
     Optional<ToDo> findById(Long id);
 
     Collection<ToDo> findByLevelOfImportance(Integer levelOfImportance);

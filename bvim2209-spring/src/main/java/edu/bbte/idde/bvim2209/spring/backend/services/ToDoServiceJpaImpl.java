@@ -2,8 +2,6 @@ package edu.bbte.idde.bvim2209.spring.backend.services;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDoDetail;
-import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDao;
-import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDetailDao;
 import edu.bbte.idde.bvim2209.spring.backend.repo.jpa.ToDoDetailJpaRepository;
 import edu.bbte.idde.bvim2209.spring.backend.repo.jpa.ToDoJpaRepository;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
@@ -16,7 +14,7 @@ import java.util.Optional;
 
 @Service
 @Profile("jpa")
-public class ToDoServiceJpaImpl implements ToDoService{
+public class ToDoServiceJpaImpl implements ToDoService {
     private final ToDoJpaRepository toDoJpaRepository;
     private final ToDoDetailJpaRepository toDoDetailJpaRepository;
 
