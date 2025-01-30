@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Configuration {
+    private Long limit;
     private String activeProfile;
     private JdbcConfiguration jdbcConfiguration;
 }

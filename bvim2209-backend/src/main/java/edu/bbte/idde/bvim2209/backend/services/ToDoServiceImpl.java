@@ -1,17 +1,28 @@
 package edu.bbte.idde.bvim2209.backend.services;
 
+import edu.bbte.idde.bvim2209.backend.conf.Configuration;
+import edu.bbte.idde.bvim2209.backend.conf.ConfigurationFactory;
 import edu.bbte.idde.bvim2209.backend.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.backend.repo.DaoFactory;
 import edu.bbte.idde.bvim2209.backend.repo.ToDoDao;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Collection;
 
 public class ToDoServiceImpl implements ToDoService {
+    @Getter
+    @Setter
+    private Long limit;
     private final transient ToDoDao toDoDao;
 
     public ToDoServiceImpl() {
         toDoDao = DaoFactory.getInstance().getToDoDao();
+        limit = ConfigurationFactory.getConfiguration().getLimit();
+        if (limit == null) {
+            limit = 5L;
+        }
     }
 
     @Override
@@ -69,6 +80,6 @@ public class ToDoServiceImpl implements ToDoService {
 
     @Override
     public Collection<ToDo> findAll() {
-        return toDoDao.findAll();
+        return toDoDao.findAll(limit);
     }
 }

@@ -3,3 +3,5 @@ spring:
     active: jpa
 server:
   port: 8081
+custom:
+  timeWindow: 60

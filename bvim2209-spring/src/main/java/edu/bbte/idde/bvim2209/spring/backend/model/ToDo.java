@@ -3,6 +3,7 @@ package edu.bbte.idde.bvim2209.spring.backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -25,6 +26,8 @@ public class ToDo extends BaseEntity {
     private Date dueDate;
     @Column(nullable = false)
     private Integer levelOfImportance;
+    @Column(nullable = false)
+    private Instant creationDate;
 
     @OneToMany(mappedBy = "toDo", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Collection<ToDoDetail> details = new ArrayList<>();

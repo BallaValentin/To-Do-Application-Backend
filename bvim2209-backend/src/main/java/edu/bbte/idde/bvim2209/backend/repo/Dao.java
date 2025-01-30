@@ -17,7 +17,7 @@ public interface Dao<T extends BaseEntity> {
     /**
      * Teljes entitáslista visszatérítése.
      */
-    Collection<T> findAll();
+    Collection<T> findAll(Long limit);
 
     /**
      * Létrehozás entitás által

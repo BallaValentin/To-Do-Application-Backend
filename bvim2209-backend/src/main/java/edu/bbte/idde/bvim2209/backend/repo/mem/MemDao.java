@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 /**
  * CRUD műveletek implementációja egy elérési móddal.
@@ -22,9 +23,9 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
     private static final AtomicLong idCounter = new AtomicLong(1);
 
     @Override
-    public Collection<T> findAll() {
+    public Collection<T> findAll(Long limit) {
         logger.info("Try to fetch all entities from memory");
-        return entities.values();
+        return entities.values().stream().limit(limit).collect(Collectors.toList());
     }
 
     @Override

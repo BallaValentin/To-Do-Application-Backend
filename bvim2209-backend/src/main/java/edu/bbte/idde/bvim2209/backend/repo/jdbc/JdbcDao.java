@@ -27,7 +27,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
 
     protected abstract void setStatementForUpdate(PreparedStatement preparedStatement, T entity) throws SQLException;
 
-    protected abstract PreparedStatement prepareStatementForFindAll() throws SQLException;
+    protected abstract PreparedStatement prepareStatementForFindAll(Long limit) throws SQLException;
 
     protected abstract PreparedStatement prepareStatementForInsert() throws SQLException;
 
@@ -42,11 +42,11 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     protected abstract Integer getNumberOfColumnsToUpdate();
 
     @Override
-    public Collection<T> findAll() {
+    public Collection<T> findAll(Long limit) {
         logger.info("Trying to fetch all entities from database");
         Collection<T> entities = new ArrayList<>();
         try (
-                PreparedStatement preparedStatement = prepareStatementForFindAll();
+                PreparedStatement preparedStatement = prepareStatementForFindAll(limit);
                 ResultSet resultSet = preparedStatement.executeQuery()
         ) {
             while (resultSet.next()) {

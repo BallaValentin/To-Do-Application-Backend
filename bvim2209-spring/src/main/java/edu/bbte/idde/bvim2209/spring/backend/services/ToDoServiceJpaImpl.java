@@ -1,33 +1,49 @@
 package edu.bbte.idde.bvim2209.spring.backend.services;
 
+import edu.bbte.idde.bvim2209.spring.backend.config.CustomConfigLoader;
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDoDetail;
 import edu.bbte.idde.bvim2209.spring.backend.repo.jpa.ToDoDetailJpaRepository;
 import edu.bbte.idde.bvim2209.spring.backend.repo.jpa.ToDoJpaRepository;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
 
 @Service
 @Profile("jpa")
+@Slf4j
 public class ToDoServiceJpaImpl implements ToDoService {
     private final ToDoJpaRepository toDoJpaRepository;
     private final ToDoDetailJpaRepository toDoDetailJpaRepository;
 
+    private CustomConfigLoader customConfigLoader;
+
+    private Integer timeWindow;
+
     @Autowired
     public ToDoServiceJpaImpl(
-            ToDoJpaRepository toDoJpaRepository, ToDoDetailJpaRepository toDoDetailJpaRepository) {
+            ToDoJpaRepository toDoJpaRepository, ToDoDetailJpaRepository toDoDetailJpaRepository,
+            CustomConfigLoader customConfigLoader) {
         this.toDoJpaRepository = toDoJpaRepository;
-        this.toDoDetailJpaRepository = toDoDetailJpaRepository;
+        this.toDoDetailJpaRepository= toDoDetailJpaRepository;
+        this.customConfigLoader = customConfigLoader;
+        this.timeWindow = customConfigLoader.getTimeWindow();
+        if (timeWindow == null) {
+            this.timeWindow = 0;
+        }
+        log.info("The time window is {}", timeWindow);
     }
 
     @Override
     public void createToDo(ToDo toDo) throws IllegalArgumentException {
         validateToDo(toDo);
+        toDo.setCreationDate(Instant.now());
         toDoJpaRepository.saveAndFlush(toDo);
     }
 
@@ -90,7 +106,7 @@ public class ToDoServiceJpaImpl implements ToDoService {
 
     @Override
     public Collection<ToDo> findAll() {
-        return toDoJpaRepository.findAll();
+        return toDoJpaRepository.findByCreationDateAfter(Instant.now().minusSeconds(timeWindow));
     }
 
     @Override

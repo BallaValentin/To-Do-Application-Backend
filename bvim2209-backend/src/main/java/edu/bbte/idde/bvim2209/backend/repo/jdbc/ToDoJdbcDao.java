@@ -52,8 +52,8 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
     }
 
     @Override
-    protected PreparedStatement prepareStatementForFindAll() throws SQLException {
-        String query = "SELECT * FROM ToDo";
+    protected PreparedStatement prepareStatementForFindAll(Long limit) throws SQLException {
+        String query = "SELECT * FROM ToDo LIMIT " + limit;
         Connection connection = dataSource.getConnection();
         PreparedStatement preparedStatement;
         preparedStatement = connection.prepareStatement(query);
