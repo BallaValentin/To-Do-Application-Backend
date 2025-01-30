@@ -21,12 +21,14 @@ public abstract class DaoFactory {
         if (instance == null) {
             String activeProfile = ConfigurationFactory.getActiveProfileConfig();
             if ("jdbc".equals(activeProfile)) {
-                logger.info("Creating instance of JdbcDaoFactory...");
+                logger.info("Creating new instance of JdbcDaoFactory...");
                 instance = new JdbcDaoFactory();
             } else {
-                logger.info("Creating new instance of MemDaoFactory");
+                logger.info("Creating new instance of MemDaoFactory...");
                 instance = new MemDaoFactory();
             }
+        } else {
+            logger.info("Getting existing instance of DaoFactory...");
         }
         return instance;
     }
