@@ -16,12 +16,15 @@ public class ToDoServiceImpl implements ToDoService {
 
     @Override
     public void createToDo(ToDo toDo) throws IllegalArgumentException {
+        toDo.setVersion(1L);
         validateToDo(toDo);
         toDoDao.create(toDo);
     }
 
     @Override
     public void updateToDo(ToDo toDo) throws EntityNotFoundException, IllegalArgumentException {
+        ToDo toDoToUpdate = toDoDao.findById(toDo.getId());
+        toDo.setVersion(toDoToUpdate.getVersion() + 1);
         validateToDo(toDo);
         toDoDao.update(toDo);
     }

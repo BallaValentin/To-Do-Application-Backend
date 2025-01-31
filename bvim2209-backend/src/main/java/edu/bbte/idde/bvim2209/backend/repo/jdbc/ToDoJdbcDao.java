@@ -30,6 +30,7 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
         toDo.setDescription(resultSet.getString("Description"));
         toDo.setDueDate(resultSet.getDate("DueDate"));
         toDo.setLevelOfImportance(resultSet.getInt("ImportanceLevel"));
+        toDo.setVersion(resultSet.getLong("Version"));
         return toDo;
     }
 
@@ -40,6 +41,7 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
         preparedStatement.setString(2, entity.getDescription());
         preparedStatement.setDate(3, new java.sql.Date(entity.getDueDate().getTime()));
         preparedStatement.setInt(4, entity.getLevelOfImportance());
+        preparedStatement.setLong(5, entity.getVersion());
     }
 
     @Override
@@ -49,6 +51,7 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
         preparedStatement.setString(2, entity.getDescription());
         preparedStatement.setDate(3, new java.sql.Date(entity.getDueDate().getTime()));
         preparedStatement.setInt(4, entity.getLevelOfImportance());
+        preparedStatement.setLong(5, entity.getVersion());
     }
 
     @Override
@@ -62,7 +65,7 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
 
     @Override
     protected PreparedStatement prepareStatementForInsert() throws SQLException {
-        String query = "INSERT INTO ToDo (Title, Description, DueDate, ImportanceLevel) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO ToDo (Title, Description, DueDate, ImportanceLevel, Version) VALUES (?, ?, ?, ?, ?)";
         Connection connection = dataSource.getConnection();
         PreparedStatement preparedStatement;
         preparedStatement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -89,7 +92,7 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
 
     @Override
     protected PreparedStatement prepareStatementForUpdate() throws SQLException {
-        String query = "UPDATE ToDo SET Title=?, Description=?, DueDate=?, ImportanceLevel=? WHERE ID=?";
+        String query = "UPDATE ToDo SET Title=?, Description=?, DueDate=?, ImportanceLevel=?, Version=? WHERE ID=?";
         Connection connection = dataSource.getConnection();
         PreparedStatement preparedStatement;
         preparedStatement = connection.prepareStatement(query);
@@ -103,6 +106,6 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
 
     @Override
     protected Integer getNumberOfColumnsToUpdate() {
-        return 4;
+        return 5;
     }
 }
