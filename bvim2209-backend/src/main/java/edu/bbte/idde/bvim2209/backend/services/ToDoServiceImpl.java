@@ -1,16 +1,22 @@
 package edu.bbte.idde.bvim2209.backend.services;
 
+import edu.bbte.idde.bvim2209.backend.conf.ConfigurationFactory;
 import edu.bbte.idde.bvim2209.backend.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.backend.repo.DaoFactory;
 import edu.bbte.idde.bvim2209.backend.repo.ToDoDao;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
+@Slf4j
 public class ToDoServiceImpl implements ToDoService {
     private final transient ToDoDao toDoDao;
+    private final Boolean showVersion = ConfigurationFactory.getConfiguration().getShowVersion();
 
     public ToDoServiceImpl() {
+
         toDoDao = DaoFactory.getInstance().getToDoDao();
     }
 
@@ -36,7 +42,12 @@ public class ToDoServiceImpl implements ToDoService {
 
     @Override
     public ToDo findById(Long id) throws EntityNotFoundException {
-        return toDoDao.findById(id);
+        ToDo toDo = toDoDao.findById(id);
+        log.info("Show version: {}", showVersion);
+        if (!showVersion) {
+            toDo.setVersion(null);
+        }
+        return toDo;
     }
 
     private void validateToDo(ToDo toDo) {
@@ -72,6 +83,12 @@ public class ToDoServiceImpl implements ToDoService {
 
     @Override
     public Collection<ToDo> findAll() {
-        return toDoDao.findAll();
+        Collection<ToDo> toDos = toDoDao.findAll();
+
+        if (!showVersion) {
+            return toDos.stream().peek(toDo -> toDo.setVersion(null)).collect(Collectors.toList());
+        }
+
+        return toDos;
     }
 }
