@@ -12,8 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 @Repository
 @Profile("jdbc")
@@ -23,7 +22,9 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
 
     @Autowired
     public ToDoJdbcDao(DataSource dataSource) {
-        super();
+        super(dataSource, "ToDo", "ID", 1,
+                new ArrayList<>(Arrays.asList("Title", "Description", "DueDate", "ImportanceLevel")
+                ));
         this.dataSource = dataSource;
     }
 
@@ -49,16 +50,6 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
     }
 
     @Override
-    protected void setStatementForInsertWithId(PreparedStatement preparedStatement, ToDo entity) throws SQLException {
-        log.info("Setting parameters for PreparedStatement to insert ToDo entity");
-        preparedStatement.setLong(1, entity.getId());
-        preparedStatement.setString(2, entity.getTitle());
-        preparedStatement.setString(3, entity.getDescription());
-        preparedStatement.setDate(4, new java.sql.Date(entity.getDueDate().getTime()));
-        preparedStatement.setInt(5, entity.getLevelOfImportance());
-    }
-
-    @Override
     protected void setStatementForUpdate(PreparedStatement preparedStatement, ToDo entity) throws SQLException {
         log.info("Setting parameters for PreparedStatement to update ToDo entity");
         preparedStatement.setString(1, entity.getTitle());
@@ -68,86 +59,23 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
     }
 
     @Override
-    protected PreparedStatement prepareStatementForFindAll() throws SQLException {
-        String query = "SELECT * FROM ToDo";
-        Connection connection = dataSource.getConnection();
-        PreparedStatement preparedStatement;
-        preparedStatement = connection.prepareStatement(query);
-        return preparedStatement;
-    }
-
-    @Override
-    protected PreparedStatement prepareStatementForInsert() throws SQLException {
-        String query = "INSERT INTO ToDo (Title, Description, DueDate, ImportanceLevel) VALUES (?, ?, ?, ?)";
-        Connection connection = dataSource.getConnection();
-        PreparedStatement preparedStatement;
-        preparedStatement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
-        return preparedStatement;
-    }
-
-    @Override
-    protected PreparedStatement prepareStatementForInsertWithId() throws SQLException {
-        String query = "INSERT INTO ToDo (ID, Title, Description, DueDate, ImportanceLevel) VALUES (?, ?, ?, ?, ?)";
-        Connection connection = dataSource.getConnection();
-        PreparedStatement preparedStatement;
-        preparedStatement = connection.prepareStatement(query);
-        return preparedStatement;
-    }
-
-    @Override
-    protected PreparedStatement prepareStatementForFindById(Long id) throws SQLException {
-        String query = "SELECT * FROM ToDo WHERE ID=?";
-        Connection connection = dataSource.getConnection();
-        PreparedStatement preparedStatement;
-        preparedStatement = connection.prepareStatement(query);
-        return preparedStatement;
-    }
-
-    @Override
-    protected PreparedStatement prepareStatementForDeleteById(Long id) throws SQLException {
-        String query = "DELETE FROM ToDo WHERE ID=?";
-        Connection connection = dataSource.getConnection();
-        PreparedStatement preparedStatement;
-        preparedStatement = connection.prepareStatement(query);
-        return preparedStatement;
-    }
-
-    @Override
-    protected PreparedStatement prepareStatementForUpdate() throws SQLException {
-        String query = "UPDATE ToDo SET Title=?, Description=?, DueDate=?, ImportanceLevel=? WHERE ID=?";
-        Connection connection = dataSource.getConnection();
-        PreparedStatement preparedStatement;
-        preparedStatement = connection.prepareStatement(query);
-        return preparedStatement;
-    }
-
-    @Override
-    protected Integer getPrimaryKeyIndex() {
-        return 1;
-    }
-
-    @Override
-    protected Integer getNumberOfColumnsToUpdate() {
-        return 4;
-    }
-
-    @Override
     public Collection<ToDo> findByLevelOfImportance(Integer levelOfImportance) {
-        Collection<ToDo> toDos = new ArrayList<>();
-        String query = "SELECT * FROM ToDo WHERE ImportanceLevel = ?";
+        String query = "SELECT * FROM ToDo WHERE ImportanceLevel = " + levelOfImportance;
+
+        Collection<ToDo> entities = new ArrayList<>();
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery(query)
         ) {
-            preparedStatement.setInt(1, levelOfImportance);
-            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                ToDo toDo = mapResultSetToEntity(resultSet);
-                toDos.add(toDo);
+                ToDo entity = mapResultSetToEntity(resultSet);
+                entities.add(entity);
             }
         } catch (SQLException exception) {
-            log.error("Error fetching all entities by importance from database", exception);
+            log.error("Error fetching all entities from database", exception);
         }
-        return toDos;
+        log.info("All entities have been successfully fetched from database");
+        return entities;
     }
 }

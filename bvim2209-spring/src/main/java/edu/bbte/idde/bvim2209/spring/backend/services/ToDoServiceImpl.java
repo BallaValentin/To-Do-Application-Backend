@@ -3,7 +3,6 @@ package edu.bbte.idde.bvim2209.spring.backend.services;
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDoDetail;
 import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDao;
-import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDetailDao;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -17,18 +16,16 @@ import java.util.Optional;
 public class ToDoServiceImpl implements ToDoService {
 
     private final ToDoDao toDoDao;
-    private final ToDoDetailDao toDoDetailDao;
 
     @Autowired
-    public ToDoServiceImpl(ToDoDao toDoDao, ToDoDetailDao toDoDetailDao) {
+    public ToDoServiceImpl(ToDoDao toDoDao) {
         this.toDoDao = toDoDao;
-        this.toDoDetailDao = toDoDetailDao;
     }
 
     @Override
     public void createToDo(ToDo toDo) throws IllegalArgumentException {
         validateToDo(toDo);
-        toDoDao.saveAndFlush(toDo);
+        toDoDao.create(toDo);
     }
 
     @Override
@@ -106,23 +103,11 @@ public class ToDoServiceImpl implements ToDoService {
 
     @Override
     public void addDetailToToDo(Long id, ToDoDetail toDoDetail) throws EntityNotFoundException {
-        ToDo toDo = getById(id);
-        toDo.getDetails().add(toDoDetail);
-        toDoDetail.setToDo(toDo);
-        toDoDetailDao.saveAndFlush(toDoDetail);
-        toDoDao.update(toDo);
+
     }
 
     @Override
     public void deleteDetailById(Long toDoId, Long toDoDetailId) throws EntityNotFoundException {
-        ToDo toDo = getById(toDoId);
-        Optional<ToDoDetail> toDoDetail = toDoDetailDao.findById(toDoDetailId);
-        if (toDoDetail.isEmpty()) {
-            throw new EntityNotFoundException("ToDoDetail with id " + toDoDetailId + " not found");
-        } else {
-            toDo.getDetails().remove(toDoDetail.get());
-            toDoDao.update(toDo);
-            toDoDetailDao.deleteById(toDoDetailId);
-        }
+
     }
 }
