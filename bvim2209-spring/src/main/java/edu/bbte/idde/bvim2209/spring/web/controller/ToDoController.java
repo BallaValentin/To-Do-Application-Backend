@@ -30,7 +30,7 @@ public class ToDoController {
 
     @GetMapping()
     public Collection<ToDoResponseDTO> getTodos(
-            @RequestParam(value = "levelOfImportance", required = false) Integer levelOfImportance
+            @RequestParam(required = false) Integer levelOfImportance
     ) {
         if (levelOfImportance == null) {
             return toDoMapper.modelsToResponseDTO(toDoService.findAll());

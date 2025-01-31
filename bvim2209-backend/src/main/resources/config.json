@@ -1,5 +1,5 @@
 {
-  "showVersion": false,
+  "showVersion": true,
   "jdbcConfiguration": {
     "databaseConfig": {
       "url": "jdbc:mysql://127.0.0.1:3306/ToDoDatabase",

@@ -1,7 +1,9 @@
 package edu.bbte.idde.bvim2209.spring.backend.services;
 
+import edu.bbte.idde.bvim2209.spring.backend.model.Query;
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDoDetail;
+import edu.bbte.idde.bvim2209.spring.backend.repo.jpa.QueryJpaRepository;
 import edu.bbte.idde.bvim2209.spring.backend.repo.jpa.ToDoDetailJpaRepository;
 import edu.bbte.idde.bvim2209.spring.backend.repo.jpa.ToDoJpaRepository;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -17,12 +20,15 @@ import java.util.Optional;
 public class ToDoServiceJpaImpl implements ToDoService {
     private final ToDoJpaRepository toDoJpaRepository;
     private final ToDoDetailJpaRepository toDoDetailJpaRepository;
+    private final QueryJpaRepository queryJpaRepository;
 
     @Autowired
     public ToDoServiceJpaImpl(
-            ToDoJpaRepository toDoJpaRepository, ToDoDetailJpaRepository toDoDetailJpaRepository) {
+            ToDoJpaRepository toDoJpaRepository, ToDoDetailJpaRepository toDoDetailJpaRepository,
+            QueryJpaRepository queryJpaRepository) {
         this.toDoJpaRepository = toDoJpaRepository;
         this.toDoDetailJpaRepository = toDoDetailJpaRepository;
+        this.queryJpaRepository = queryJpaRepository;
     }
 
     @Override
@@ -95,6 +101,10 @@ public class ToDoServiceJpaImpl implements ToDoService {
 
     @Override
     public Collection<ToDo> findByImportance(Integer levelOfImportance) {
+        Query query = new Query();
+        query.setSearchQuery("levelOfImportance=" + levelOfImportance);
+        query.setSearchDate(Instant.now());
+        queryJpaRepository.saveAndFlush(query);
         return toDoJpaRepository.findByLevelOfImportance(levelOfImportance);
     }
 
