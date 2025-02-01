@@ -48,7 +48,8 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     public Collection<T> findAll() {
         log.info("Trying to fetch all entities from database");
 
-        String query = "SELECT * FROM " + tableName;
+        String query = "SELECT * FROM " + tableName
+                + " WHERE Deleted=FALSE";
         Collection<T> entities = new ArrayList<>();
         try (
                 Connection connection = dataSource.getConnection();
@@ -71,9 +72,11 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
         log.info("Trying to insert new entity in database");
 
         String query = "INSERT INTO ToDo ("
-                + String.join(",", columnNames) + ") VALUES ("
+                + String.join(",", columnNames)
+                + ", Deleted"
+                + ") VALUES ("
                 + columnNames.stream().map(column -> "?").collect(Collectors.joining(", "))
-                + ")";
+                + ", FALSE)";
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement =
@@ -99,7 +102,8 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     public Optional<T> findById(Long id) throws EntityNotFoundException {
         log.info("Trying to find entity by id: {} in database", id);
 
-        String query = "SELECT * FROM " + tableName + " WHERE " + primaryKey + " = " + id;
+        String query = "SELECT * FROM " + tableName + " WHERE " + primaryKey + " = " + id
+                + " AND Deleted=FALSE";
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -125,7 +129,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
         String query = "UPDATE " + tableName
                 + " SET "
                 + columnNames.stream().map(column -> column + "=?").collect(Collectors.joining(", "))
-                + " WHERE " + primaryKey + "=?";
+                + " WHERE " + primaryKey + "=? AND Deleted=FALSE";
 
         try (
                 Connection connection = dataSource.getConnection();
@@ -146,7 +150,8 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     public void deleteById(Long id) throws EntityNotFoundException {
         log.info("Trying to delete entity with id {} from database", id);
 
-        String query = "DELETE FROM ToDo WHERE " + primaryKey + " = " + id;
+        String query = "UPDATE " + tableName  + " SET Deleted=TRUE WHERE " + primaryKey + " = " + id
+                + " AND Deleted=FALSE";
 
         try (
                 Connection connection = dataSource.getConnection();

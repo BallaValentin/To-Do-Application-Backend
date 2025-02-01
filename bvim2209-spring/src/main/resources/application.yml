@@ -1,5 +1,5 @@
 spring:
   profiles:
-    active: jpa
+    active: mem
 server:
   port: 8081
