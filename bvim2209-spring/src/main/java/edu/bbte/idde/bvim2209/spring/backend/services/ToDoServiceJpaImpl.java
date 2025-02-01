@@ -1,5 +1,6 @@
 package edu.bbte.idde.bvim2209.spring.backend.services;
 
+import edu.bbte.idde.bvim2209.spring.backend.configuration.CustomConfiguration;
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDoDetail;
 import edu.bbte.idde.bvim2209.spring.backend.repo.jpa.ToDoDetailJpaRepository;
@@ -17,12 +18,24 @@ import java.util.Optional;
 public class ToDoServiceJpaImpl implements ToDoService {
     private final ToDoJpaRepository toDoJpaRepository;
     private final ToDoDetailJpaRepository toDoDetailJpaRepository;
+    private Boolean failOnDeleteMissing;
+    private Boolean isDeleteMissingFatal;
 
     @Autowired
     public ToDoServiceJpaImpl(
-            ToDoJpaRepository toDoJpaRepository, ToDoDetailJpaRepository toDoDetailJpaRepository) {
+            ToDoJpaRepository toDoJpaRepository,
+            ToDoDetailJpaRepository toDoDetailJpaRepository,
+            CustomConfiguration customConfiguration) {
         this.toDoJpaRepository = toDoJpaRepository;
         this.toDoDetailJpaRepository = toDoDetailJpaRepository;
+        this.failOnDeleteMissing = customConfiguration.getFailOnDeleteMissing();
+        if (this.failOnDeleteMissing == null) {
+            this.failOnDeleteMissing = false;
+        }
+        this.isDeleteMissingFatal = customConfiguration.getIsDeleteMissingFatal();
+        if (this.isDeleteMissingFatal == null) {
+            this.isDeleteMissingFatal = false;
+        }
     }
 
     @Override
@@ -41,7 +54,13 @@ public class ToDoServiceJpaImpl implements ToDoService {
     @Override
     public void deleteToDo(Long id) throws EntityNotFoundException {
         validateId(id);
-        toDoJpaRepository.deleteById(id);
+        try {
+            toDoJpaRepository.deleteById(id);
+        } catch (EntityNotFoundException e) {
+            if (failOnDeleteMissing) {
+                throw e;
+            }
+        }
     }
 
     @Override

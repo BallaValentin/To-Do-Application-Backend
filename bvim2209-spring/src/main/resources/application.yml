@@ -3,3 +3,6 @@ spring:
     active: jdbc
 server:
   port: 8081
+custom:
+  failOnDeleteMissing: false
+  isDeleteMissingFatal: false
