@@ -1,5 +1,6 @@
 package edu.bbte.idde.bvim2209.backend.services;
 
+import edu.bbte.idde.bvim2209.backend.conf.ConfigurationFactory;
 import edu.bbte.idde.bvim2209.backend.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.backend.repo.DaoFactory;
@@ -70,5 +71,21 @@ public class ToDoServiceImpl implements ToDoService {
     @Override
     public Collection<ToDo> findAll() {
         return toDoDao.findAll();
+    }
+
+    @Override
+    public Integer getLogQueryCount() {
+        if (toDoDao.getLogQueries()) {
+            return toDoDao.getLogQueriesCount();
+        }
+        return null;
+    }
+
+    @Override
+    public Integer getLogUpdateCount() {
+        if (toDoDao.getLogUpdates()) {
+            return toDoDao.getLogUpdatesCount();
+        }
+        return null;
     }
 }

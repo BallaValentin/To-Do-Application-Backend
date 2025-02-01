@@ -1,9 +1,12 @@
 package edu.bbte.idde.bvim2209.backend.repo.jdbc;
 
 import com.zaxxer.hikari.HikariDataSource;
+import edu.bbte.idde.bvim2209.backend.conf.ConfigurationFactory;
 import edu.bbte.idde.bvim2209.backend.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.backend.model.BaseEntity;
 import edu.bbte.idde.bvim2209.backend.repo.Dao;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,12 +28,32 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     private final Integer primaryKeyIndex;
     private final Collection<String> columnNames;
 
+    private final Boolean logQueries;
+
+    private final Boolean logUpdates;
+
+    private Integer logUpdatesCount = 0;
+
+    private Integer logQueriesCount = 0;
+
     protected JdbcDao(String tableName, String primaryKey, Integer primaryKeyIndex,
                       Collection<String> columnNames) {
         this.tableName = tableName;
         this.primaryKey = primaryKey;
         this.primaryKeyIndex = primaryKeyIndex;
         this.columnNames = columnNames;
+
+        if (ConfigurationFactory.getConfiguration().getLogQueries() == null) {
+            this.logQueries = false;
+        } else {
+            this.logQueries = ConfigurationFactory.getConfiguration().getLogQueries();
+        }
+
+        if (ConfigurationFactory.getConfiguration().getLogUpdates() == null) {
+            this.logUpdates = true;
+        } else {
+            this.logUpdates = ConfigurationFactory.getConfiguration().getLogUpdates();
+        }
     }
 
     protected abstract T mapResultSetToEntity(ResultSet resultSet) throws SQLException;
@@ -44,6 +67,12 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
         logger.info("Trying to fetch all entities from database");
 
         String query = "SELECT * FROM " + tableName;
+
+        if (logQueries) {
+            logger.info(query);
+            logQueriesCount++;
+        }
+
         Collection<T> entities = new ArrayList<>();
         try (
                 Connection connection = dataSource.getConnection();
@@ -69,6 +98,12 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
                 + String.join(",", columnNames) + ") VALUES ("
                 + columnNames.stream().map(column -> "?").collect(Collectors.joining(", "))
                 + ")";
+
+        if(logUpdates) {
+            logger.info(query);
+            logUpdatesCount++;
+        }
+
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement =
@@ -95,6 +130,12 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
         logger.info("Trying to find entity by id: {} in database", id);
 
         String query = "SELECT * FROM " + tableName + " WHERE " + primaryKey + " = " + id;
+
+        if(logQueries) {
+            logger.info(query);
+            logQueriesCount++;
+        }
+
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -121,6 +162,11 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
                 + columnNames.stream().map(column -> column + "=?").collect(Collectors.joining(", "))
                 + " WHERE " + primaryKey + "=?";
 
+        if (logUpdates) {
+            logger.info(query);
+            logUpdatesCount++;
+        }
+
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -142,6 +188,11 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
 
         String query = "DELETE FROM ToDo WHERE " + primaryKey + " = " + id;
 
+        if (logUpdates) {
+            logger.info(query);
+            logUpdatesCount++;
+        }
+
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);) {
@@ -153,5 +204,25 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
             logger.error("Error deleting entity from database", e);
         }
         logger.info("Entity with id {} has been successfully deleted from database", id);
+    }
+
+    @Override
+    public Integer getLogUpdatesCount() {
+        return logUpdatesCount;
+    }
+
+    @Override
+    public Integer getLogQueriesCount() {
+        return logQueriesCount;
+    }
+
+    @Override
+    public Boolean getLogUpdates() {
+        return logUpdates;
+    }
+
+    @Override
+    public Boolean getLogQueries() {
+        return logQueries;
     }
 }

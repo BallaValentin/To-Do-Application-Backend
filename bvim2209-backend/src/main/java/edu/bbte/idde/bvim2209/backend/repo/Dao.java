@@ -29,4 +29,10 @@ public interface Dao<T extends BaseEntity> {
     void update(T entity) throws EntityNotFoundException;
 
     void delete(Long id) throws EntityNotFoundException;
+
+    Boolean getLogQueries();
+    Boolean getLogUpdates();
+
+    Integer getLogQueriesCount();
+    Integer getLogUpdatesCount();
 }

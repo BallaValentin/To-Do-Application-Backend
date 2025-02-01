@@ -16,4 +16,8 @@ public interface ToDoService {
     ToDo findById(Long id) throws EntityNotFoundException;
 
     Collection<ToDo> findAll();
+
+    public Integer getLogQueryCount();
+
+    public Integer getLogUpdateCount();
 }

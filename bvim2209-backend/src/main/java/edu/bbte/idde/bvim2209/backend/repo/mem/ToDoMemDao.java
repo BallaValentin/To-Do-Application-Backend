@@ -19,4 +19,24 @@ public class ToDoMemDao extends MemDao<ToDo> implements ToDoDao {
                 .filter(toDo -> toDo.getTitle().equals(title))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Boolean getLogQueries() {
+        return false;
+    }
+
+    @Override
+    public Boolean getLogUpdates() {
+        return false;
+    }
+
+    @Override
+    public Integer getLogQueriesCount() {
+        return 0;
+    }
+
+    @Override
+    public Integer getLogUpdatesCount() {
+        return 0;
+    }
 }
