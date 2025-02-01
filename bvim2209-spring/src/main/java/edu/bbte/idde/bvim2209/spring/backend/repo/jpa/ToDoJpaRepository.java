@@ -32,5 +32,9 @@ public interface ToDoJpaRepository extends
     @Override
     Optional<ToDo> findById(Long id);
 
-    Collection<ToDo> findByLevelOfImportance(Integer levelOfImportance);
+    @Transactional
+    Collection<ToDo> findByLevelOfImportanceAndDeletedFalse(Integer levelOfImportance);
+
+    @Transactional
+    Collection<ToDo> findByDeletedFalse();
 }

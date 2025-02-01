@@ -21,6 +21,8 @@ public abstract class BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
+    protected Boolean deleted = Boolean.FALSE;
+
     public BaseEntity(Long id) {
         this.id = id;
     }

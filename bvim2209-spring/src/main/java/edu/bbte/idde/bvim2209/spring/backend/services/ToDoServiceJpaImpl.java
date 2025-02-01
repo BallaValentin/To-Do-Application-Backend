@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Profile("jpa")
@@ -33,15 +34,16 @@ public class ToDoServiceJpaImpl implements ToDoService {
 
     @Override
     public void updateToDo(ToDo toDo) throws EntityNotFoundException, IllegalArgumentException {
-        validateId(toDo.getId());
+        getById(toDo.getId());
         validateToDo(toDo);
         toDoJpaRepository.update(toDo);
     }
 
     @Override
     public void deleteToDo(Long id) throws EntityNotFoundException {
-        validateId(id);
-        toDoJpaRepository.deleteById(id);
+        ToDo toDo = getById(id);
+        toDo.setDeleted(Boolean.TRUE);
+        toDoJpaRepository.update(toDo);
     }
 
     @Override
@@ -49,6 +51,9 @@ public class ToDoServiceJpaImpl implements ToDoService {
         Optional<ToDo> toDo = toDoJpaRepository.findById(id);
         if (toDo.isEmpty()) {
             throw new EntityNotFoundException("ToDo with id " + id + " not found");
+        }
+        if (toDo.get().getDeleted()) {
+            throw new EntityNotFoundException("ToDo with id" + id + " not found");
         }
         return toDo.get();
     }
@@ -84,18 +89,14 @@ public class ToDoServiceJpaImpl implements ToDoService {
         }
     }
 
-    private void validateId(Long id) {
-        getById(id);
-    }
-
     @Override
     public Collection<ToDo> findAll() {
-        return toDoJpaRepository.findAll();
+        return toDoJpaRepository.findByDeletedFalse();
     }
 
     @Override
     public Collection<ToDo> findByImportance(Integer levelOfImportance) {
-        return toDoJpaRepository.findByLevelOfImportance(levelOfImportance);
+        return toDoJpaRepository.findByLevelOfImportanceAndDeletedFalse(levelOfImportance);
     }
 
     @Override
