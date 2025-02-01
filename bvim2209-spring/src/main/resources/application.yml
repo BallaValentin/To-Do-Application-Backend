@@ -1,8 +1,8 @@
 spring:
   profiles:
-    active: jdbc
+    active: jpa
 server:
   port: 8081
 custom:
-  failOnDeleteMissing: false
-  isDeleteMissingFatal: false
+  failOnDeleteMissing: true
+  isDeleteMissingFatal: true

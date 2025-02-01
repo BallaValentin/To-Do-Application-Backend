@@ -3,8 +3,8 @@ package edu.bbte.idde.bvim2209.backend.repo;
 import edu.bbte.idde.bvim2209.backend.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.backend.model.BaseEntity;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * CRUD műveleteket absztraktan meghatározó interfész.
@@ -25,7 +25,7 @@ public interface Dao<T extends BaseEntity> {
      */
     void create(T entity) throws IllegalArgumentException;
 
-    void addEntities(ArrayList<T> entities) throws IllegalArgumentException;
+    void addEntities(List<T> entities) throws IllegalArgumentException;
 
     T findById(Long id) throws EntityNotFoundException;
 

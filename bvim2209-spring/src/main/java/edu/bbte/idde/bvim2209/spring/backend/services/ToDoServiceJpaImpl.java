@@ -6,6 +6,8 @@ import edu.bbte.idde.bvim2209.spring.backend.model.ToDoDetail;
 import edu.bbte.idde.bvim2209.spring.backend.repo.jpa.ToDoDetailJpaRepository;
 import edu.bbte.idde.bvim2209.spring.backend.repo.jpa.ToDoJpaRepository;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
+import edu.bbte.idde.bvim2209.spring.exceptions.InternalServerException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Profile("jpa")
 public class ToDoServiceJpaImpl implements ToDoService {
@@ -53,12 +56,16 @@ public class ToDoServiceJpaImpl implements ToDoService {
 
     @Override
     public void deleteToDo(Long id) throws EntityNotFoundException {
-        validateId(id);
         try {
+            getById(id);
             toDoJpaRepository.deleteById(id);
         } catch (EntityNotFoundException e) {
             if (failOnDeleteMissing) {
-                throw e;
+                if (isDeleteMissingFatal) {
+                    throw new InternalServerException(e.getMessage());
+                } else {
+                    throw e;
+                }
             }
         }
     }

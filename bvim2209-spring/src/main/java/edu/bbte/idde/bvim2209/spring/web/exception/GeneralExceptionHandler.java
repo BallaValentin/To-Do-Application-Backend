@@ -1,6 +1,7 @@
 package edu.bbte.idde.bvim2209.spring.web.exception;
 
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
+import edu.bbte.idde.bvim2209.spring.exceptions.InternalServerException;
 import edu.bbte.idde.bvim2209.spring.web.dto.ErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,18 @@ public class GeneralExceptionHandler {
             IllegalArgumentException exception, HttpServletRequest request) {
         LocalDateTime timestamp = LocalDateTime.now();
         Integer statusCode = HttpStatus.BAD_REQUEST.value();
+        String error = exception.getMessage();
+        String path = request.getRequestURI();
+        return new ErrorResponseDTO(timestamp, statusCode, error, path);
+    }
+
+    @ExceptionHandler(InternalServerException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public ErrorResponseDTO handleInternalServerException(
+            IllegalArgumentException exception, HttpServletRequest request) {
+        LocalDateTime timestamp = LocalDateTime.now();
+        Integer statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
         String error = exception.getMessage();
         String path = request.getRequestURI();
         return new ErrorResponseDTO(timestamp, statusCode, error, path);

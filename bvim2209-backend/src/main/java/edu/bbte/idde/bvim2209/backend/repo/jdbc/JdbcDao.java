@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
@@ -92,7 +93,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     }
 
     @Override
-    public void addEntities(ArrayList<T> entities) throws IllegalArgumentException {
+    public void addEntities(List<T> entities) throws IllegalArgumentException {
         logger.info("Trying to insert new entities in database");
 
         String query = "INSERT INTO ToDo ("

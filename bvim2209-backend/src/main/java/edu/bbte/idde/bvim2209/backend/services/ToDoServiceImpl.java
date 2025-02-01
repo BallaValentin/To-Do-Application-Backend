@@ -5,7 +5,6 @@ import edu.bbte.idde.bvim2209.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.backend.repo.DaoFactory;
 import edu.bbte.idde.bvim2209.backend.repo.ToDoDao;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class ToDoServiceImpl implements ToDoService {
@@ -24,7 +23,7 @@ public class ToDoServiceImpl implements ToDoService {
     @Override
     public void addTodos(Collection<ToDo> toDos) {
         toDos.forEach(this::validateToDo);
-        toDoDao.addEntities((ArrayList<ToDo>) toDos);
+        toDoDao.addEntities(toDos.stream().toList());
     }
 
     @Override

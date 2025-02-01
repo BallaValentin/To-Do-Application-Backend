@@ -6,8 +6,8 @@ import edu.bbte.idde.bvim2209.backend.repo.Dao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -42,7 +42,7 @@ public abstract class MemDao<T extends BaseEntity> implements Dao<T> {
     }
 
     @Override
-    public void addEntities(ArrayList<T> entities) {
+    public void addEntities(List<T> entities) {
         entities.forEach(this::create);
     }
 
