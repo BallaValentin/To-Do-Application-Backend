@@ -66,8 +66,11 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
         logger.info("Trying to insert new entity in database");
 
         String query = "INSERT INTO ToDo ("
-                + String.join(",", columnNames) + ") VALUES ("
+                + String.join(",", columnNames)
+                +  ", CreationDate"
+                + ") VALUES ("
                 + columnNames.stream().map(column -> "?").collect(Collectors.joining(", "))
+                + ", " + entity.getCreationDate()
                 + ")";
         try (
                 Connection connection = dataSource.getConnection();

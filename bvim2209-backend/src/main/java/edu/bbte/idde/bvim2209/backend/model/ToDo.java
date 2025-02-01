@@ -1,7 +1,12 @@
 package edu.bbte.idde.bvim2209.backend.model;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.util.Date;
 
+@Data
+@EqualsAndHashCode(callSuper=true)
 public class ToDo extends BaseEntity {
 
     private String title;
@@ -21,48 +26,12 @@ public class ToDo extends BaseEntity {
         this.levelOfImportance = levelOfImportance;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Date getDueDate() {
         return new Date(dueDate.getTime());
     }
 
     public void setDueDate(Date dueDate) {
         this.dueDate = new Date(dueDate.getTime());
-    }
-
-    public Integer getLevelOfImportance() {
-        return levelOfImportance;
-    }
-
-    public void setLevelOfImportance(Integer levelOfImportance) {
-        this.levelOfImportance = levelOfImportance;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuffer sb = new StringBuffer("ToDoList{");
-        sb.append("id=").append(id);
-        sb.append(", title='").append(title).append('\'');
-        sb.append(", description='").append(description).append('\'');
-        sb.append(", dueDate='").append(dueDate).append('\'');
-        sb.append(", levelOfImportance=").append(levelOfImportance);
-        sb.append('}');
-        return sb.toString();
     }
 
 }

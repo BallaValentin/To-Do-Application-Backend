@@ -5,6 +5,7 @@ import edu.bbte.idde.bvim2209.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.backend.repo.DaoFactory;
 import edu.bbte.idde.bvim2209.backend.repo.ToDoDao;
 
+import java.time.Instant;
 import java.util.Collection;
 
 public class ToDoServiceImpl implements ToDoService {
@@ -17,6 +18,7 @@ public class ToDoServiceImpl implements ToDoService {
     @Override
     public void createToDo(ToDo toDo) throws IllegalArgumentException {
         validateToDo(toDo);
+        toDo.setCreationDate(Instant.now());
         toDoDao.create(toDo);
     }
 
