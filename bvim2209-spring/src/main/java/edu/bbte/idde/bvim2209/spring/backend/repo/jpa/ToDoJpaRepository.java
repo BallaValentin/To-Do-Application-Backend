@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Optional;
 
 @Repository
@@ -33,4 +34,7 @@ public interface ToDoJpaRepository extends
     Optional<ToDo> findById(Long id);
 
     Collection<ToDo> findByLevelOfImportance(Integer levelOfImportance);
+
+    @Transactional
+    void deleteAllByDueDateBetween(Date afterDate, Date beforeDate);
 }

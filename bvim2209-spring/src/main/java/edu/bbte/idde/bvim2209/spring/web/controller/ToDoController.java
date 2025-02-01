@@ -3,10 +3,13 @@ package edu.bbte.idde.bvim2209.spring.web.controller;
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.spring.backend.services.ToDoService;
 import edu.bbte.idde.bvim2209.spring.web.dto.request.ToDoRequestDTO;
+import edu.bbte.idde.bvim2209.spring.web.dto.response.DeleteResponseDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.response.ToDoResponseDTO;
 import edu.bbte.idde.bvim2209.spring.web.mapper.ToDoMapper;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/todos")
@@ -69,5 +74,15 @@ public class ToDoController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteToDo(@PathVariable("toDoId") Long id) throws ParseException {
         toDoService.deleteToDo(id);
+    }
+
+    @DeleteMapping()
+    public DeleteResponseDTO deleteTodosBetweenDates(
+            @RequestParam() @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            Optional<Date> afterDate,
+            @RequestParam() @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            Optional<Date> beforeDate
+            ) {
+        return new DeleteResponseDTO(toDoService.deleteTodosBetweenDates(beforeDate, afterDate));
     }
 }

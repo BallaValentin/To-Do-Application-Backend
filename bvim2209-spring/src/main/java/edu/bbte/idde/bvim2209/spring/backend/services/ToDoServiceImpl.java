@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -39,6 +40,11 @@ public class ToDoServiceImpl implements ToDoService {
     public void deleteToDo(Long id) throws EntityNotFoundException {
         validateId(id);
         toDoDao.deleteById(id);
+    }
+
+    @Override
+    public Integer deleteTodosBetweenDates(Optional<Date> beforeDate, Optional<Date> afterDate) throws IllegalArgumentException {
+        return null;
     }
 
     @Override

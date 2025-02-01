@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -42,6 +43,27 @@ public class ToDoServiceJpaImpl implements ToDoService {
     public void deleteToDo(Long id) throws EntityNotFoundException {
         validateId(id);
         toDoJpaRepository.deleteById(id);
+    }
+
+    @Override
+    public Integer deleteTodosBetweenDates(Optional<Date> beforeDate, Optional<Date> afterDate) throws IllegalArgumentException {
+
+        if (beforeDate.isEmpty()) {
+            throw new IllegalArgumentException("Before date cannot be empty");
+        }
+
+        if (afterDate.isEmpty()) {
+            throw new IllegalArgumentException("After date cannot be empty");
+        }
+
+        if (beforeDate.get().before(afterDate.get())) {
+            throw new IllegalArgumentException("Date cannot be after date");
+        }
+
+        Integer rowsBefore = toDoJpaRepository.findAll().size();
+        toDoJpaRepository.deleteAllByDueDateBetween(afterDate.get(), beforeDate.get());
+        Integer rowsAfter = toDoJpaRepository.findAll().size();
+        return rowsBefore - rowsAfter;
     }
 
     @Override

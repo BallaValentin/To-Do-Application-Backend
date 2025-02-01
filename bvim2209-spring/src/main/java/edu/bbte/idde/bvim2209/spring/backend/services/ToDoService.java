@@ -6,6 +6,8 @@ import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Optional;
 
 public interface ToDoService {
     void createToDo(ToDo toDo) throws ParseException, IllegalArgumentException;
@@ -13,6 +15,8 @@ public interface ToDoService {
     void updateToDo(ToDo toDo) throws EntityNotFoundException, ParseException;
 
     void deleteToDo(Long id) throws EntityNotFoundException, ParseException;
+
+    Integer deleteTodosBetweenDates(Optional<Date> beforeDate, Optional<Date> afterDate) throws  IllegalArgumentException;
 
     ToDo getById(Long id) throws EntityNotFoundException;
 
