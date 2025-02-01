@@ -41,12 +41,13 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
     }
 
     @Override
-    protected void setStatementForInsert(PreparedStatement preparedStatement, ToDo entity) throws SQLException {
+    protected void setStatementForInsert(
+            PreparedStatement preparedStatement, ToDo entity, Integer rowCount) throws SQLException {
         logger.info("Setting parameters for PreparedStatement to insert ToDo entity");
-        preparedStatement.setString(1, entity.getTitle());
-        preparedStatement.setString(2, entity.getDescription());
-        preparedStatement.setDate(3, new java.sql.Date(entity.getDueDate().getTime()));
-        preparedStatement.setInt(4, entity.getLevelOfImportance());
+        preparedStatement.setString(rowCount * 4 + 1, entity.getTitle());
+        preparedStatement.setString(rowCount * 4 + 2, entity.getDescription());
+        preparedStatement.setDate(rowCount * 4 + 3, new java.sql.Date(entity.getDueDate().getTime()));
+        preparedStatement.setInt(rowCount * 4 + 4, entity.getLevelOfImportance());
     }
 
     @Override

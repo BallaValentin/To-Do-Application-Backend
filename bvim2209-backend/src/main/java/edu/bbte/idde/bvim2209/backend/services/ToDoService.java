@@ -9,6 +9,8 @@ import java.util.Collection;
 public interface ToDoService {
     void createToDo(ToDo toDo) throws ParseException, IllegalArgumentException;
 
+    void addTodos(Collection<ToDo> toDos) throws IllegalArgumentException;
+
     void updateToDo(ToDo toDo) throws EntityNotFoundException, ParseException;
 
     void deleteToDo(Long id) throws EntityNotFoundException, ParseException;

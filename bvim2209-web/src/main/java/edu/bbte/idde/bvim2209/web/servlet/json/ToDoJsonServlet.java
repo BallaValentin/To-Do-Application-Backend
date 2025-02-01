@@ -6,6 +6,7 @@ import edu.bbte.idde.bvim2209.backend.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.backend.model.ToDo;
 
 import edu.bbte.idde.bvim2209.backend.services.ToDoServiceImpl;
+import edu.bbte.idde.bvim2209.backend.services.ToDoServiceImplFactory;
 import edu.bbte.idde.bvim2209.web.servlet.messages.HttpErrorMessage;
 import edu.bbte.idde.bvim2209.web.servlet.messages.HttpSuccessMessage;
 import jakarta.servlet.annotation.WebServlet;
@@ -22,7 +23,7 @@ import java.util.Optional;
 
 @WebServlet("/todos")
 public class ToDoJsonServlet extends HttpServlet {
-    private final transient ToDoServiceImpl toDoService = new ToDoServiceImpl();
+    private final transient ToDoServiceImpl toDoService = ToDoServiceImplFactory.getInstance();
     private static final ObjectMapper objectMapper = JsonConfig.createConfiguredObjectMapper();
     private static final Logger logger = LoggerFactory.getLogger(ToDoJsonServlet.class);
 

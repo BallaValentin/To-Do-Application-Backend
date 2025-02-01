@@ -35,7 +35,8 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
 
     protected abstract T mapResultSetToEntity(ResultSet resultSet) throws SQLException;
 
-    protected abstract void setStatementForInsert(PreparedStatement preparedStatement, T entity) throws SQLException;
+    protected abstract void setStatementForInsert(
+            PreparedStatement preparedStatement, T entity, Integer rowCount) throws SQLException;
 
     protected abstract void setStatementForUpdate(PreparedStatement preparedStatement, T entity) throws SQLException;
 
@@ -74,7 +75,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
                 PreparedStatement preparedStatement =
                         connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)
         ) {
-            setStatementForInsert(preparedStatement, entity);
+            setStatementForInsert(preparedStatement, entity, 0);
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
                 try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
@@ -88,6 +89,35 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
             throw new IllegalArgumentException("Could not create entity", exception);
         }
         logger.info("New entity has been successfully inserted into database");
+    }
+
+    @Override
+    public void addEntities(ArrayList<T> entities) throws IllegalArgumentException {
+        logger.info("Trying to insert new entities in database");
+
+        Collection<String> values = new ArrayList<>();
+        entities.forEach(entity -> {
+            values.add(columnNames.stream().map(column -> "?").collect(Collectors.joining(", ")));
+        });
+
+        String query = "INSERT INTO ToDo ("
+                + String.join(",", columnNames) + ") VALUES "
+                + String.join(",/n", values);
+
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)
+        ) {
+            for (int i = 0; i < entities.size(); i++) {
+                setStatementForInsert(preparedStatement, entities.get(i), i);
+            }
+            preparedStatement.executeUpdate();
+        } catch (SQLException exception) {
+            logger.error("Error creating entities in database", exception);
+            throw new IllegalArgumentException("Could not create entities", exception);
+        }
+        logger.info("New entities has been successfully inserted into database");
     }
 
     @Override
