@@ -95,14 +95,11 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     public void addEntities(ArrayList<T> entities) throws IllegalArgumentException {
         logger.info("Trying to insert new entities in database");
 
-        Collection<String> values = new ArrayList<>();
-        entities.forEach(entity -> {
-            values.add(columnNames.stream().map(column -> "?").collect(Collectors.joining(", ")));
-        });
-
         String query = "INSERT INTO ToDo ("
-                + String.join(",", columnNames) + ") VALUES "
-                + String.join(",/n", values);
+                + String.join(", ", columnNames) + ") VALUES "
+                + entities.stream()
+                .map(entity -> "(" + columnNames.stream().map(column -> "?").collect(Collectors.joining(", ")) + ")")
+                .collect(Collectors.joining(", "));
 
         try (
                 Connection connection = dataSource.getConnection();
