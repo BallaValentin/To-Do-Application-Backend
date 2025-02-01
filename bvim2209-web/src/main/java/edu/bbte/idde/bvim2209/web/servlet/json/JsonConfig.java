@@ -15,9 +15,6 @@ public class JsonConfig {
 
         objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH));
 
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-
         return objectMapper;
     }
 }

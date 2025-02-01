@@ -4,10 +4,13 @@ import edu.bbte.idde.bvim2209.backend.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.backend.repo.DaoFactory;
 import edu.bbte.idde.bvim2209.backend.repo.ToDoDao;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Date;
 
+@Slf4j
 public class ToDoServiceImpl implements ToDoService {
     private final transient ToDoDao toDoDao;
 

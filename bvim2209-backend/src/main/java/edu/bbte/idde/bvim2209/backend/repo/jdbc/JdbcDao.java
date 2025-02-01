@@ -7,10 +7,8 @@ import edu.bbte.idde.bvim2209.backend.repo.Dao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -52,6 +50,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
         ) {
             while (resultSet.next()) {
                 T entity = mapResultSetToEntity(resultSet);
+                entity.setCreationDate(resultSet.getTimestamp("CreationDate").toInstant());
                 entities.add(entity);
             }
         } catch (SQLException exception) {
@@ -70,7 +69,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
                 +  ", CreationDate"
                 + ") VALUES ("
                 + columnNames.stream().map(column -> "?").collect(Collectors.joining(", "))
-                + ", " + entity.getCreationDate()
+                + ", ?"
                 + ")";
         try (
                 Connection connection = dataSource.getConnection();
@@ -78,6 +77,8 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
                         connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)
         ) {
             setStatementForInsert(preparedStatement, entity);
+            preparedStatement.setTimestamp(columnNames.size() + 1,
+                    Timestamp.from(entity.getCreationDate()));
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
                 try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
@@ -104,7 +105,9 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     logger.info("Entity with id {} has been successfully found in database", id);
-                    return mapResultSetToEntity(resultSet);
+                    T entity = mapResultSetToEntity(resultSet);
+                    entity.setCreationDate(resultSet.getTimestamp("CreationDate").toInstant());
+                    return entity;
                 } else {
                     throw new EntityNotFoundException("Entity with ID " + id + " not found");
                 }

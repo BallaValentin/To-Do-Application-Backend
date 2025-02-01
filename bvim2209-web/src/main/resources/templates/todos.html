@@ -15,6 +15,7 @@
         <th>Description</th>
         <th>Due date</th>
         <th>Importance level</th>
+        <th>Creation date</th>
     </tr>
     </thead>
     <tbody>
@@ -24,6 +25,7 @@
         <td th:text="${todo.description}"></td>
         <td th:text="${#dates.format(todo.dueDate, 'yyyy-MM-dd')}"></td>
         <td th:text="${todo.levelOfImportance}"></td>
+        <td th:text="${todo.creationDate}"></td>
     </tr>
     </tbody>
 </table>
