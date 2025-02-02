@@ -36,7 +36,7 @@ public class ToDoDetailController {
 
     @GetMapping("/{id}/details")
     public Collection<ToDoDetailResponseDTO> getToDetails(@PathVariable Long id) {
-        queryCounterService.updateQueryCount("GET", ToDoDetail.class.getName());
+        queryCounterService.updateQueryCount("GET", ToDoDetail.class.getSimpleName());
         return toDoMapper.detailsToResponseDTOs(toDoService.getDetails(id));
     }
 
@@ -44,7 +44,7 @@ public class ToDoDetailController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ToDoDetailResponseDTO> createToDoDetailDTO(
             @PathVariable Long id, @Valid @RequestBody ToDoDetailRequestDTO toDoDetailRequestDTO) {
-        queryCounterService.updateQueryCount("DELETE", ToDoDetail.class.getName());
+        queryCounterService.updateQueryCount("CREATE", ToDoDetail.class.getSimpleName());
         ToDoDetail toDoDetail = toDoDetailMapper.requestDTOToModel(toDoDetailRequestDTO);
         toDoService.addDetailToToDo(id, toDoDetail);
         URI createURI = URI.create("api/todos/" + id + "/details/" + toDoDetail.getId());
@@ -57,6 +57,7 @@ public class ToDoDetailController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteToDoDetail(
             @PathVariable("todo-id") Long toDoId, @PathVariable("todo-detail-id") Long toDoDetailId) {
+        queryCounterService.updateQueryCount("DELETE", ToDoDetail.class.getSimpleName());
         toDoService.deleteDetailById(toDoId, toDoDetailId);
     }
 }

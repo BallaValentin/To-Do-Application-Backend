@@ -36,7 +36,7 @@ public class ToDoController {
     public Collection<ToDoResponseDTO> getTodos(
             @RequestParam(value = "levelOfImportance", required = false) Integer levelOfImportance
     ) {
-        queryCounterService.updateQueryCount("GET", ToDo.class.getName());
+        queryCounterService.updateQueryCount("GET", ToDo.class.getSimpleName());
         if (levelOfImportance == null) {
             return toDoMapper.modelsToResponseDTO(toDoService.findAll());
         } else {
@@ -46,7 +46,7 @@ public class ToDoController {
 
     @GetMapping("/{toDoId}")
     public ToDoResponseDTO getTodo(@PathVariable("toDoId") Long id) {
-        queryCounterService.updateQueryCount("GET", ToDo.class.getName());
+        queryCounterService.updateQueryCount("GET", ToDo.class.getSimpleName());
         ToDo toDo = toDoService.getById(id);
         return toDoMapper.modelToResponseDTO(toDo);
     }
@@ -55,7 +55,7 @@ public class ToDoController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ToDoResponseDTO> createToDo(
             @Valid @RequestBody ToDoRequestDTO toDoDto) throws ParseException {
-        queryCounterService.updateQueryCount("CREATE", ToDo.class.getName());
+        queryCounterService.updateQueryCount("CREATE", ToDo.class.getSimpleName());
         ToDo toDo = toDoMapper.requestDTOToModel(toDoDto);
         toDoService.createToDo(toDo);
         URI createURI = URI.create("api/todos/" + toDo.getId());
@@ -66,7 +66,7 @@ public class ToDoController {
     public ResponseEntity<ToDoResponseDTO> updateToDo(
             @PathVariable("toDoId") Long id,
             @Valid @RequestBody ToDoRequestDTO toDoDto) throws ParseException {
-        queryCounterService.updateQueryCount("UPDATE", ToDo.class.getName());
+        queryCounterService.updateQueryCount("UPDATE", ToDo.class.getSimpleName());
         ToDo toDo = toDoMapper.requestDTOToModel(toDoDto);
         toDo.setId(id);
         toDoService.updateToDo(toDo);
@@ -76,7 +76,7 @@ public class ToDoController {
     @DeleteMapping("/{toDoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteToDo(@PathVariable("toDoId") Long id) throws ParseException {
-        queryCounterService.updateQueryCount("DELETE", ToDo.class.getName());
+        queryCounterService.updateQueryCount("DELETE", ToDo.class.getSimpleName());
         toDoService.deleteToDo(id);
     }
 }
