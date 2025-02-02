@@ -1,6 +1,7 @@
 package edu.bbte.idde.bvim2209.spring.web.controller;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDoDetail;
+import edu.bbte.idde.bvim2209.spring.backend.services.QueryCounterService;
 import edu.bbte.idde.bvim2209.spring.backend.services.ToDoService;
 import edu.bbte.idde.bvim2209.spring.web.dto.request.ToDoDetailRequestDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.response.ToDoDetailResponseDTO;
@@ -21,17 +22,21 @@ public class ToDoDetailController {
     ToDoService toDoService;
     ToDoMapper toDoMapper;
     ToDoDetailMapper toDoDetailMapper;
+    QueryCounterService queryCounterService;
 
     @Autowired
     public ToDoDetailController(
-            ToDoMapper toDoMapper, ToDoDetailMapper toDoDetailMapper, ToDoService toDoService) {
+            ToDoMapper toDoMapper, ToDoDetailMapper toDoDetailMapper, ToDoService toDoService,
+            QueryCounterService queryCounterService) {
         this.toDoMapper = toDoMapper;
         this.toDoDetailMapper = toDoDetailMapper;
         this.toDoService = toDoService;
+        this.queryCounterService = queryCounterService;
     }
 
     @GetMapping("/{id}/details")
     public Collection<ToDoDetailResponseDTO> getToDetails(@PathVariable Long id) {
+        queryCounterService.updateQueryCount("GET", ToDoDetail.class.getName());
         return toDoMapper.detailsToResponseDTOs(toDoService.getDetails(id));
     }
 
@@ -39,6 +44,7 @@ public class ToDoDetailController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ToDoDetailResponseDTO> createToDoDetailDTO(
             @PathVariable Long id, @Valid @RequestBody ToDoDetailRequestDTO toDoDetailRequestDTO) {
+        queryCounterService.updateQueryCount("DELETE", ToDoDetail.class.getName());
         ToDoDetail toDoDetail = toDoDetailMapper.requestDTOToModel(toDoDetailRequestDTO);
         toDoService.addDetailToToDo(id, toDoDetail);
         URI createURI = URI.create("api/todos/" + id + "/details/" + toDoDetail.getId());

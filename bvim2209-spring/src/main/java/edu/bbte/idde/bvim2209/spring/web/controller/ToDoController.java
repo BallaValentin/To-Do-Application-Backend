@@ -1,6 +1,7 @@
 package edu.bbte.idde.bvim2209.spring.web.controller;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
+import edu.bbte.idde.bvim2209.spring.backend.services.QueryCounterService;
 import edu.bbte.idde.bvim2209.spring.backend.services.ToDoService;
 import edu.bbte.idde.bvim2209.spring.web.dto.request.ToDoRequestDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.response.ToDoResponseDTO;
@@ -21,17 +22,21 @@ import java.util.Collection;
 public class ToDoController {
     ToDoMapper toDoMapper;
     ToDoService toDoService;
+    QueryCounterService queryCounterService;
 
     @Autowired
-    public ToDoController(ToDoMapper toDoMapper, ToDoService toDoService) {
+    public ToDoController(ToDoMapper toDoMapper, ToDoService toDoService,
+                          QueryCounterService queryCounterService) {
         this.toDoMapper = toDoMapper;
         this.toDoService = toDoService;
+        this.queryCounterService = queryCounterService;
     }
 
     @GetMapping()
     public Collection<ToDoResponseDTO> getTodos(
             @RequestParam(value = "levelOfImportance", required = false) Integer levelOfImportance
     ) {
+        queryCounterService.updateQueryCount("GET", ToDo.class.getName());
         if (levelOfImportance == null) {
             return toDoMapper.modelsToResponseDTO(toDoService.findAll());
         } else {
@@ -41,6 +46,7 @@ public class ToDoController {
 
     @GetMapping("/{toDoId}")
     public ToDoResponseDTO getTodo(@PathVariable("toDoId") Long id) {
+        queryCounterService.updateQueryCount("GET", ToDo.class.getName());
         ToDo toDo = toDoService.getById(id);
         return toDoMapper.modelToResponseDTO(toDo);
     }
@@ -49,6 +55,7 @@ public class ToDoController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ToDoResponseDTO> createToDo(
             @Valid @RequestBody ToDoRequestDTO toDoDto) throws ParseException {
+        queryCounterService.updateQueryCount("CREATE", ToDo.class.getName());
         ToDo toDo = toDoMapper.requestDTOToModel(toDoDto);
         toDoService.createToDo(toDo);
         URI createURI = URI.create("api/todos/" + toDo.getId());
@@ -59,6 +66,7 @@ public class ToDoController {
     public ResponseEntity<ToDoResponseDTO> updateToDo(
             @PathVariable("toDoId") Long id,
             @Valid @RequestBody ToDoRequestDTO toDoDto) throws ParseException {
+        queryCounterService.updateQueryCount("UPDATE", ToDo.class.getName());
         ToDo toDo = toDoMapper.requestDTOToModel(toDoDto);
         toDo.setId(id);
         toDoService.updateToDo(toDo);
@@ -68,6 +76,7 @@ public class ToDoController {
     @DeleteMapping("/{toDoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteToDo(@PathVariable("toDoId") Long id) throws ParseException {
+        queryCounterService.updateQueryCount("DELETE", ToDo.class.getName());
         toDoService.deleteToDo(id);
     }
 }

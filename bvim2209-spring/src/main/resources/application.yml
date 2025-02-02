@@ -1,5 +1,5 @@
 spring:
   profiles:
-    active: jdbc
+    active: jpa
 server:
   port: 8081
