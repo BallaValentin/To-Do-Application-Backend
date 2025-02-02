@@ -27,15 +27,14 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
 
     @Override
     public Collection<ToDo> findByPriority(Integer priority) {
-        String query = "SELECT * FROM ToDo WHERE ImportanceLevel=?";
+        String query = "SELECT * FROM ToDo WHERE ImportanceLevel = " + priority;
 
         Collection<ToDo> entities = new ArrayList<>();
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery()
         ) {
-            preparedStatement.setInt(1, priority);
-            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 ToDo toDo = mapResultSetToEntity(resultSet);
                 entities.add(toDo);

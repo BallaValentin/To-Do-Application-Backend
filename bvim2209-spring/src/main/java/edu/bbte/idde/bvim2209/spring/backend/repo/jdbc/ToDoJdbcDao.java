@@ -22,7 +22,7 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
 
     @Autowired
     public ToDoJdbcDao(DataSource dataSource) {
-        super(dataSource, "ToDo", "ID", 1,
+        super(dataSource, "ToDoSpring", "ID", 1,
                 new ArrayList<>(Arrays.asList("Title", "Description", "DueDate", "ImportanceLevel")
                 ));
         this.dataSource = dataSource;
@@ -60,7 +60,7 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
 
     @Override
     public Collection<ToDo> findByLevelOfImportance(Integer levelOfImportance) {
-        String query = "SELECT * FROM ToDo WHERE ImportanceLevel = " + levelOfImportance;
+        String query = "SELECT * FROM ToDoSpring WHERE ImportanceLevel = " + levelOfImportance;
 
         Collection<ToDo> entities = new ArrayList<>();
         try (
