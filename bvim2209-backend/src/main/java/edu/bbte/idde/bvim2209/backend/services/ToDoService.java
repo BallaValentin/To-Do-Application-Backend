@@ -16,4 +16,6 @@ public interface ToDoService {
     ToDo findById(Long id) throws EntityNotFoundException;
 
     Collection<ToDo> findAll();
+
+    Collection<ToDo> findAllByPriority(Integer priority);
 }

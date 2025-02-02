@@ -32,9 +32,19 @@ public class ToDoJsonServlet extends HttpServlet {
         logger.info("Executing doGet request");
 
         String id = req.getParameter("id");
+
+        Integer priority =
+                req.getParameter("levelOfImportance") == null
+                        ? null : Integer.parseInt(req.getParameter("levelOfImportance"));
+
         if (id == null) {
             logger.info("id is null, preparing to find all todo`s");
-            Collection<ToDo> toDoCollection = toDoService.findAll();
+            Collection<ToDo> toDoCollection;
+            if (priority != null) {
+                toDoCollection = toDoService.findAllByPriority(priority);
+            } else {
+                toDoCollection = toDoService.findAll();
+            }
             resp.getWriter().write(objectMapper.writeValueAsString(toDoCollection));
         } else {
             try {

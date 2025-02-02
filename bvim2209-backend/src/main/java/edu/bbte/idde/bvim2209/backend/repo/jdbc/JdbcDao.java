@@ -7,18 +7,30 @@ import edu.bbte.idde.bvim2209.backend.repo.Dao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     private static final Logger logger = LoggerFactory.getLogger(JdbcDao.class);
 
     static final HikariDataSource dataSource = DataSourceFactory.getDataSource();
 
-    protected JdbcDao() {
+    private final String tableName;
+    private final String primaryKey;
+    private final Integer primaryKeyIndex;
+    private final Collection<String> columnNames;
+
+    protected JdbcDao(String tableName, String primaryKey, Integer primaryKeyIndex,
+                      Collection<String> columnNames) {
+        this.tableName = tableName;
+        this.primaryKey = primaryKey;
+        this.primaryKeyIndex = primaryKeyIndex;
+        this.columnNames = columnNames;
     }
 
     protected abstract T mapResultSetToEntity(ResultSet resultSet) throws SQLException;
@@ -27,27 +39,16 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
 
     protected abstract void setStatementForUpdate(PreparedStatement preparedStatement, T entity) throws SQLException;
 
-    protected abstract PreparedStatement prepareStatementForFindAll() throws SQLException;
-
-    protected abstract PreparedStatement prepareStatementForInsert() throws SQLException;
-
-    protected abstract PreparedStatement prepareStatementForFindById(Long id) throws SQLException;
-
-    protected abstract PreparedStatement prepareStatementForDeleteById(Long id) throws SQLException;
-
-    protected abstract PreparedStatement prepareStatementForUpdate() throws SQLException;
-
-    protected abstract Integer getPrimaryKeyIndex();
-
-    protected abstract Integer getNumberOfColumnsToUpdate();
-
     @Override
     public Collection<T> findAll() {
         logger.info("Trying to fetch all entities from database");
+
+        String query = "SELECT * FROM " + tableName;
         Collection<T> entities = new ArrayList<>();
         try (
-                PreparedStatement preparedStatement = prepareStatementForFindAll();
-                ResultSet resultSet = preparedStatement.executeQuery()
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery(query)
         ) {
             while (resultSet.next()) {
                 T entity = mapResultSetToEntity(resultSet);
@@ -63,15 +64,22 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     @Override
     public void create(T entity) throws IllegalArgumentException {
         logger.info("Trying to insert new entity in database");
+
+        String query = "INSERT INTO " + tableName + " ("
+                + String.join(",", columnNames) + ") VALUES ("
+                + columnNames.stream().map(column -> "?").collect(Collectors.joining(", "))
+                + ")";
         try (
-                PreparedStatement preparedStatement = prepareStatementForInsert()
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)
         ) {
             setStatementForInsert(preparedStatement, entity);
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
                 try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
-                        entity.setId(generatedKeys.getLong(getPrimaryKeyIndex()));
+                        entity.setId(generatedKeys.getLong(primaryKeyIndex));
                     }
                 }
             }
@@ -85,9 +93,11 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     @Override
     public T findById(Long id) throws EntityNotFoundException {
         logger.info("Trying to find entity by id: {} in database", id);
+
+        String query = "SELECT * FROM " + tableName + " WHERE " + primaryKey + " = " + id;
         try (
-                PreparedStatement preparedStatement = prepareStatementForFindById(id)) {
-            preparedStatement.setLong(getPrimaryKeyIndex(), id);
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     logger.info("Entity with id {} has been successfully found in database", id);
@@ -105,10 +115,17 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     @Override
     public void update(T entity) throws EntityNotFoundException {
         logger.info("Trying to update entity with id {} in database", entity.getId());
+
+        String query = "UPDATE " + tableName
+                + " SET "
+                + columnNames.stream().map(column -> column + "=?").collect(Collectors.joining(", "))
+                + " WHERE " + primaryKey + "=?";
+
         try (
-                PreparedStatement preparedStatement = prepareStatementForUpdate()) {
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             setStatementForUpdate(preparedStatement, entity);
-            preparedStatement.setLong(getNumberOfColumnsToUpdate() + 1, entity.getId());
+            preparedStatement.setLong(columnNames.size() + 1, entity.getId());
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected == 0) {
                 throw new EntityNotFoundException("Entity with ID " + entity.getId() + " not found.");
@@ -122,11 +139,13 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     @Override
     public void delete(Long id) throws EntityNotFoundException {
         logger.info("Trying to delete entity with id {} from database", id);
-        try (
-                PreparedStatement preparedStatement = prepareStatementForDeleteById(id)) {
-            preparedStatement.setLong(1, id);
-            int rowsAffected = preparedStatement.executeUpdate();
 
+        String query = "DELETE FROM " + tableName + " WHERE " + primaryKey + " = " + id;
+
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);) {
+            int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected == 0) {
                 throw new EntityNotFoundException("Entity with ID " + id + " not found.");
             }

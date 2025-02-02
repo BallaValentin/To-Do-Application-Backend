@@ -11,7 +11,7 @@ public interface Dao<T extends BaseEntity> {
 
     Optional<T> findById(Long id);
 
-    T saveAndFlush(T entity) throws IllegalArgumentException;
+    void create(T entity) throws IllegalArgumentException;
 
     void update(T entity) throws EntityNotFoundException;
 
