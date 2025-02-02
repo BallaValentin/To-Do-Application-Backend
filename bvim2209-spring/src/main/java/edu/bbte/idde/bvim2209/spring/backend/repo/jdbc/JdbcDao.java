@@ -70,7 +70,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     public void create(T entity) throws IllegalArgumentException {
         log.info("Trying to insert new entity in database");
 
-        String query = "INSERT INTO ToDo ("
+        String query = "INSERT INTO " + tableName + " ("
                 + String.join(",", columnNames) + ") VALUES ("
                 + columnNames.stream().map(column -> "?").collect(Collectors.joining(", "))
                 + ")";
@@ -146,7 +146,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     public void deleteById(Long id) throws EntityNotFoundException {
         log.info("Trying to delete entity with id {} from database", id);
 
-        String query = "DELETE FROM ToDo WHERE " + primaryKey + " = " + id;
+        String query = "DELETE FROM " + tableName + " WHERE " + primaryKey + " = " + id;
 
         try (
                 Connection connection = dataSource.getConnection();
