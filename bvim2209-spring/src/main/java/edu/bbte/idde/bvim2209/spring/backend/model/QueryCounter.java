@@ -15,12 +15,13 @@ public class QueryCounter extends BaseEntity {
     private Integer count;
 
     public QueryCounter(String queryType, String entityName) {
+        super();
         this.queryType = queryType;
         this.entityName = entityName;
         this.count = 0;
     }
 
     public QueryCounter() {
-
+        super();
     }
 }

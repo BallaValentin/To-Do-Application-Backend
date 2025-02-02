@@ -3,7 +3,6 @@ package edu.bbte.idde.bvim2209.spring.backend.services;
 import edu.bbte.idde.bvim2209.spring.backend.model.QueryCounter;
 import edu.bbte.idde.bvim2209.spring.backend.repo.jpa.QueryCounterJpaRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service
@@ -14,12 +13,14 @@ public class QueryCounterServiceImpl implements QueryCounterService {
         this.queryCounterJpaRepository = queryCounterJpaRepository;
     }
 
+    @Override
     public QueryCounter getQueryCounter(String queryType, String entityName) {
         Optional<QueryCounter> queryCounter =
                 queryCounterJpaRepository.findByQueryTypeAndEntityName(queryType, entityName);
         return queryCounter.orElseGet(() -> new QueryCounter(queryType, entityName));
     }
 
+    @Override
     public void updateQueryCount(String queryType, String entityName) {
         Optional<QueryCounter> queryCounter =
                 queryCounterJpaRepository.findByQueryTypeAndEntityName(queryType, entityName);
