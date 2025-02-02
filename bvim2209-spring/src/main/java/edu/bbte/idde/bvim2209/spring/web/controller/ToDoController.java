@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/todos")
@@ -40,8 +41,18 @@ public class ToDoController {
     }
 
     @GetMapping("/{toDoId}")
-    public ToDoResponseDTO getTodo(@PathVariable("toDoId") Long id) {
+    public ToDoResponseDTO getTodo(
+            @PathVariable("toDoId") Long id,
+            @RequestParam String full) {
+
+        if (!Objects.equals(full, "yes") && !Objects.equals(full, "no")) {
+            throw new IllegalArgumentException("Invalid full option");
+        }
+
         ToDo toDo = toDoService.getById(id);
+        if (Objects.equals(full, "no")) {
+            toDo.setLevelOfImportance(null);
+        }
         return toDoMapper.modelToResponseDTO(toDo);
     }
 
