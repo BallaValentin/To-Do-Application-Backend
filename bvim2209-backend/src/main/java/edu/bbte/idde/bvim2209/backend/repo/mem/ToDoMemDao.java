@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 public class ToDoMemDao extends MemDao<ToDo> implements ToDoDao {
 
     @Override
-    public Collection<ToDo> findByTitle(String title) {
+    public Collection<ToDo> findByPriority(Integer priority) {
         return entities.values().stream()
-                .filter(toDo -> toDo.getTitle().equals(title))
+                .filter(toDo -> toDo.getLevelOfImportance().equals(priority))
                 .collect(Collectors.toList());
     }
 }

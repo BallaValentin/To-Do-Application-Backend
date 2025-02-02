@@ -5,17 +5,19 @@ import edu.bbte.idde.bvim2209.backend.repo.ToDoDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
 
     private static final Logger logger = LoggerFactory.getLogger(ToDoJdbcDao.class);
+    DataSource dataSource = DataSourceFactory.getDataSource();
 
     protected ToDoJdbcDao() {
         super("ToDo", "ID", 1,
@@ -24,8 +26,25 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
     }
 
     @Override
-    public Collection<ToDo> findByTitle(String title) {
-        return Collections.emptyList();
+    public Collection<ToDo> findByPriority(Integer priority) {
+        String query = "SELECT * FROM ToDo WHERE ImportanceLevel=?";
+
+        Collection<ToDo> entities = new ArrayList<>();
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+        ) {
+            preparedStatement.setInt(1, priority);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                ToDo toDo = mapResultSetToEntity(resultSet);
+                entities.add(toDo);
+            }
+        } catch (SQLException exception) {
+            logger.error("Error fetching all entities from database", exception);
+        }
+        logger.info("All entities have been successfully fetched from database");
+        return entities;
     }
 
     @Override

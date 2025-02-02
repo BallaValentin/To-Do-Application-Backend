@@ -15,7 +15,7 @@ public interface ToDoDao extends Dao<ToDo> {
     /**
      * Szűrt entitáslista visszatérítése.
      */
-    Collection<ToDo> findByTitle(String title);
+    Collection<ToDo> findByPriority(Integer priority);
 
     // további blogposzt-specifikus CRUD műveletek...
 }
