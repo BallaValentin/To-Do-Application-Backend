@@ -47,6 +47,28 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
     }
 
     @Override
+    public Collection<ToDo> findAllByPriorityBetweenInterval(Integer min, Integer max) {
+        String query = "SELECT * FROM ToDo WHERE ImportanceLevel <= " + max
+                + " AND ImportanceLevel >= " + min;
+
+        Collection<ToDo> entities = new ArrayList<>();
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery()
+        ) {
+            while (resultSet.next()) {
+                ToDo toDo = mapResultSetToEntity(resultSet);
+                entities.add(toDo);
+            }
+        } catch (SQLException exception) {
+            logger.error("Error fetching all entities from database", exception);
+        }
+        logger.info("All entities have been successfully fetched from database");
+        return entities;
+    }
+
+    @Override
     protected ToDo mapResultSetToEntity(ResultSet resultSet) throws SQLException {
         logger.info("Mapping ResultSet to ToDo entity.");
         ToDo toDo = new ToDo();

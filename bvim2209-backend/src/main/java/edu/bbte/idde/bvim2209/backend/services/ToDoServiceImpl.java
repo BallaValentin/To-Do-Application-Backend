@@ -1,14 +1,20 @@
 package edu.bbte.idde.bvim2209.backend.services;
 
+import edu.bbte.idde.bvim2209.backend.conf.ConfigurationFactory;
 import edu.bbte.idde.bvim2209.backend.exceptions.EntityNotFoundException;
 import edu.bbte.idde.bvim2209.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.backend.repo.DaoFactory;
 import edu.bbte.idde.bvim2209.backend.repo.ToDoDao;
+import lombok.Getter;
 
 import java.util.Collection;
 
 public class ToDoServiceImpl implements ToDoService {
     private final transient ToDoDao toDoDao;
+
+    @Getter
+    public final Boolean supportFilterByInterval =
+            ConfigurationFactory.getConfiguration().getSupportFilterByInterval();
 
     public ToDoServiceImpl() {
         toDoDao = DaoFactory.getInstance().getToDoDao();
@@ -75,5 +81,10 @@ public class ToDoServiceImpl implements ToDoService {
     @Override
     public Collection<ToDo> findAllByPriority(Integer priority) {
         return toDoDao.findByPriority(priority);
+    }
+
+    @Override
+    public Collection<ToDo> findAllByPriorityBetweenInterval(Integer min, Integer max) {
+        return toDoDao.findAllByPriorityBetweenInterval(min, max);
     }
 }

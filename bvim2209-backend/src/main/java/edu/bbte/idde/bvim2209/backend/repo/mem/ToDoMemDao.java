@@ -19,4 +19,12 @@ public class ToDoMemDao extends MemDao<ToDo> implements ToDoDao {
                 .filter(toDo -> toDo.getLevelOfImportance().equals(priority))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Collection<ToDo> findAllByPriorityBetweenInterval(Integer min, Integer max) {
+        return entities.values().stream()
+                .filter(toDo -> toDo.getLevelOfImportance() >= min
+                        && toDo.getLevelOfImportance() <= max)
+                .collect(Collectors.toList());
+    }
 }

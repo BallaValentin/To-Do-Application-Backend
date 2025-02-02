@@ -18,4 +18,6 @@ public interface ToDoService {
     Collection<ToDo> findAll();
 
     Collection<ToDo> findAllByPriority(Integer priority);
+
+    Collection<ToDo> findAllByPriorityBetweenInterval(Integer min, Integer max);
 }

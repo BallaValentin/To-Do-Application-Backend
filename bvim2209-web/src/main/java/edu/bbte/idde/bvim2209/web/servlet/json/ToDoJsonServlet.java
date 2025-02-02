@@ -26,6 +26,35 @@ public class ToDoJsonServlet extends HttpServlet {
     private static final ObjectMapper objectMapper = JsonConfig.createConfiguredObjectMapper();
     private static final Logger logger = LoggerFactory.getLogger(ToDoJsonServlet.class);
 
+    private Collection<ToDo> getCollection(Integer priority, Integer min, Integer max) {
+        if (min != null && max != null) {
+            return toDoService.findAllByPriorityBetweenInterval(min, max);
+        } else if (priority != null) {
+            return toDoService.findAllByPriority(priority);
+        }
+        return toDoService.findAll();
+    }
+
+    private Boolean minMaxCheck(HttpServletResponse resp, Integer min, Integer max) throws IOException {
+        if ((min != null || max != null) && !toDoService.getSupportFilterByInterval()) {
+            HttpErrorMessage errorMessage =
+                    new HttpErrorMessage("Filtering by min and max is not supported");
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println(objectMapper.writeValueAsString(errorMessage));
+            return Boolean.FALSE;
+        }
+
+        if ((min == null && max != null) || (min != null && max == null)) {
+            HttpErrorMessage errorMessage =
+                    new HttpErrorMessage("Both min and max must be provided");
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println(objectMapper.writeValueAsString(errorMessage));
+            return Boolean.FALSE;
+        }
+
+        return Boolean.TRUE;
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
@@ -37,14 +66,18 @@ public class ToDoJsonServlet extends HttpServlet {
                 req.getParameter("levelOfImportance") == null
                         ? null : Integer.parseInt(req.getParameter("levelOfImportance"));
 
+        Integer min = req.getParameter("min") == null
+                ? null : Integer.parseInt(req.getParameter("min"));
+        Integer max = req.getParameter("max") == null
+                ? null : Integer.parseInt(req.getParameter("max"));
+
+        if (!minMaxCheck(resp, min, max)) {
+            return;
+        }
+
         if (id == null) {
             logger.info("id is null, preparing to find all todo`s");
-            Collection<ToDo> toDoCollection;
-            if (priority != null) {
-                toDoCollection = toDoService.findAllByPriority(priority);
-            } else {
-                toDoCollection = toDoService.findAll();
-            }
+            Collection<ToDo> toDoCollection = getCollection(priority, min, max);
             resp.getWriter().write(objectMapper.writeValueAsString(toDoCollection));
         } else {
             try {

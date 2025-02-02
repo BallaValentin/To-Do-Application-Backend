@@ -17,6 +17,7 @@ public interface ToDoDao extends Dao<ToDo> {
      */
     Collection<ToDo> findByPriority(Integer priority);
 
+    Collection<ToDo> findAllByPriorityBetweenInterval(Integer min, Integer max);
     // további blogposzt-specifikus CRUD műveletek...
 }
 
