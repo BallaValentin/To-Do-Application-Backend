@@ -55,6 +55,7 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
         toDo.setDescription(resultSet.getString("Description"));
         toDo.setDueDate(resultSet.getDate("DueDate"));
         toDo.setLevelOfImportance(resultSet.getInt("ImportanceLevel"));
+        toDo.setLastUpdatedAt(resultSet.getTimestamp("LastUpdatedAt").toInstant());
         return toDo;
     }
 

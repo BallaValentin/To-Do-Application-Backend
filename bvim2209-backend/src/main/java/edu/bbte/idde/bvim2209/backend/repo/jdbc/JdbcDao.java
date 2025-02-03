@@ -7,10 +7,7 @@ import edu.bbte.idde.bvim2209.backend.repo.Dao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -66,15 +63,20 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
         logger.info("Trying to insert new entity in database");
 
         String query = "INSERT INTO " + tableName + " ("
-                + String.join(",", columnNames) + ") VALUES ("
+                + String.join(",", columnNames)
+                + ", LastUpdatedAt"
+                + ") VALUES ("
                 + columnNames.stream().map(column -> "?").collect(Collectors.joining(", "))
+                + ", ?"
                 + ")";
+        logger.info(query);
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement =
                         connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)
         ) {
             setStatementForInsert(preparedStatement, entity);
+            preparedStatement.setTimestamp(5, Timestamp.from(entity.getLastUpdatedAt()));
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
                 try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
@@ -119,13 +121,15 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
         String query = "UPDATE " + tableName
                 + " SET "
                 + columnNames.stream().map(column -> column + "=?").collect(Collectors.joining(", "))
+                + ", LastUpdatedAt=?"
                 + " WHERE " + primaryKey + "=?";
 
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             setStatementForUpdate(preparedStatement, entity);
-            preparedStatement.setLong(columnNames.size() + 1, entity.getId());
+            preparedStatement.setTimestamp(5, Timestamp.from(entity.getLastUpdatedAt()));
+            preparedStatement.setLong(columnNames.size() + 2, entity.getId());
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected == 0) {
                 throw new EntityNotFoundException("Entity with ID " + entity.getId() + " not found.");
