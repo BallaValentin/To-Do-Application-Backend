@@ -30,8 +30,8 @@ public class QueryTokenJpaService {
     public void checkToken(String token, String operationType, String entityName) {
         QueryToken queryToken = queryTokenJpaRepository.findByToken(token);
         if (queryToken != null) {
-            if (!queryToken.getOperationType().equals(operationType) ||
-                    !queryToken.getEntityName().equals(entityName)) {
+            if (!queryToken.getOperationType().equals(operationType)
+                    || !queryToken.getEntityName().equals(entityName)) {
                 throw new ForbiddenException("Invalid token for this operation");
             }
         } else {
