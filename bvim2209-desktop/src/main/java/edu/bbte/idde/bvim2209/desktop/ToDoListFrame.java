@@ -73,7 +73,8 @@ public class ToDoListFrame extends JFrame {
 
         tableOutputPanel.setBorder(createCustomTitledBorder("Table Output"));
 
-        String[] columnNames = {"ID", "Title", "Description", "Due date", "Importance level"};
+        String[] columnNames = {"ID", "Title", "Description",
+                "Due date", "Importance level", "Last Updated At"};
         Object[][] tableData = {};
         tableModel.setDataVector(tableData, columnNames);
         table.setModel(tableModel);
@@ -144,6 +145,7 @@ public class ToDoListFrame extends JFrame {
                     toDo.getDescription(),
                     new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(toDo.getDueDate()),
                     toDo.getLevelOfImportance(),
+                    toDo.getLastUpdatedAt()
             };
             tableModel.addRow(rowData);
         }

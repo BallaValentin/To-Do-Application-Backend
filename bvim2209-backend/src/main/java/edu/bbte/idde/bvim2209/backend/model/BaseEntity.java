@@ -1,7 +1,11 @@
 package edu.bbte.idde.bvim2209.backend.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Objects;
 
 public abstract class BaseEntity implements Serializable {
@@ -9,6 +13,10 @@ public abstract class BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     protected Long id;
+
+    @Getter
+    @Setter
+    protected Instant lastUpdatedAt;
 
     public BaseEntity() {
     }
