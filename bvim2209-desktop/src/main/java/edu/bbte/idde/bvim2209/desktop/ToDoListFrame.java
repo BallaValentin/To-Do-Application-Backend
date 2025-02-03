@@ -73,8 +73,7 @@ public class ToDoListFrame extends JFrame {
 
         tableOutputPanel.setBorder(createCustomTitledBorder("Table Output"));
 
-        String[] columnNames = {"ID", "Title", "Description",
-                "Due date", "Importance level", "Last Updated At"};
+        String[] columnNames = {"ID", "Title", "Description", "Due date", "Importance level", "Last Updated At"};
         Object[][] tableData = {};
         tableModel.setDataVector(tableData, columnNames);
         table.setModel(tableModel);
