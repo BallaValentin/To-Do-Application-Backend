@@ -50,4 +50,17 @@ public class GeneralExceptionHandler {
         String path = request.getRequestURI();
         return new ErrorResponseDTO(timestamp, statusCode, error, path);
     }
+
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ErrorResponseDTO handleUnauthorized(
+            ForbiddenException exception, HttpServletRequest request
+    ) {
+        LocalDateTime timestamp = LocalDateTime.now();
+        Integer statusCode = HttpStatus.FORBIDDEN.value();
+        String error = exception.getMessage();
+        String path = request.getRequestURI();
+        return new ErrorResponseDTO(timestamp, statusCode, error, path);
+    }
 }
