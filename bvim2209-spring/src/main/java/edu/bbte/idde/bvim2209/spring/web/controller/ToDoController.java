@@ -2,6 +2,7 @@ package edu.bbte.idde.bvim2209.spring.web.controller;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.spring.backend.services.ToDoService;
+import edu.bbte.idde.bvim2209.spring.exceptions.UnauthorizedException;
 import edu.bbte.idde.bvim2209.spring.web.dto.request.ToDoRequestDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.response.ToDoResponseDTO;
 import edu.bbte.idde.bvim2209.spring.web.mapper.ToDoMapper;
@@ -40,7 +41,11 @@ public class ToDoController {
     }
 
     @GetMapping("/{toDoId}")
-    public ToDoResponseDTO getTodo(@PathVariable("toDoId") Long id) {
+    public ToDoResponseDTO getTodo(@PathVariable("toDoId") Long id,
+                                   @RequestHeader("Authorization") String token) {
+        if (token == null) {
+            throw new UnauthorizedException("The token is missing");
+        }
         ToDo toDo = toDoService.getById(id);
         return toDoMapper.modelToResponseDTO(toDo);
     }
@@ -48,7 +53,11 @@ public class ToDoController {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ToDoResponseDTO> createToDo(
+            @RequestHeader("Authorization") String token,
             @Valid @RequestBody ToDoRequestDTO toDoDto) throws ParseException {
+        if (token == null) {
+            throw new UnauthorizedException("The token is missing");
+        }
         ToDo toDo = toDoMapper.requestDTOToModel(toDoDto);
         toDoService.createToDo(toDo);
         URI createURI = URI.create("api/todos/" + toDo.getId());
