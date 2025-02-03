@@ -23,7 +23,7 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
-    public void createToDo(ToDo toDo) throws IllegalArgumentException {
+    public void createToDo(ToDo toDo, String token) throws IllegalArgumentException {
         validateToDo(toDo);
         toDoDao.create(toDo);
     }
@@ -86,7 +86,7 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
-    public Collection<ToDo> findAll() {
+    public Collection<ToDo> findAll(String token) {
         return toDoDao.findAll();
     }
 

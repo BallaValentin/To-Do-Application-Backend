@@ -2,6 +2,7 @@ package edu.bbte.idde.bvim2209.spring.backend.services;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDoDetail;
+import edu.bbte.idde.bvim2209.spring.backend.repo.jpa.QueryTokenJpaRepository;
 import edu.bbte.idde.bvim2209.spring.backend.repo.jpa.ToDoDetailJpaRepository;
 import edu.bbte.idde.bvim2209.spring.backend.repo.jpa.ToDoJpaRepository;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
@@ -17,16 +18,21 @@ import java.util.Optional;
 public class ToDoServiceJpaImpl implements ToDoService {
     private final ToDoJpaRepository toDoJpaRepository;
     private final ToDoDetailJpaRepository toDoDetailJpaRepository;
+    private final QueryTokenJpaService queryTokenService;
 
     @Autowired
     public ToDoServiceJpaImpl(
-            ToDoJpaRepository toDoJpaRepository, ToDoDetailJpaRepository toDoDetailJpaRepository) {
+            ToDoJpaRepository toDoJpaRepository,
+            ToDoDetailJpaRepository toDoDetailJpaRepository,
+            QueryTokenJpaService queryTokenService) {
         this.toDoJpaRepository = toDoJpaRepository;
         this.toDoDetailJpaRepository = toDoDetailJpaRepository;
+        this.queryTokenService = queryTokenService;
     }
 
     @Override
-    public void createToDo(ToDo toDo) throws IllegalArgumentException {
+    public void createToDo(ToDo toDo, String token) throws IllegalArgumentException {
+        queryTokenService.checkToken(token, "WRITE", "TODO");
         validateToDo(toDo);
         toDoJpaRepository.saveAndFlush(toDo);
     }
@@ -89,7 +95,8 @@ public class ToDoServiceJpaImpl implements ToDoService {
     }
 
     @Override
-    public Collection<ToDo> findAll() {
+    public Collection<ToDo> findAll(String token) {
+        queryTokenService.checkToken(token, "READ", "TODO");
         return toDoJpaRepository.findAll();
     }
 

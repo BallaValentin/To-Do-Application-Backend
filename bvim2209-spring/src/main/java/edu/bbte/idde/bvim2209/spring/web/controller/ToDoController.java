@@ -31,21 +31,21 @@ public class ToDoController {
 
     @GetMapping()
     public Collection<ToDoResponseDTO> getTodos(
+            @RequestHeader("Authorization") String token,
             @RequestParam(value = "levelOfImportance", required = false) Integer levelOfImportance
     ) {
+        if (token == null) {
+            throw new UnauthorizedException("The token is missing");
+        }
         if (levelOfImportance == null) {
-            return toDoMapper.modelsToResponseDTO(toDoService.findAll());
+            return toDoMapper.modelsToResponseDTO(toDoService.findAll(token));
         } else {
             return toDoMapper.modelsToResponseDTO(toDoService.findByImportance(levelOfImportance));
         }
     }
 
     @GetMapping("/{toDoId}")
-    public ToDoResponseDTO getTodo(@PathVariable("toDoId") Long id,
-                                   @RequestHeader("Authorization") String token) {
-        if (token == null) {
-            throw new UnauthorizedException("The token is missing");
-        }
+    public ToDoResponseDTO getTodo(@PathVariable("toDoId") Long id) {
         ToDo toDo = toDoService.getById(id);
         return toDoMapper.modelToResponseDTO(toDo);
     }
@@ -59,7 +59,7 @@ public class ToDoController {
             throw new UnauthorizedException("The token is missing");
         }
         ToDo toDo = toDoMapper.requestDTOToModel(toDoDto);
-        toDoService.createToDo(toDo);
+        toDoService.createToDo(toDo, token);
         URI createURI = URI.create("api/todos/" + toDo.getId());
         return ResponseEntity.created(createURI).body(toDoMapper.modelToResponseDTO(toDo));
     }
