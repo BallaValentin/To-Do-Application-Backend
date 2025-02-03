@@ -78,6 +78,11 @@ public class ToDoJsonServlet extends HttpServlet {
                 handleBadRequest(resp, "The 'id' field should not be provided.");
                 return;
             }
+            if (toDo.getLastUpdatedAt() != null) {
+                logger.warn("The 'lastUpdatedAt' field should not be provided.");
+                handleBadRequest(resp, "The 'lastUpdatedAt' field should not be provided.");
+                return;
+            }
             logger.info("Inserting new todo.");
             toDoService.createToDo(toDo);
             resp.setStatus(HttpServletResponse.SC_CREATED);
@@ -102,6 +107,11 @@ public class ToDoJsonServlet extends HttpServlet {
             }
             Long id = Long.parseLong(idParam);
             ToDo toDo = objectMapper.readValue(req.getReader(), ToDo.class);
+            if (toDo.getLastUpdatedAt() != null) {
+                logger.warn("The 'lastUpdatedAt' field should not be provided.");
+                handleBadRequest(resp, "The 'lastUpdatedAt' field should not be provided.");
+                return;
+            }
             if (toDo.getId() != null) {
                 logger.warn("The 'id' field should only be provided as parameter");
                 handleBadRequest(resp,
