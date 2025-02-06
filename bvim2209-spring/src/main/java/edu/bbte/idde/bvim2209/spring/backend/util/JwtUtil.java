@@ -20,7 +20,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setSubject(username + '|' + fullname + '|' + role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 600000L))
+                .setExpiration(new Date(System.currentTimeMillis() + 60000L))
                 .signWith(SignatureAlgorithm.HS512, secret1)
                 .compact();
     }
@@ -37,25 +37,16 @@ public class JwtUtil {
     public String extractUsername(String jwtToken) {
         try {
             Jws<Claims> parsedToken = parseAccessToken(jwtToken);
-            return parsedToken.getBody().getSubject().split("\\|")[0];
+            return parsedToken.getPayload().getSubject();
         } catch (JwtException exception) {
             throw new AuthenticationException("Invalid JWT token");
         }
     }
 
-    public String extractFullname(String jwtToken) {
+    public String extractRefreshToken(String jwtToken) {
         try {
-            Jws<Claims> parsedToken = parseAccessToken(jwtToken);
-            return parsedToken.getBody().getSubject().split("\\|")[1];
-        } catch (JwtException exception) {
-            throw new AuthenticationException("Invalid JWT token");
-        }
-    }
-
-    public String extractRole(String jwtToken) {
-        try {
-            Jws<Claims> parsedToken = parseAccessToken(jwtToken);
-            return parsedToken.getBody().getSubject().split("\\|")[2];
+            Jws<Claims> parsedToken = parseRefreshToken(jwtToken);
+            return parsedToken.getPayload().getSubject();
         } catch (JwtException exception) {
             throw new AuthenticationException("Invalid JWT token");
         }
@@ -65,8 +56,8 @@ public class JwtUtil {
         return Jwts.parser().setSigningKey(secret1).build().parseClaimsJws(token);
     }
 
-    public void parseRefreshToken(String token) {
-        Jwts.parser().setSigningKey(secret2).build().parseClaimsJws(token).getBody();
+    public Jws<Claims> parseRefreshToken(String token) {
+        return Jwts.parser().setSigningKey(secret2).build().parseClaimsJws(token);
     }
 
     public Boolean validateRefreshToken(String token) {

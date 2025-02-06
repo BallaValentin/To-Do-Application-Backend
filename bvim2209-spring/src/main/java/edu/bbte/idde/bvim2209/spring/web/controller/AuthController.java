@@ -10,6 +10,7 @@ import edu.bbte.idde.bvim2209.spring.web.dto.response.RefreshTokenResponse;
 import edu.bbte.idde.bvim2209.spring.web.dto.response.UserResponseDTO;
 import edu.bbte.idde.bvim2209.spring.web.mapper.UserMapper;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin("http://localhost:5173")
+@Slf4j
 public class AuthController {
     JwtUtil jwtUtil = new JwtUtil();
     UserMapper userMapper;
@@ -66,10 +68,10 @@ public class AuthController {
             String token = authHeader.substring(7);
             Boolean isValidToken = jwtUtil.validateRefreshToken(token);
             if (isValidToken) {
-                String username = jwtUtil.extractUsername(token);
-                String fullname = jwtUtil.extractFullname(token);
-                String role = jwtUtil.extractRole(token);
-
+                String subject = jwtUtil.extractRefreshToken(token);
+                String username = subject.split("\\|")[0];
+                String fullname = subject.split("\\|")[1];
+                String role = subject.split("\\|")[2];
                 String accessToken = jwtUtil.generateAccessToken(username, fullname, role);
                 RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse();
                 refreshTokenResponse.setAccessToken(accessToken);
