@@ -2,8 +2,11 @@ package edu.bbte.idde.bvim2209.spring.backend.util;
 
 import edu.bbte.idde.bvim2209.spring.exceptions.AuthenticationException;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
@@ -18,19 +21,19 @@ public class JwtUtil {
 
     public String generateAccessToken(String username, String fullname, String role) {
         return Jwts.builder()
-                .setSubject(username + '|' + fullname + '|' + role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 60000L))
-                .signWith(SignatureAlgorithm.HS512, secret1)
+                .subject(username + '|' + fullname + '|' + role)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 600000L))
+                .signWith(Keys.hmacShaKeyFor(secret1.getBytes()))
                 .compact();
     }
 
     public String generateRefreshToken(String username, String fullname, String role) {
         return Jwts.builder()
-                .setSubject(username + '|' + fullname + '|' + role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30L))
-                .signWith(SignatureAlgorithm.HS512, secret2)
+                .subject(username + '|' + fullname + '|' + role)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30L))
+                .signWith(Keys.hmacShaKeyFor(secret2.getBytes()))
                 .compact();
     }
 
@@ -53,11 +56,13 @@ public class JwtUtil {
     }
 
     public Jws<Claims> parseAccessToken(String token) {
-        return Jwts.parser().setSigningKey(secret1).build().parseClaimsJws(token);
+        SecretKey key = Keys.hmacShaKeyFor(secret1.getBytes(StandardCharsets.UTF_8));
+        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
     }
 
     public Jws<Claims> parseRefreshToken(String token) {
-        return Jwts.parser().setSigningKey(secret2).build().parseClaimsJws(token);
+        SecretKey key = Keys.hmacShaKeyFor(secret2.getBytes(StandardCharsets.UTF_8));
+        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
     }
 
     public Boolean validateRefreshToken(String token) {
