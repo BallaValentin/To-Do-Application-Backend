@@ -39,9 +39,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<UserResponseDTO> loginUser(@Valid @RequestBody UserLoginReqDTO requestDTO) {
-        User user = userMapper.loginDTOToModel(requestDTO);
+        User loginData = userMapper.loginDTOToModel(requestDTO);
         Boolean rememberMe = requestDTO.getRememberMe();
-        userService.loginUser(user);
+        User user = userService.loginUser(loginData);
 
         UserResponseDTO userResponseDTO = new UserResponseDTO();
 

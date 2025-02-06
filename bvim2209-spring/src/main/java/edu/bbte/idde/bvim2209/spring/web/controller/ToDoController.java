@@ -71,11 +71,11 @@ public class ToDoController {
             @PathVariable("toDoId") Long id,
             @Valid @RequestBody ToDoRequestDTO toDoDto,
             @RequestHeader("Authorization") String authorizationHeader) throws ParseException {
-        ToDo toDo = toDoMapper.requestDTOToModel(toDoDto);
-        toDo.setId(id);
+        ToDo toDoUpdates = toDoMapper.requestDTOToModel(toDoDto);
+        toDoUpdates.setId(id);
         String jwtToken = authorizationHeader.substring(7);
-        toDoService.updateToDo(toDo, jwtToken);
-        return ResponseEntity.ok().body(toDoMapper.modelToResponseDTO(toDo));
+        toDoService.updateToDo(toDoUpdates, jwtToken);
+        return ResponseEntity.ok().body(toDoMapper.modelToResponseDTO(toDoUpdates));
     }
 
     @DeleteMapping("/{toDoId}")

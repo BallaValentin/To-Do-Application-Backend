@@ -55,10 +55,12 @@ public class UserService {
         }
     }
 
-    public void loginUser(User loginData) {
+    public User loginUser(User loginData) {
         Optional<User> user = userDao.findByUsername(loginData.getUsername());
         if (user.isPresent()) {
-            if (!passwordEncoder.matches(loginData.getPassword(), user.get().getPassword())) {
+            if (passwordEncoder.matches(loginData.getPassword(), user.get().getPassword())) {
+                return user.get();
+            } else {
                 throw new BadCredentialsException("Invalid username or password");
             }
         } else {

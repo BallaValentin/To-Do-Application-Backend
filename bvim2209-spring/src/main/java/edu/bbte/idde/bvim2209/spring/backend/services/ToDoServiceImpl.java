@@ -51,10 +51,12 @@ public class ToDoServiceImpl implements ToDoService {
         if (toDo.isPresent()) {
             User user = userService.getUserFromToken(jwtToken);
             if (user.equals(toDo.get().getUser())) {
-                toDoDao.update(toDo.get());
+                toDoDao.update(toDoUpdates);
             } else {
                 throw new UnauthorizedException("You are not allowed to update this entity");
             }
+        } else {
+            throw new EntityNotFoundException("To Do does not exist");
         }
     }
 
