@@ -8,29 +8,73 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private static final String secret =
+    private static final String secret1 =
             "a6RTEew6dfwFDG7dv732vwveuGRTGfw23742dby32r42fvwefuef3ftv3SADVU32DEEHWFVU"
                     + "34YFV43RVF34VF3UFVFAJSHHbs2y8r723fewfvet3fv4fdsvgfru43byid243yfu4vevferfv";
 
-    public String generateToken(String username, String fullname, String role, Long age) {
+    private static final String secret2 =
+            "dsjnvjvndSNADJBDADB1243724GEHBFqewqef4sgwv7DWGqXGEWFWVHSB32YR23ndewbufbw"
+                    + "A27rasdhsadvVWVDGWce23rbcewwbhbDW7238CBSHCDjsdcsjbi23bfqhkfbefwgwBDWYFQhd";
+
+    public String generateAccessToken(String username, String fullname, String role) {
         return Jwts.builder()
                 .setSubject(username + '|' + fullname + '|' + role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + age))
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .setExpiration(new Date(System.currentTimeMillis() + 600000L))
+                .signWith(SignatureAlgorithm.HS512, secret1)
+                .compact();
+    }
+
+    public String generateRefreshToken(String username, String fullname, String role) {
+        return Jwts.builder()
+                .setSubject(username + '|' + fullname + '|' + role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30L))
+                .signWith(SignatureAlgorithm.HS512, secret2)
                 .compact();
     }
 
     public String extractUsername(String jwtToken) {
         try {
-            Jws<Claims> parsedToken = parseToken(jwtToken);
+            Jws<Claims> parsedToken = parseAccessToken(jwtToken);
             return parsedToken.getBody().getSubject().split("\\|")[0];
         } catch (JwtException exception) {
             throw new AuthenticationException("Invalid JWT token");
         }
     }
 
-    public Jws<Claims> parseToken(String token) {
-        return Jwts.parser().setSigningKey(secret).build().parseClaimsJws(token);
+    public String extractFullname(String jwtToken) {
+        try {
+            Jws<Claims> parsedToken = parseAccessToken(jwtToken);
+            return parsedToken.getBody().getSubject().split("\\|")[1];
+        } catch (JwtException exception) {
+            throw new AuthenticationException("Invalid JWT token");
+        }
+    }
+
+    public String extractRole(String jwtToken) {
+        try {
+            Jws<Claims> parsedToken = parseAccessToken(jwtToken);
+            return parsedToken.getBody().getSubject().split("\\|")[2];
+        } catch (JwtException exception) {
+            throw new AuthenticationException("Invalid JWT token");
+        }
+    }
+
+    public Jws<Claims> parseAccessToken(String token) {
+        return Jwts.parser().setSigningKey(secret1).build().parseClaimsJws(token);
+    }
+
+    public void parseRefreshToken(String token) {
+        Jwts.parser().setSigningKey(secret2).build().parseClaimsJws(token).getBody();
+    }
+
+    public Boolean validateRefreshToken(String token) {
+        try {
+            parseRefreshToken(token);
+            return true;
+        } catch (JwtException exception) {
+            return false;
+        }
     }
 }

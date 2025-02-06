@@ -55,23 +55,10 @@ public class UserService {
         }
     }
 
-    public String loginUser(User loginData, Boolean rememberMe) {
+    public void loginUser(User loginData) {
         Optional<User> user = userDao.findByUsername(loginData.getUsername());
         if (user.isPresent()) {
-            if (passwordEncoder.matches(loginData.getPassword(), user.get().getPassword())) {
-                String jwtToken;
-                if (rememberMe) {
-                    jwtToken = jwtUtil.generateToken(
-                            user.get().getUsername(),
-                            user.get().getFullname(),
-                            user.get().getRole(), 60000 * 1440 * 365L);
-                } else {
-                    jwtToken = jwtUtil.generateToken(
-                            user.get().getUsername(),
-                            user.get().getFullname(), user.get().getRole(), 600000L);
-                }
-                return jwtToken;
-            } else {
+            if (!passwordEncoder.matches(loginData.getPassword(), user.get().getPassword())) {
                 throw new BadCredentialsException("Invalid username or password");
             }
         } else {
