@@ -79,10 +79,6 @@ public class UserService {
         }
     }
 
-    public void logoutUser(String jwtToken) {
-        getUserFromToken(jwtToken);
-    }
-
     public Collection<User> getAllUsers(String jwtToken) {
         User userFromToken = getUserFromToken(jwtToken);
         Specification<User> userSpecification = Specification.where(null);

@@ -42,12 +42,4 @@ public class AuthController {
         userResponseDTO.setJwtToken(jwtToken);
         return ResponseEntity.ok(userResponseDTO);
     }
-
-    @PostMapping("/logout")
-    public void logoutUser(
-            @RequestHeader("Authorization") String authorizationHeader
-    ) {
-        String jwtToken = authorizationHeader.substring(7);
-        userService.logoutUser(jwtToken);
-    }
 }
