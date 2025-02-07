@@ -6,7 +6,6 @@ import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -16,7 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Profile("jdbc")
@@ -155,7 +154,7 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
     }
 
     @Override
-    public Collection<ToDo> findByUser(User user) {
-        return List.of();
+    public Optional<ToDo> findByIdAndUser(Long id, User user) {
+        return Optional.empty();
     }
 }

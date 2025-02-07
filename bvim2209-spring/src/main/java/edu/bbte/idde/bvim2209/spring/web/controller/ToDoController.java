@@ -48,18 +48,21 @@ public class ToDoController {
         String jwtToken = authorizationHeader.substring(7);
         log.info("JWT Token: {}", jwtToken);
         User user = userService.getUserFromToken(jwtToken);
-            Specification<ToDo> toDoSpecification = Specification.where(
-                            ToDoSpecification.withUser(user))
-                    .and(ToDoSpecification.withPriority(levelOfImportance))
-                    .and(ToDoSpecification.withDueDateBefore(beforeDate))
-                    .and(ToDoSpecification.withDueDateAfter(afterDate));
+        Specification<ToDo> toDoSpecification = Specification.where(
+                        ToDoSpecification.withUser(user))
+                .and(ToDoSpecification.withPriority(levelOfImportance))
+                .and(ToDoSpecification.withDueDateBefore(beforeDate))
+                .and(ToDoSpecification.withDueDateAfter(afterDate));
 
-            return toDoMapper.modelsToResponseDTO(toDoService.findAll(toDoSpecification, jwtToken));
+        return toDoMapper.modelsToResponseDTO(toDoService.findAll(toDoSpecification, jwtToken));
     }
 
     @GetMapping("/{toDoId}")
-    public ToDoResponseDTO getTodo(@PathVariable("toDoId") Long id) {
-        ToDo toDo = toDoService.getById(id);
+    public ToDoResponseDTO getTodo(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @PathVariable("toDoId") Long id) {
+        String jwtToken = authorizationHeader.substring(7);
+        ToDo toDo = toDoService.getById(id, jwtToken);
         ToDoResponseDTO toDoResponseDTO = toDoMapper.modelToResponseDTO(toDo);
         toDoResponseDTO.setCreatedBy(toDo.getUser().getUsername());
         return toDoResponseDTO;

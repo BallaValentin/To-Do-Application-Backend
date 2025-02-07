@@ -2,10 +2,8 @@ package edu.bbte.idde.bvim2209.spring.backend.util;
 
 import edu.bbte.idde.bvim2209.spring.exceptions.AuthenticationException;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
 import java.util.Date;
 
 @Component

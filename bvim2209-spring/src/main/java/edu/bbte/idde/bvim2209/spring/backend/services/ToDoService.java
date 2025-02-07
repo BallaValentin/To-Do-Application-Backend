@@ -20,13 +20,11 @@ public interface ToDoService {
     void deleteToDo(Long id, String jwtToken) throws
             EntityNotFoundException, ParseException, AuthenticationException, UnauthorizedException;
 
-    ToDo getById(Long id) throws EntityNotFoundException;
+    ToDo getById(Long id, String jwtToken) throws EntityNotFoundException;
 
     Collection<ToDo> findAll(Specification<ToDo> toDoSpecification, String jwtToken);
 
-    Collection<ToDo> findByImportance(Integer importanceLevel);
-
-    Collection<ToDoDetail> getDetails(Long id);
+    Collection<ToDoDetail> getDetails(Long id, String jwtToken);
 
     void addDetailToToDo(Long id, ToDoDetail toDoDetail, String jwtToken) throws EntityNotFoundException;
 

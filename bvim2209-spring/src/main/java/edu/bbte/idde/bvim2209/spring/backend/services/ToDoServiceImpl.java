@@ -14,7 +14,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -46,47 +45,26 @@ public class ToDoServiceImpl implements ToDoService {
     @Override
     public void updateToDo(ToDo toDoUpdates, String jwtToken) throws
             EntityNotFoundException, IllegalArgumentException, AuthenticationException {
-        validateId(toDoUpdates.getId());
         toDoServiceUtil.validateToDo(toDoUpdates);
-        Optional<ToDo> toDo = toDoDao.findById(toDoUpdates.getId());
-        if (toDo.isPresent()) {
-            User user = userService.getUserFromToken(jwtToken);
-            if (user.equals(toDo.get().getUser())) {
-                toDoDao.update(toDoUpdates);
-            } else {
-                throw new UnauthorizedException("You are not allowed to update this entity");
-            }
-        } else {
-            throw new EntityNotFoundException("To Do does not exist");
-        }
+        getById(toDoUpdates.getId(), jwtToken);
+        toDoDao.update(toDoUpdates);
     }
 
     @Override
     public void deleteToDo(Long id, String jwtToken) throws
             EntityNotFoundException, AuthenticationException {
-        validateId(id);
-        Optional<ToDo> toDo = toDoDao.findById(id);
-        if (toDo.isPresent()) {
-            User user = userService.getUserFromToken(jwtToken);
-            if (user.equals(toDo.get().getUser())) {
-                toDoDao.deleteById(id);
-            } else {
-                throw new UnauthorizedException("You are not allowed to delete this entity");
-            }
-        }
+        getById(id, jwtToken);
+        toDoDao.deleteById(id);
     }
 
     @Override
-    public ToDo getById(Long id) throws EntityNotFoundException {
-        Optional<ToDo> toDo = toDoDao.findById(id);
+    public ToDo getById(Long id, String jwtToken) throws EntityNotFoundException {
+        User user = userService.getUserFromToken(jwtToken);
+        Optional<ToDo> toDo = toDoDao.findByIdAndUser(id, user);
         if (toDo.isEmpty()) {
             throw new EntityNotFoundException("ToDo with id " + id + " not found");
         }
         return toDo.get();
-    }
-
-    private void validateId(Long id) {
-        getById(id);
     }
 
     @Override
@@ -95,20 +73,15 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
-    public Collection<ToDo> findByImportance(Integer levelOfImportance) {
-        return toDoDao.findByLevelOfImportance(levelOfImportance);
-    }
-
-    @Override
-    public Collection<ToDoDetail> getDetails(Long id) {
-        ToDo toDo = getById(id);
+    public Collection<ToDoDetail> getDetails(Long id, String jwtToken) {
+        ToDo toDo = getById(id, jwtToken);
         return toDo.getDetails();
     }
 
     @Override
     public void addDetailToToDo(Long id, ToDoDetail toDoDetail, String jwtToken)
             throws EntityNotFoundException {
-        ToDo toDo = getById(id);
+        ToDo toDo = getById(id, jwtToken);
         User user = userService.getUserFromToken(jwtToken);
         if (user.equals(toDo.getUser())) {
             toDo.getDetails().add(toDoDetail);
@@ -123,7 +96,7 @@ public class ToDoServiceImpl implements ToDoService {
     @Override
     public void deleteDetailById(Long toDoId, Long toDoDetailId, String jwtToken)
             throws EntityNotFoundException {
-        ToDo toDo = getById(toDoId);
+        ToDo toDo = getById(toDoId, jwtToken);
         Optional<ToDoDetail> toDoDetail = toDoDetailDao.findById(toDoDetailId);
         if (toDoDetail.isEmpty()) {
             throw new EntityNotFoundException("ToDoDetail with id " + toDoDetailId + " not found");

@@ -32,8 +32,11 @@ public class ToDoDetailController {
     }
 
     @GetMapping("/{id}/details")
-    public Collection<ToDoDetailResponseDTO> getToDetails(@PathVariable Long id) {
-        return toDoMapper.detailsToResponseDTOs(toDoService.getDetails(id));
+    public Collection<ToDoDetailResponseDTO> getToDetails(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @PathVariable Long id) {
+        String jwtToken = authorizationHeader.substring(7);
+        return toDoMapper.detailsToResponseDTOs(toDoService.getDetails(id, jwtToken));
     }
 
     @PostMapping("/{id}/details")
