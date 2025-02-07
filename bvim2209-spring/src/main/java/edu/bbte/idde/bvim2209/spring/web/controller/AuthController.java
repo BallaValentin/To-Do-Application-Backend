@@ -9,6 +9,9 @@ import edu.bbte.idde.bvim2209.spring.web.dto.request.UserRegisterReqDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.response.RefreshTokenResponse;
 import edu.bbte.idde.bvim2209.spring.web.dto.response.UserResponseDTO;
 import edu.bbte.idde.bvim2209.spring.web.mapper.UserMapper;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin("http://localhost:5173")
+@CrossOrigin(value = "http://localhost:5173", allowCredentials = "true")
 @Slf4j
 public class AuthController {
     JwtUtil jwtUtil = new JwtUtil();
@@ -40,7 +43,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDTO> loginUser(@Valid @RequestBody UserLoginReqDTO requestDTO) {
+    public ResponseEntity<UserResponseDTO> loginUser(@Valid @RequestBody UserLoginReqDTO requestDTO,
+                                                     HttpServletResponse response) {
         User loginData = userMapper.loginDTOToModel(requestDTO);
         Boolean rememberMe = requestDTO.getRememberMe();
         User user = userService.loginUser(loginData);
@@ -56,31 +60,44 @@ public class AuthController {
             String refreshToken = jwtUtil.generateRefreshToken(user.getUsername(),
                     user.getFullname(),
                     user.getRole());
-            userResponseDTO.setRefreshToken(refreshToken);
+            Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+            refreshTokenCookie.setHttpOnly(true);
+            refreshTokenCookie.setSecure(true);
+            refreshTokenCookie.setPath("/");
+            refreshTokenCookie.setMaxAge(60 * 60 * 24 * 30);
+            refreshTokenCookie.setAttribute("SameSite", "Strict");
+            response.addCookie(refreshTokenCookie);
         }
 
         return ResponseEntity.ok(userResponseDTO);
     }
 
     @GetMapping("/refreshToken")
-    public ResponseEntity<RefreshTokenResponse> refreshToken(@RequestHeader("Authorization") String authHeader) {
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            Boolean isValidToken = jwtUtil.validateRefreshToken(token);
-            if (isValidToken) {
-                String subject = jwtUtil.extractRefreshToken(token);
-                String username = subject.split("\\|")[0];
-                String fullname = subject.split("\\|")[1];
-                String role = subject.split("\\|")[2];
-                String accessToken = jwtUtil.generateAccessToken(username, fullname, role);
-                RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse();
-                refreshTokenResponse.setAccessToken(accessToken);
-                return ResponseEntity.ok(refreshTokenResponse);
-            } else {
-                throw new UnauthorizedException("Invalid refresh token");
-            }
-        } else {
+    public ResponseEntity<RefreshTokenResponse> refreshToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies == null) {
             throw new UnauthorizedException("Invalid refresh token");
         }
+
+        for (Cookie cookie : cookies) {
+            if ("refreshToken".equals(cookie.getName())) {
+                String refreshToken = cookie.getValue();
+                Boolean isValidToken = jwtUtil.validateRefreshToken(refreshToken);
+                if (isValidToken) {
+                    String subject = jwtUtil.extractRefreshToken(refreshToken);
+                    String[] userData = subject.split("\\|");
+                    String username = userData[0];
+                    String fullname = userData[1];
+                    String role = userData[2];
+
+                    String accessToken = jwtUtil.generateAccessToken(username, fullname, role);
+                    RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse();
+                    refreshTokenResponse.setAccessToken(accessToken);
+                    return ResponseEntity.ok(refreshTokenResponse);
+                }
+            }
+        }
+        throw new UnauthorizedException("Invalid refresh token");
     }
 }

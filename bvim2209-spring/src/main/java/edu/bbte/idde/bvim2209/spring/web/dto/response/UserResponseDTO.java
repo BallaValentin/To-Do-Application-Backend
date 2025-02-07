@@ -5,5 +5,4 @@ import lombok.Data;
 @Data
 public class UserResponseDTO {
     private String accessToken;
-    private String refreshToken;
 }
