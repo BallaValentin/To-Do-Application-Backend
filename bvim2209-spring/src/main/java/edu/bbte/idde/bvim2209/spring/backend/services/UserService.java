@@ -30,7 +30,9 @@ public class UserService {
     }
 
     public User getUserFromToken(String jwtToken) {
+        log.info("jwtToken: {}", jwtToken);
         String username = jwtUtil.extractUsername(jwtToken);
+        log.info("username {}", username);
         Optional<User> user = userDao.findByUsername(username);
         if (user.isEmpty()) {
             throw new AuthenticationException("Invalid JWT token");

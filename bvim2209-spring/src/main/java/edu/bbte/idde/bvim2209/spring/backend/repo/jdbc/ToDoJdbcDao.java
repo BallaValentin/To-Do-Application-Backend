@@ -1,10 +1,12 @@
 package edu.bbte.idde.bvim2209.spring.backend.repo.jdbc;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
+import edu.bbte.idde.bvim2209.spring.backend.model.User;
 import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -14,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 @Profile("jdbc")
@@ -149,5 +152,10 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
             log.error("Error fetching all entities by importance from database", exception);
         }
         return toDos;
+    }
+
+    @Override
+    public Collection<ToDo> findByUser(User user) {
+        return List.of();
     }
 }

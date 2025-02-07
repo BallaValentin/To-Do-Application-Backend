@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -89,8 +90,7 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
-    public Collection<ToDo> findAll(Specification<ToDo> toDoSpecification) {
-
+    public Collection<ToDo> findAll(Specification<ToDo> toDoSpecification, String jwtToken) {
         return toDoDao.findAll(toDoSpecification);
     }
 

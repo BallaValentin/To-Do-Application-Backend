@@ -1,6 +1,7 @@
 package edu.bbte.idde.bvim2209.spring.backend.specification;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
+import edu.bbte.idde.bvim2209.spring.backend.model.User;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Date;
@@ -21,5 +22,10 @@ public class ToDoSpecification {
         return (root, query, criteriaBuilder) ->
                 dueDate != null
                         ? criteriaBuilder.greaterThanOrEqualTo(root.get("dueDate"), dueDate) : null;
+    }
+
+    public static Specification<ToDo> withUser(User user) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("user"), user);
     }
 }

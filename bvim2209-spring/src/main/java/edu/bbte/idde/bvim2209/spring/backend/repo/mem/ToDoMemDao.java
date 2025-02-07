@@ -1,11 +1,14 @@
 package edu.bbte.idde.bvim2209.spring.backend.repo.mem;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
+import edu.bbte.idde.bvim2209.spring.backend.model.User;
 import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDao;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -20,5 +23,10 @@ public class ToDoMemDao extends MemDao<ToDo> implements ToDoDao {
                 .filter(e ->
                         Objects.equals(e.getLevelOfImportance(), levelOfImportance))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<ToDo> findByUser(User user) {
+        return List.of();
     }
 }

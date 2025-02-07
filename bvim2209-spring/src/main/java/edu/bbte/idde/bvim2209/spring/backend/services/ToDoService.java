@@ -22,7 +22,7 @@ public interface ToDoService {
 
     ToDo getById(Long id) throws EntityNotFoundException;
 
-    Collection<ToDo> findAll(Specification<ToDo> toDoSpecification);
+    Collection<ToDo> findAll(Specification<ToDo> toDoSpecification, String jwtToken);
 
     Collection<ToDo> findByImportance(Integer importanceLevel);
 

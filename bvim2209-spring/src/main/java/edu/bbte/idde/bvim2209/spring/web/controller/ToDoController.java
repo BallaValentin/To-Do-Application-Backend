@@ -1,12 +1,15 @@
 package edu.bbte.idde.bvim2209.spring.web.controller;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
+import edu.bbte.idde.bvim2209.spring.backend.model.User;
 import edu.bbte.idde.bvim2209.spring.backend.services.ToDoService;
+import edu.bbte.idde.bvim2209.spring.backend.services.UserService;
 import edu.bbte.idde.bvim2209.spring.backend.specification.ToDoSpecification;
 import edu.bbte.idde.bvim2209.spring.web.dto.request.ToDoRequestDTO;
 import edu.bbte.idde.bvim2209.spring.web.dto.response.ToDoResponseDTO;
 import edu.bbte.idde.bvim2209.spring.web.mapper.ToDoMapper;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,31 +22,39 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/todos")
 @CrossOrigin("http://localhost:5173")
 public class ToDoController {
-    ToDoMapper toDoMapper;
-    ToDoService toDoService;
+    private final UserService userService;
+    private final ToDoMapper toDoMapper;
+    private final ToDoService toDoService;
 
     @Autowired
-    public ToDoController(ToDoMapper toDoMapper, ToDoService toDoService) {
+    public ToDoController(ToDoMapper toDoMapper, ToDoService toDoService, UserService userService) {
         this.toDoMapper = toDoMapper;
         this.toDoService = toDoService;
+        this.userService = userService;
     }
 
     @GetMapping()
     public Collection<ToDoResponseDTO> getTodos(
+            @RequestHeader("Authorization") String authorizationHeader,
             @RequestParam(required = false) Integer levelOfImportance,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date beforeDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date afterDate
     ) {
-        Specification<ToDo> toDoSpecification = Specification.where(
-                ToDoSpecification.withPriority(levelOfImportance))
-                .and(ToDoSpecification.withDueDateBefore(beforeDate))
-                .and(ToDoSpecification.withDueDateAfter(afterDate));
+        String jwtToken = authorizationHeader.substring(7);
+        log.info("JWT Token: {}", jwtToken);
+        User user = userService.getUserFromToken(jwtToken);
+            Specification<ToDo> toDoSpecification = Specification.where(
+                            ToDoSpecification.withUser(user))
+                    .and(ToDoSpecification.withPriority(levelOfImportance))
+                    .and(ToDoSpecification.withDueDateBefore(beforeDate))
+                    .and(ToDoSpecification.withDueDateAfter(afterDate));
 
-        return toDoMapper.modelsToResponseDTO(toDoService.findAll(toDoSpecification));
+            return toDoMapper.modelsToResponseDTO(toDoService.findAll(toDoSpecification, jwtToken));
     }
 
     @GetMapping("/{toDoId}")
