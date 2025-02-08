@@ -72,6 +72,14 @@ public class AuthController {
         return ResponseEntity.ok(userResponseDTO);
     }
 
+    @GetMapping("/logout")
+    public void logoutUser(HttpServletResponse response) {
+        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
+        refreshTokenCookie.setMaxAge(0);
+        response.addCookie(refreshTokenCookie);
+    }
+
+
     @GetMapping("/refreshToken")
     public ResponseEntity<RefreshTokenResponse> refreshToken(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
