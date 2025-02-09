@@ -31,7 +31,7 @@ public class UserService {
 
     public User getUserFromToken(String jwtToken) {
         log.info("jwtToken: {}", jwtToken);
-        String username = jwtUtil.extractUsername(jwtToken);
+        String username = jwtUtil.extractAccessToken(jwtToken).split("\\|")[0];
         log.info("username {}", username);
         Optional<User> user = userDao.findByUsername(username);
         if (user.isEmpty()) {
@@ -70,6 +70,8 @@ public class UserService {
         }
     }
 
+
+
     public Collection<User> getAllUsers(String jwtToken) {
         User userFromToken = getUserFromToken(jwtToken);
         Specification<User> userSpecification = Specification.where(null);
@@ -86,6 +88,24 @@ public class UserService {
             return user.get();
         }
         throw new EntityNotFoundException("User not found");
+    }
+
+    public User getByEmail(String email) {
+        Optional<User> user = userDao.findByEmail(email);
+        if (user.isPresent()) {
+            return user.get();
+        } else {
+            throw new EntityNotFoundException("User not found");
+        }
+    }
+
+    public void updateUser(User user) {
+        userDao.saveAndFlush(user);
+    }
+
+    public void updatePassword(User user, String password) {
+        user.setPassword(passwordEncoder.encode(password));
+        userDao.saveAndFlush(user);
     }
 
     public void deleteUser(User user, String jwtToken) {

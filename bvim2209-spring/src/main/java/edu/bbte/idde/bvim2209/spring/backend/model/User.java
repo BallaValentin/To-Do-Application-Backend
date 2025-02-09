@@ -3,6 +3,7 @@ package edu.bbte.idde.bvim2209.spring.backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.Collection;
 
 @Getter
@@ -28,6 +29,8 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     private String role;
+
+    private Instant lastChangedPassword;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Collection<ToDo> todos;

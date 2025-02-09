@@ -17,28 +17,28 @@ public class JwtUtil {
             "dsjnvjvndSNADJBDADB1243724GEHBFqewqef4sgwv7DWGqXGEWFWVHSB32YR23ndewbufbw"
                     + "A27rasdhsadvVWVDGWce23rbcewwbhbDW7238CBSHCDjsdcsjbi23bfqhkfbefwgwBDWYFQhd";
 
-    public String generateAccessToken(String username, String fullname, String role) {
+    public String generateAccessToken(String subject) {
         return Jwts.builder()
-                .subject(username + '|' + fullname + '|' + role)
+                .subject(subject)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 600000L))
                 .signWith(SignatureAlgorithm.HS512, secret1)
                 .compact();
     }
 
-    public String generateRefreshToken(String username, String fullname, String role) {
+    public String generateRefreshToken(String subject) {
         return Jwts.builder()
-                .subject(username + '|' + fullname + '|' + role)
+                .subject(subject)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30L))
                 .signWith(SignatureAlgorithm.HS512, secret2)
                 .compact();
     }
 
-    public String extractUsername(String jwtToken) {
+    public String extractAccessToken(String jwtToken) {
         try {
             Jws<Claims> parsedToken = parseAccessToken(jwtToken);
-            return parsedToken.getPayload().getSubject().split("\\|")[0];
+            return parsedToken.getPayload().getSubject();
         } catch (JwtException exception) {
             log.error(exception.getMessage());
             throw new AuthenticationException("Invalid JWT token");

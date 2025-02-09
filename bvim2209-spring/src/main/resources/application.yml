@@ -1,3 +1,11 @@
 spring:
   profiles:
     active: jpa
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ballavalentin18@gmail.com
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+    password: lphh zrhr hspe wajs
