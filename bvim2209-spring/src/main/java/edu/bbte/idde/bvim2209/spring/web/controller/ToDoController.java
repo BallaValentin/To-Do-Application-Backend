@@ -46,7 +46,6 @@ public class ToDoController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date afterDate
     ) {
         String jwtToken = authorizationHeader.substring(7);
-        log.info("JWT Token: {}", jwtToken);
         User user = userService.getUserFromToken(jwtToken);
         Specification<ToDo> toDoSpecification = Specification.where(
                         ToDoSpecification.withUser(user))

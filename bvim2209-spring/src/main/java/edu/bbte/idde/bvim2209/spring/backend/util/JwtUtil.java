@@ -55,7 +55,6 @@ public class JwtUtil {
     }
 
     public Jws<Claims> parseAccessToken(String token) {
-        log.info("Parsing JWT token: {}", token);
         return Jwts.parser().setSigningKey(secret1).build().parseSignedClaims(token);
     }
 

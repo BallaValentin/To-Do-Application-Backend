@@ -26,10 +26,10 @@ public class EmailService {
     public void sendPasswordResetEmail(String email, String token) throws MessagingException {
         User user = userService.getByEmail(email);
         Instant lastPasswordReset = user.getLastChangedPassword();
-        if (lastPasswordReset == null || Duration.between(lastPasswordReset, Instant.now()).toDays() >= 1) {
+        if (lastPasswordReset == null || Duration.between(lastPasswordReset, Instant.now()).toSeconds() >= 1) {
             user.setLastChangedPassword(Instant.now());
             userService.updateUser(user);
-            String resetLink = "http://localhost:5173/resetPassword?token=" + token;
+            String resetLink = "http://localhost:5173/change-password?token=" + token;
             String subject = "Password Reset Request";
             String content = "<p>Hello,</p>"
                     + "<p>You requested to reset your password. Click the link below:</p>"

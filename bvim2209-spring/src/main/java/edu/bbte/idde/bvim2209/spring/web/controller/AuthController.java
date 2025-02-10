@@ -58,8 +58,8 @@ public class AuthController {
         User user = userService.loginUser(loginData);
 
         UserResponseDTO userResponseDTO = new UserResponseDTO();
-        String[] userData = {user.getFullname(), user.getFullname(), user.getEmail()};
-        String subject = String.join("\\|", userData);
+        String[] userData = {user.getUsername(), user.getFullname(), user.getEmail()};
+        String subject = String.join("|", userData);
 
         String accessToken = jwtUtil.generateAccessToken(subject);
         userResponseDTO.setAccessToken(accessToken);
@@ -117,7 +117,7 @@ public class AuthController {
     @PostMapping("forgot-password")
     public String forgotPassword(@Valid @RequestBody PasswordResetEmailDTO passwordResetRequestDTO) {
         String email = passwordResetRequestDTO.getEmail();
-        String token = UUID.randomUUID().toString();
+        String token = jwtUtil.generateAccessToken(email);
         try {
             emailService.sendPasswordResetEmail(email, token);
             return "Password reset email sent";
