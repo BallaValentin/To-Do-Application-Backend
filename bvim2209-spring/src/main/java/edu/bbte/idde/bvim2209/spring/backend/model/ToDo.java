@@ -25,6 +25,12 @@ public class ToDo extends BaseEntity {
     private Date dueDate;
     @Column(nullable = false)
     private Integer levelOfImportance;
+    @Column(nullable = false)
+    private String createdBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @OneToMany(mappedBy = "toDo", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Collection<ToDoDetail> details = new ArrayList<>();

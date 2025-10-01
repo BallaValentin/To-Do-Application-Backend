@@ -17,6 +17,7 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("/api/todos")
+@CrossOrigin("http://localhost:5173")
 public class ToDoDetailController {
     ToDoService toDoService;
     ToDoMapper toDoMapper;
@@ -31,16 +32,21 @@ public class ToDoDetailController {
     }
 
     @GetMapping("/{id}/details")
-    public Collection<ToDoDetailResponseDTO> getToDetails(@PathVariable Long id) {
-        return toDoMapper.detailsToResponseDTOs(toDoService.getDetails(id));
+    public Collection<ToDoDetailResponseDTO> getToDetails(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @PathVariable Long id) {
+        String jwtToken = authorizationHeader.substring(7);
+        return toDoMapper.detailsToResponseDTOs(toDoService.getDetails(id, jwtToken));
     }
 
     @PostMapping("/{id}/details")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ToDoDetailResponseDTO> createToDoDetailDTO(
-            @PathVariable Long id, @Valid @RequestBody ToDoDetailRequestDTO toDoDetailRequestDTO) {
+            @PathVariable Long id, @Valid @RequestBody ToDoDetailRequestDTO toDoDetailRequestDTO,
+            @RequestHeader("Authorization") String authorizationHeader) {
         ToDoDetail toDoDetail = toDoDetailMapper.requestDTOToModel(toDoDetailRequestDTO);
-        toDoService.addDetailToToDo(id, toDoDetail);
+        String jwtToken = authorizationHeader.substring(7);
+        toDoService.addDetailToToDo(id, toDoDetail, jwtToken);
         URI createURI = URI.create("api/todos/" + id + "/details/" + toDoDetail.getId());
         return ResponseEntity.created(createURI).body(
                 toDoDetailMapper.modelToResponseDTO(toDoDetail)
@@ -50,7 +56,9 @@ public class ToDoDetailController {
     @DeleteMapping("/{todo-id}/details/{todo-detail-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteToDoDetail(
-            @PathVariable("todo-id") Long toDoId, @PathVariable("todo-detail-id") Long toDoDetailId) {
-        toDoService.deleteDetailById(toDoId, toDoDetailId);
+            @PathVariable("todo-id") Long toDoId, @PathVariable("todo-detail-id") Long toDoDetailId,
+            @RequestHeader("Authorization") String authorizationHeader) {
+        String jwtToken = authorizationHeader.substring(7);
+        toDoService.deleteDetailById(toDoId, toDoDetailId, jwtToken);
     }
 }

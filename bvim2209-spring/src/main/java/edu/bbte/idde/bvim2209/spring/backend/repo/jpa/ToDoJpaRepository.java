@@ -1,21 +1,22 @@
 package edu.bbte.idde.bvim2209.spring.backend.repo.jpa;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
+import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDao;
 import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.Optional;
 
 @Repository
 @Profile("jpa")
 public interface ToDoJpaRepository extends
-        JpaRepository<ToDo, Long> {
+        ToDoDao, JpaRepository<ToDo, Long>, JpaSpecificationExecutor<ToDo> {
+    @Override
     @Modifying
     @Transactional
     @Query("update ToDo t "
@@ -25,12 +26,4 @@ public interface ToDoJpaRepository extends
             + "t.levelOfImportance=:#{#toDo.levelOfImportance} "
             + "where t.id=:#{#toDo.id}")
     void update(@Param("toDo") ToDo toDo);
-
-    @Override
-    void deleteById(Long id);
-
-    @Override
-    Optional<ToDo> findById(Long id);
-
-    Collection<ToDo> findByLevelOfImportance(Integer levelOfImportance);
 }
