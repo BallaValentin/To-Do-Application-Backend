@@ -1,9 +1,14 @@
 package edu.bbte.idde.bvim2209.spring.web.exception;
 
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
+import edu.bbte.idde.bvim2209.spring.exceptions.AuthenticationException;
+import edu.bbte.idde.bvim2209.spring.exceptions.TooManyRequestsException;
+import edu.bbte.idde.bvim2209.spring.exceptions.UnauthorizedException;
 import edu.bbte.idde.bvim2209.spring.web.dto.ErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,6 +37,68 @@ public class GeneralExceptionHandler {
             IllegalArgumentException exception, HttpServletRequest request) {
         LocalDateTime timestamp = LocalDateTime.now();
         Integer statusCode = HttpStatus.BAD_REQUEST.value();
+        String error = exception.getMessage();
+        String path = request.getRequestURI();
+        return new ErrorResponseDTO(timestamp, statusCode, error, path);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ErrorResponseDTO handleBadCredentials(
+            BadCredentialsException exception, HttpServletRequest request) {
+        LocalDateTime timestamp = LocalDateTime.now();
+        Integer statusCode = HttpStatus.UNAUTHORIZED.value();
+        String error = exception.getMessage();
+        String path = request.getRequestURI();
+        return new ErrorResponseDTO(timestamp, statusCode, error, path);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ErrorResponseDTO handleInvalidJwtException(
+            AuthenticationException exception, HttpServletRequest request
+    ) {
+        LocalDateTime timestamp = LocalDateTime.now();
+        Integer statusCode = HttpStatus.UNAUTHORIZED.value();
+        String error = exception.getMessage();
+        String path = request.getRequestURI();
+        return new ErrorResponseDTO(timestamp, statusCode, error, path);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ErrorResponseDTO handleUnauthorizedException(
+            UnauthorizedException exception, HttpServletRequest request
+    ) {
+        LocalDateTime timestamp = LocalDateTime.now();
+        Integer statusCode = HttpStatus.UNAUTHORIZED.value();
+        String error = exception.getMessage();
+        String path = request.getRequestURI();
+        return new ErrorResponseDTO(timestamp, statusCode, error, path);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponseDTO handleMethodArgumentNotValid(
+            MethodArgumentNotValidException exception, HttpServletRequest request) {
+        LocalDateTime timestamp = LocalDateTime.now();
+        Integer statusCode = HttpStatus.BAD_REQUEST.value();
+        String error = exception.getBindingResult().getAllErrors().getFirst().getDefaultMessage();
+        String path = request.getRequestURI();
+        return new ErrorResponseDTO(timestamp, statusCode, error, path);
+    }
+
+    @ExceptionHandler(TooManyRequestsException.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    @ResponseBody
+    public ErrorResponseDTO handleTooManyRequests(
+            TooManyRequestsException exception, HttpServletRequest request) {
+        LocalDateTime timestamp = LocalDateTime.now();
+        Integer statusCode = HttpStatus.TOO_MANY_REQUESTS.value();
         String error = exception.getMessage();
         String path = request.getRequestURI();
         return new ErrorResponseDTO(timestamp, statusCode, error, path);

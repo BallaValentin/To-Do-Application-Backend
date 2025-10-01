@@ -1,6 +1,7 @@
 package edu.bbte.idde.bvim2209.spring.backend.repo.jdbc;
 
 import edu.bbte.idde.bvim2209.spring.backend.model.ToDo;
+import edu.bbte.idde.bvim2209.spring.backend.model.User;
 import edu.bbte.idde.bvim2209.spring.backend.repo.ToDoDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +67,9 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
-                ResultSet resultSet = preparedStatement.executeQuery(query)
         ) {
+            preparedStatement.setInt(1, levelOfImportance);
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 ToDo entity = mapResultSetToEntity(resultSet);
                 entities.add(entity);
@@ -77,5 +79,10 @@ public class ToDoJdbcDao extends JdbcDao<ToDo> implements ToDoDao {
         }
         log.info("All entities have been successfully fetched from database");
         return entities;
+    }
+
+    @Override
+    public Optional<ToDo> findByIdAndUser(Long id, User user) {
+        return Optional.empty();
     }
 }

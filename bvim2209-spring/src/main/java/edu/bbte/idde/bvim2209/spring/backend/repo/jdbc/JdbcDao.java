@@ -5,6 +5,7 @@ import edu.bbte.idde.bvim2209.spring.backend.repo.Dao;
 import edu.bbte.idde.bvim2209.spring.exceptions.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -45,7 +46,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     protected abstract void setStatementForUpdate(PreparedStatement preparedStatement, T entity) throws SQLException;
 
     @Override
-    public Collection<T> findAll() {
+    public Collection<T> findAll(Specification<T> specification) {
         log.info("Trying to fetch all entities from database");
 
         String query = "SELECT * FROM " + tableName;
@@ -67,7 +68,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
     }
 
     @Override
-    public void create(T entity) throws IllegalArgumentException {
+    public T saveAndFlush(T entity) throws IllegalArgumentException {
         log.info("Trying to insert new entity in database");
 
         String query = "INSERT INTO " + tableName + " ("
@@ -93,6 +94,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
             throw new IllegalArgumentException("Could not create entity", exception);
         }
         log.info("New entity has been successfully inserted into database");
+        return entity;
     }
 
     @Override
@@ -152,6 +154,7 @@ public abstract class JdbcDao<T extends BaseEntity> implements Dao<T> {
                 Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);) {
             int rowsAffected = preparedStatement.executeUpdate();
+
             if (rowsAffected == 0) {
                 throw new EntityNotFoundException("Entity with ID " + id + " not found.");
             }
