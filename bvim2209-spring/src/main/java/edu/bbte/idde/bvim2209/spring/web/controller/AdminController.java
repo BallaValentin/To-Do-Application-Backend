@@ -12,7 +12,7 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("/api/admin")
-@CrossOrigin("http://localhost:5173")
+@CrossOrigin(value = "http://localhost:5173", allowCredentials = "true")
 public class AdminController {
     UserMapper userMapper;
     UserService userService;

@@ -11,3 +11,10 @@ spring:
     password: lphh zrhr hspe wajs
 server:
   port: 8081
+connection:
+  database_url: mysql://localhost:3306/ToDoDatabase
+  database_username: root
+  database_password: 12345
+jwt:
+  secret1: a6RTEew6dfwFDG7dv732vwveuGRTGfw23742dby32r42fvwefuef3ftv3SADVU32DEEHWFVU34YFV43RVF34VF3UFVFAJSHHbs2y8r723fewfvet3fv4fdsvgfru43byid243yfu4vevferfv
+  secret2: dsjnvjvndSNADJBDADB1243724GEHBFqewqef4sgwv7DWGqXGEWFWVHSB32YR23ndewbufbwA27rasdhsadvVWVDGWce23rbcewwbhbDW7238CBSHCDjsdcsjbi23bfqhkfbefwgwBDWYFQhd

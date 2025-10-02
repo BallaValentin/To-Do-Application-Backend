@@ -1,8 +1,8 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ToDoDatabase
-    username: root
-    password: 12345
+    url: jdbc:${connection.database_url}
+    username: ${connection.database_username}
+    password: ${connection.database_password}
     hikari:
       maximum-pool-size: 20

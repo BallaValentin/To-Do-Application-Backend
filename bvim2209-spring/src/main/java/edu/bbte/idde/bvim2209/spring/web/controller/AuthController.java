@@ -56,7 +56,7 @@ public class AuthController {
         User user = userService.loginUser(loginData);
 
         UserResponseDTO userResponseDTO = new UserResponseDTO();
-        String[] userData = {user.getUsername(), user.getFullname(), user.getEmail()};
+        String[] userData = {user.getUsername(), user.getFullname(), user.getRole()};
         String subject = String.join("|", userData);
 
         String accessToken = jwtUtil.generateAccessToken(subject);
